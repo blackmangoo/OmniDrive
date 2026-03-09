@@ -66,9 +66,5 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>NSCameraUsageDescription</key>
-	<string>This app requires camera access to scan car parts.</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>This app requires microphone access for the camera component.</string>
 </dict>
 </plist>
