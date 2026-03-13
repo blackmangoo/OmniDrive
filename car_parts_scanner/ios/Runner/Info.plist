@@ -67,8 +67,10 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>NSCameraUsageDescription</key>
-	<string>This app requires camera access to scan car parts.</string>
+	<string>OmniDrive AI uses the camera to scan and identify car parts.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>This app requires microphone access for the camera component.</string>
+	<string>The camera component requires microphone access.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>OmniDrive AI needs photo library access to analyse car part images from your gallery.</string>
 </dict>
 </plist>

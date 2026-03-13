@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from ultralytics import YOLO
 import io
+import os
 import time
 from PIL import Image
 
@@ -44,9 +45,22 @@ async def predict_car_part(file: UploadFile = File(...)):
     if model is None:
         raise HTTPException(status_code=500, detail="Model is not loaded")
 
-    # Validate file type
-    if not file.content_type.startswith("image/"):
-        raise HTTPException(status_code=400, detail="File provided is not an image.")
+    # Validate file type — accept explicit image/* MIME types
+    # OR application/octet-stream (what Android camera package sends)
+    # OR fall back to a known image file extension.
+    ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp", ".bmp"}
+    filename = file.filename or ""
+    ext = os.path.splitext(filename)[-1].lower()
+
+    is_image_mime = file.content_type and file.content_type.startswith("image/")
+    is_octet = file.content_type in (None, "", "application/octet-stream")
+    is_known_ext = ext in ALLOWED_EXTENSIONS
+
+    if not (is_image_mime or (is_octet and is_known_ext)):
+        raise HTTPException(
+            status_code=400,
+            detail=f"File is not a recognised image (content_type={file.content_type!r}, ext={ext!r})."
+        )
 
     try:
         # Read the image bytes directly into a PIL Image
