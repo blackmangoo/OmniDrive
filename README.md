@@ -16,6 +16,19 @@ OmniDrive AI bridges the gap between car enthusiasts, technical knowledge, and t
 
 ---
 
+## 🏗️ System Architecture
+
+![System Architecture](docs/arcitecture.png)
+
+The OmniDrive AI ecosystem is driven by a centralized **Flutter App** that orchestrates interactions across four primary layers:
+
+1. **AI Vision Server (FastAPI / YOLOv11):** Receives captured images from the app and returns real-time car part predictions.
+2. **Cloud Backend & RAG (Supabase):** Serves as the central hub for database storage, vendor catalogs, and expert Q&A. It retrieves context from a Vector DB to augment user queries sent to the LLM.
+3. **IoT & Telemetry (Performance Metrics):** Ingests real-time vehicle telemetry via OBD-II scanners (ECU data) and native phone sensors (GPS/IMU) for sensor fusion and performance testing.
+4. **Logistics & Commerce:** A multi-role marketplace connecting users seeking parts with vendors managing catalogs, and riders handling product delivery.
+
+---
+
 ## 🗂️ Project Structure
 
 ```
@@ -24,16 +37,18 @@ OmniDrive/
 │   ├── main.py                 # FastAPI app with /predict endpoint
 │   ├── requirements.txt        # Python dependencies
 │   ├── test_inference.py       # Local model testing script
-│   └── runs/                   # YOLO training output & model weights
+│   └── models/                 # YOLO training output & model weights (car_parts_large_v1.pt)
 │
 ├── car_parts_scanner/          # Flutter mobile application
 │   ├── lib/
 │   │   ├── main.dart                   # App entry point, camera & Supabase init
+│   │   ├── main_shell.dart             # Main app shell with navigation
 │   │   ├── image_search_screen.dart    # Home/Search screen (search bar UI)
 │   │   ├── camera_preview_screen.dart  # Full-screen camera scanner
 │   │   ├── part_detection_service.dart # YOLO API + Supabase + scan history
 │   │   ├── car_part.dart               # CarPart data model
-│   │   └── ...
+│   │   ├── auth/                       # Supabase authentication screens
+│   │   └── performance/                # OBD-II & GPS performance analytics UI
 │   ├── android/                # Android-specific config (permissions, manifest)
 │   ├── ios/                    # iOS-specific config (Info.plist permissions)
 │   └── pubspec.yaml            # Flutter dependencies
@@ -43,6 +58,9 @@ OmniDrive/
 │       ├── class_counts.csv    # 50 classes, 26,820 total images
 │       └── ...
 │
+├── docs/                       # Architecture diagrams and design files
+├── kaggle_notebooks/           # Model training notebooks
+├── proposal/                   # Project proposal and defense presentations
 └── README.md
 ```
 
@@ -54,7 +72,7 @@ OmniDrive/
 |---|---|---|
 | **1. AI Visual Recognition** | ✅ **Complete** | YOLO11L, 50 classes, FastAPI deployed |
 | **2. RAG / Expert Q&A** | 🔲 Phase 2 | `part_docs` table ready, embeddings TBD |
-| **3. Performance Analytics** | 🔲 Phase 3 | OBD-II + GPS sensor fusion |
+| **3. Performance Analytics** | 🚧 In Progress | OBD-II + GPS sensor fusion (UI screens built) |
 | **4. Marketplace** | 🔲 Phase 2 | Vendors, listings, geospatial search |
 | **Auth (all roles)** | 🔲 Phase 1.5 | Supabase Auth — email/password |
 
@@ -135,7 +153,7 @@ Four user roles are planned:
 - Python 3.10+ with `.venv` active (`d:\OmniDrive\.venv`)
 - Flutter SDK (stable channel)
 - Phone on same WiFi network as PC
-- YOLO model weights at `api/runs/...` (or adjust path in `main.py`)
+- YOLO model weights at `api/models/...` (or adjust path in `main.py`)
 
 ### 1. Start the FastAPI inference server
 
@@ -208,8 +226,9 @@ Phase 1.5 🔲  Authentication (NEXT)
 Phase 2   🔲  Marketplace + RAG
               Vendor listings · Geospatial search · Expert Q&A
 
-Phase 3   🔲  Performance Analytics
+Phase 3   🚧  Performance Analytics (In Progress)
               OBD-II sensor fusion · GPS tracking · Dashcam integration
+              Core UI screens completed
 ```
 
 ---
