@@ -1,0 +1,103 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.1 Chrome/142.0.7444.265 Electron/39.8.0 Safari/537.36" version="29.6.1">
+  <diagram name="Page-1" id="22vsSCXt_uV8_j9TQuNR">
+    <mxGraphModel dx="772" dy="547" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="HcSV7mJNiEREfq8mQAZZ-1" parent="1" style="whiteSpace=wrap;strokeWidth=2;" value="User " vertex="1">
+          <mxGeometry height="169" width="178" x="200" y="150.5" as="geometry" />
+        </mxCell>
+        <mxCell id="HcSV7mJNiEREfq8mQAZZ-2" parent="1" style="ellipse;aspect=fixed;strokeWidth=2;whiteSpace=wrap;" value="OmniDrive System" vertex="1">
+          <mxGeometry height="190" width="190" x="628" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="HcSV7mJNiEREfq8mQAZZ-3" edge="1" parent="1" source="HcSV7mJNiEREfq8mQAZZ-1" style="curved=0;startArrow=none;endArrow=block;exitX=1;exitY=0.5;entryX=0;entryY=0.5;rounded=0;" target="HcSV7mJNiEREfq8mQAZZ-2" value="">
+          <mxGeometry relative="1" x="1" y="283" as="geometry">
+            <mxPoint x="172" y="59" as="offset" />
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="HcSV7mJNiEREfq8mQAZZ-4" edge="1" parent="1" style="curved=0;startArrow=none;endArrow=block;exitX=1;exitY=0.5;entryX=0.183;entryY=0.111;rounded=0;entryDx=0;entryDy=0;entryPerimeter=0;" target="HcSV7mJNiEREfq8mQAZZ-2" value="">
+          <mxGeometry relative="1" x="1" y="135" as="geometry">
+            <mxPoint x="2" y="1" as="offset" />
+            <Array as="points" />
+            <mxPoint x="378" y="160.5" as="sourcePoint" />
+            <mxPoint x="628" y="160.5" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="HcSV7mJNiEREfq8mQAZZ-5" edge="1" parent="1" source="HcSV7mJNiEREfq8mQAZZ-1" style="curved=0;startArrow=none;endArrow=block;entryX=0.098;entryY=0.204;rounded=0;entryDx=0;entryDy=0;entryPerimeter=0;exitX=1.005;exitY=0.168;exitDx=0;exitDy=0;exitPerimeter=0;" target="HcSV7mJNiEREfq8mQAZZ-2" value="">
+          <mxGeometry relative="1" x="-1" y="244" as="geometry">
+            <mxPoint x="-80" y="14" as="offset" />
+            <Array as="points" />
+            <mxPoint x="380" y="175.5" as="sourcePoint" />
+            <mxPoint x="680" y="280.5" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="HcSV7mJNiEREfq8mQAZZ-6" edge="1" parent="1" style="curved=0;startArrow=none;endArrow=block;exitX=0.999;exitY=0.284;entryX=0.035;entryY=0.321;rounded=0;exitDx=0;exitDy=0;exitPerimeter=0;entryDx=0;entryDy=0;entryPerimeter=0;" target="HcSV7mJNiEREfq8mQAZZ-2" value="">
+          <mxGeometry relative="1" x="-0.0559" y="-30" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points" />
+            <mxPoint x="378.002" y="200.4960000000001" as="sourcePoint" />
+            <mxPoint x="636.54" y="200.9000000000001" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="HcSV7mJNiEREfq8mQAZZ-7" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Login/Registration Details" vertex="1">
+          <mxGeometry height="10" width="140" x="440" y="150.5" as="geometry" />
+        </mxCell>
+        <mxCell id="HcSV7mJNiEREfq8mQAZZ-8" edge="1" parent="1" source="HcSV7mJNiEREfq8mQAZZ-1" style="endArrow=classic;html=1;rounded=0;entryX=0.006;entryY=0.417;entryDx=0;entryDy=0;entryPerimeter=0;exitX=1;exitY=0.407;exitDx=0;exitDy=0;exitPerimeter=0;" target="HcSV7mJNiEREfq8mQAZZ-2" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="380" y="220.5" as="sourcePoint" />
+            <mxPoint x="430" y="170.5" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="HcSV7mJNiEREfq8mQAZZ-9" edge="1" parent="1" source="HcSV7mJNiEREfq8mQAZZ-2" style="endArrow=classic;html=1;rounded=0;entryX=0.999;entryY=0.598;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0.008;exitY=0.597;exitDx=0;exitDy=0;exitPerimeter=0;" target="HcSV7mJNiEREfq8mQAZZ-1" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="570" y="260.5" as="sourcePoint" />
+            <mxPoint x="510" y="260.5" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="HcSV7mJNiEREfq8mQAZZ-10" edge="1" parent="1" source="HcSV7mJNiEREfq8mQAZZ-2" style="endArrow=classic;html=1;rounded=0;entryX=0.998;entryY=0.7;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0.032;exitY=0.682;exitDx=0;exitDy=0;exitPerimeter=0;" target="HcSV7mJNiEREfq8mQAZZ-1" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="460" y="320.5" as="sourcePoint" />
+            <mxPoint x="510" y="270.5" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="HcSV7mJNiEREfq8mQAZZ-11" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Car Part Image" vertex="1">
+          <mxGeometry height="19.5" width="100" x="445" y="160.5" as="geometry" />
+        </mxCell>
+        <mxCell id="HcSV7mJNiEREfq8mQAZZ-12" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Car Specs &amp;amp; Budget" vertex="1">
+          <mxGeometry height="20.5" width="130" x="432" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="HcSV7mJNiEREfq8mQAZZ-13" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="GPS/Sensor Data" vertex="1">
+          <mxGeometry width="127" x="431.5" y="210.5" as="geometry" />
+        </mxCell>
+        <mxCell id="HcSV7mJNiEREfq8mQAZZ-14" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Order &amp;amp; Payment Details" vertex="1">
+          <mxGeometry height="10" width="160" x="422" y="222.5" as="geometry" />
+        </mxCell>
+        <mxCell id="HcSV7mJNiEREfq8mQAZZ-15" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Identified Part &amp;amp; Price" vertex="1">
+          <mxGeometry height="30" width="140" x="427" y="230.5" as="geometry" />
+        </mxCell>
+        <mxCell id="HcSV7mJNiEREfq8mQAZZ-16" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Modification Build Sheet" vertex="1">
+          <mxGeometry height="20" width="160" x="420" y="250.5" as="geometry" />
+        </mxCell>
+        <mxCell id="HcSV7mJNiEREfq8mQAZZ-17" edge="1" parent="1" source="HcSV7mJNiEREfq8mQAZZ-2" style="endArrow=classic;html=1;rounded=0;entryX=0.999;entryY=0.813;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0.075;exitY=0.769;exitDx=0;exitDy=0;exitPerimeter=0;" target="HcSV7mJNiEREfq8mQAZZ-1" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="370" y="350.5" as="sourcePoint" />
+            <mxPoint x="420" y="300.5" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="HcSV7mJNiEREfq8mQAZZ-18" edge="1" parent="1" source="HcSV7mJNiEREfq8mQAZZ-2" style="endArrow=classic;html=1;rounded=0;entryX=0.999;entryY=0.911;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0;exitY=1;exitDx=0;exitDy=0;" target="HcSV7mJNiEREfq8mQAZZ-1" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="440" y="280.5" as="sourcePoint" />
+            <mxPoint x="490" y="230.5" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="HcSV7mJNiEREfq8mQAZZ-19" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="0-100 km/h Performance Stats" vertex="1">
+          <mxGeometry height="20" width="280" x="362" y="270.5" as="geometry" />
+        </mxCell>
+        <mxCell id="HcSV7mJNiEREfq8mQAZZ-20" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Order Status &amp;amp; Notifications" vertex="1">
+          <mxGeometry height="30" width="170" x="417" y="280.5" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
