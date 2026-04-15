@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "170468732804",
+    "project_id": "omni-drive-f9197",
+    "storage_bucket": "omni-drive-f9197.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:170468732804:android:ba0409d87c3df01cfc37d1",
+        "android_client_info": {
+          "package_name": "com.ammar.OmniDrive"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBEoklqposyzCfdgGQ7T9REiVEj3ic_v3o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

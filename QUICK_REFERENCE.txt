@@ -1,0 +1,198 @@
+╔════════════════════════════════════════════════════════════════════════════╗
+║                    OMNIDRIVE DOCKER - QUICK REFERENCE                       ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+═════════════════════════════════════════════════════════════════════════════
+ 📋 PREREQUISITE
+═════════════════════════════════════════════════════════════════════════════
+
+  1. Install Docker Desktop from https://www.docker.com/products/docker-desktop
+  2. Start Docker Desktop
+  3. Verify: docker --version
+
+
+═════════════════════════════════════════════════════════════════════════════
+ 🚀 QUICKSTART (3 STEPS)
+═════════════════════════════════════════════════════════════════════════════
+
+  Step 1: Navigate to project
+    cd D:\OmniDrive
+
+  Step 2: Start development environment
+    docker-compose up
+
+  Step 3: Open in browser
+    http://localhost:8000/docs
+
+  ✓ API is running with hot reload enabled
+
+
+═════════════════════════════════════════════════════════════════════════════
+ 📌 MOST COMMON COMMANDS
+═════════════════════════════════════════════════════════════════════════════
+
+  START DEVELOPMENT
+  ├─ docker-compose up                    # Start with logs visible
+  ├─ docker-compose up -d                 # Start in background
+  └─ docker-compose up --build            # Rebuild & start
+
+  STOP & CLEANUP
+  ├─ Ctrl+C                               # Stop (if running in foreground)
+  ├─ docker-compose down                  # Stop containers
+  └─ docker-compose down -v               # Stop & remove volumes
+
+  VIEW STATUS
+  ├─ docker-compose ps                    # List containers
+  ├─ docker-compose logs -f               # View logs (live)
+  └─ docker-compose logs --tail 50        # View last 50 lines
+
+  PRODUCTION
+  ├─ docker-compose -f docker-compose.prod.yml up -d
+  └─ docker-compose -f docker-compose.prod.yml logs -f
+
+
+═════════════════════════════════════════════════════════════════════════════
+ 🧪 TEST THE API
+═════════════════════════════════════════════════════════════════════════════
+
+  HEALTH CHECK (PowerShell)
+    curl http://localhost:8000/
+
+  SWAGGER UI (Browser)
+    http://localhost:8000/docs
+
+  PREDICT WITH IMAGE (PowerShell)
+    $file = "D:\path\to\image.jpg"
+    curl.exe -X POST http://localhost:8000/predict -F "file=@$file"
+
+
+═════════════════════════════════════════════════════════════════════════════
+ 🔨 MANUAL BUILD & RUN (If not using docker-compose)
+═════════════════════════════════════════════════════════════════════════════
+
+  BUILD
+    docker build -t omnidrive-api:latest .
+
+  RUN
+    docker run -d -p 8000:8000 --name omnidrive-api `
+      -v ${PWD}/api/models:/app/models:ro `
+      omnidrive-api:latest
+
+  LOGS
+    docker logs -f omnidrive-api
+
+  STOP
+    docker stop omnidrive-api
+    docker rm omnidrive-api
+
+
+═════════════════════════════════════════════════════════════════════════════
+ ⚡ HOT RELOAD (Development Only)
+═════════════════════════════════════════════════════════════════════════════
+
+  With docker-compose up running:
+
+  1. Edit api/main.py (any change)
+  2. Save file
+  3. Container auto-reloads in ~1 second
+  4. Test: curl http://localhost:8000/
+
+  ✓ No manual restart needed!
+
+
+═════════════════════════════════════════════════════════════════════════════
+ 🗂️ FILE REFERENCE
+═════════════════════════════════════════════════════════════════════════════
+
+  Dockerfile
+  └─ Build recipe. Defines how to create the container image.
+     Multi-stage build: smaller final image (~350MB vs ~950MB)
+
+  .dockerignore
+  └─ Excludes large files from build context (dataset, cache, etc.)
+
+  docker-compose.yml
+  └─ Development config. Source code mounted, auto-reload enabled.
+     Best for: Local development with code changes
+
+  docker-compose.override.yml
+  └─ Development overrides. Auto-loaded by docker-compose.yml
+     Adds: hot reload configuration
+
+  docker-compose.prod.yml
+  └─ Production config. Optimized, 4 workers, auto-restart.
+     Best for: Production servers, load testing
+
+  USAGE_GUIDE.md
+  └─ Detailed step-by-step guide (10+ pages)
+
+  DOCKER_BEST_PRACTICES.md
+  └─ Technical details on all optimizations applied
+
+
+═════════════════════════════════════════════════════════════════════════════
+ 🆘 TROUBLESHOOTING
+═════════════════════════════════════════════════════════════════════════════
+
+  PROBLEM: Port 8000 already in use
+  SOLUTION: 
+    docker-compose down        # Stop existing container
+    docker-compose up          # Restart
+
+  PROBLEM: Container exits immediately
+  SOLUTION:
+    docker-compose logs        # Check error messages
+    docker-compose down        # Stop
+    Fix the error in code
+    docker-compose up --build  # Rebuild & start
+
+  PROBLEM: Out of disk space
+  SOLUTION:
+    docker system prune -a     # Remove unused images
+    docker system df           # Check space usage
+
+  PROBLEM: "Cannot start service: port is already allocated"
+  SOLUTION:
+    docker-compose down        # Stop all containers
+    docker ps -a               # Check for orphans
+    docker stop <container>    # Stop any orphans
+    docker-compose up          # Try again
+
+
+═════════════════════════════════════════════════════════════════════════════
+ ✅ DEPLOYMENT CHECKLIST
+═════════════════════════════════════════════════════════════════════════════
+
+  Before going to production:
+
+  ☐ Test locally: docker-compose up
+  ☐ Verify API: curl http://localhost:8000/
+  ☐ Test prediction: POST image to /predict
+  ☐ Check logs: docker-compose logs
+  ☐ Test production config: docker-compose -f docker-compose.prod.yml up
+  ☐ Verify model file exists: api/models/car_parts_large_v1.pt
+  ☐ Document any custom env variables
+  ☐ Tag image: docker build -t omnidrive-api:v1.0 .
+  ☐ Push to registry: docker push yourusername/omnidrive-api:v1.0
+  ☐ Test on target server
+  ☐ Set up monitoring/alerts
+
+
+═════════════════════════════════════════════════════════════════════════════
+ 📚 DETAILED DOCUMENTATION
+═════════════════════════════════════════════════════════════════════════════
+
+  For step-by-step guides, see: USAGE_GUIDE.md
+  For technical details, see: DOCKER_BEST_PRACTICES.md
+
+
+═════════════════════════════════════════════════════════════════════════════
+ 🔗 USEFUL LINKS
+═════════════════════════════════════════════════════════════════════════════
+
+  Docker Documentation:    https://docs.docker.com/
+  Docker Compose Ref:      https://docs.docker.com/compose/reference/
+  FastAPI Docs:            https://fastapi.tiangolo.com/
+  YOLO11 Docs:             https://docs.ultralytics.com/models/yolov11/
+
+═════════════════════════════════════════════════════════════════════════════
