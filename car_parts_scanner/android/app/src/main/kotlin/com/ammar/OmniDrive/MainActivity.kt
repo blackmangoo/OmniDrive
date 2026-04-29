@@ -1,4 +1,4 @@
-package com.example.car_parts_scanner
+package com.ammar.OmniDrive
 
 import io.flutter.embedding.android.FlutterActivity
 
