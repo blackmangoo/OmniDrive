@@ -1,3 +1,7 @@
+# IMPORTANT: Override parent OmniDrive/.gitignore Python rule that ignores lib/
+# Flutter source code lives in lib/ and MUST be tracked.
+!lib/
+
 # Miscellaneous
 *.class
 *.log
