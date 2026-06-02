@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OmniDrive AI — Project Progress & Gap Analysis</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0A0A0F;
+      --card: #111118;
+      --border: #1E1E2E;
+      --accent: #4FC3F7;
+      --accent2: #7C4DFF;
+      --done: #66BB6A;
+      --partial: #FFA726;
+      --missing: #EF5350;
+      --planned: #AB47BC;
+      --text: #E0E0E0;
+      --muted: #888;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      padding-bottom: 40px;
+    }
+
+    .header {
+      text-align: center;
+      padding: 40px 20px 10px;
+    }
+    .header h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--done), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .header p { color: var(--muted); margin-top: 8px; font-size: 0.9rem; }
+
+    /* Stats bar */
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      padding: 24px 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .stat {
+      text-align: center;
+    }
+    .stat-value {
+      font-size: 2.2rem;
+      font-weight: 800;
+    }
+    .stat-label {
+      font-size: 0.7rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 2px;
+    }
+
+    /* Overall progress bar */
+    .progress-container {
+      max-width: 900px;
+      margin: 0 auto 30px;
+      padding: 0 20px;
+    }
+    .progress-bar-bg {
+      background: rgba(255,255,255,0.05);
+      border-radius: 8px;
+      height: 18px;
+      overflow: hidden;
+      display: flex;
+    }
+    .progress-fill-done {
+      background: linear-gradient(90deg, var(--done), #43A047);
+      height: 100%;
+      transition: width 0.8s ease;
+    }
+    .progress-fill-partial {
+      background: linear-gradient(90deg, var(--partial), #FF9800);
+      height: 100%;
+      transition: width 0.8s ease;
+    }
+    .progress-text {
+      text-align: center;
+      margin-top: 8px;
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    /* Modules Grid */
+    .modules {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 20px;
+    }
+
+    .module {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      transition: border-color 0.3s;
+    }
+    .module:hover { border-color: rgba(79,195,247,0.3); }
+
+    .module-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+    .module-title {
+      font-size: 1rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .module-badge {
+      font-size: 0.6rem;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .badge-done { background: rgba(102,187,106,0.15); color: var(--done); }
+    .badge-partial { background: rgba(255,167,38,0.15); color: var(--partial); }
+    .badge-missing { background: rgba(239,83,80,0.15); color: var(--missing); }
+    .badge-planned { background: rgba(171,71,188,0.15); color: var(--planned); }
+
+    /* Mini progress */
+    .mini-progress {
+      width: 100%;
+      height: 4px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 2px;
+      margin-bottom: 14px;
+      overflow: hidden;
+    }
+    .mini-progress-fill {
+      height: 100%;
+      border-radius: 2px;
+      transition: width 0.6s ease;
+    }
+
+    /* Feature list */
+    .features { list-style: none; }
+    .feature {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 0;
+      font-size: 0.78rem;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+    .feature:last-child { border-bottom: none; }
+    .feature-icon {
+      width: 18px;
+      height: 18px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      flex-shrink: 0;
+      font-weight: 700;
+    }
+    .icon-done { background: rgba(102,187,106,0.15); color: var(--done); }
+    .icon-partial { background: rgba(255,167,38,0.15); color: var(--partial); }
+    .icon-missing { background: rgba(239,83,80,0.15); color: var(--missing); }
+    .icon-planned { background: rgba(171,71,188,0.15); color: var(--planned); }
+
+    .feature-text { flex: 1; }
+    .feature-text.done { color: var(--text); }
+    .feature-text.partial { color: var(--partial); }
+    .feature-text.missing { color: var(--missing); }
+    .feature-text.planned { color: var(--planned); }
+
+    .feature-note {
+      font-size: 0.6rem;
+      color: var(--muted);
+      background: rgba(255,255,255,0.03);
+      padding: 1px 6px;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+
+    /* Legend */
+    .legend {
+      max-width: 900px;
+      margin: 30px auto 0;
+      padding: 16px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      justify-content: center;
+      border-top: 1px solid var(--border);
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+    }
+
+    /* FYP Phase labels */
+    .phase-section {
+      max-width: 1200px;
+      margin: 10px auto 16px;
+      padding: 0 20px;
+    }
+    .phase-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      display: inline-block;
+    }
+    .phase-1 { background: rgba(102,187,106,0.1); color: var(--done); border: 1px solid rgba(102,187,106,0.2); }
+    .phase-2 { background: rgba(171,71,188,0.1); color: var(--planned); border: 1px solid rgba(171,71,188,0.2); }
+
+    .footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.7rem;
+      padding: 30px 20px 20px;
+      border-top: 1px solid var(--border);
+      margin-top: 30px;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>📊 OmniDrive AI — Project Progress</h1>
+    <p>What's Done · What's In-Progress · What's Missing · FYP-1 vs FYP-2 Scope</p>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-value" style="color: var(--done);">52</div>
+      <div class="stat-label">Dart Files</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value" style="color: var(--accent);">13</div>
+      <div class="stat-label">DB Tables</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value" style="color: var(--accent2);">4</div>
+      <div class="stat-label">User Roles</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value" style="color: var(--partial);">~78%</div>
+      <div class="stat-label">FYP-1 Complete</div>
+    </div>
+  </div>
+
+  <!-- Overall Progress Bar -->
+  <div class="progress-container">
+    <div class="progress-bar-bg">
+      <div class="progress-fill-done" style="width: 68%;"></div>
+      <div class="progress-fill-partial" style="width: 10%;"></div>
+    </div>
+    <div class="progress-text">68% Fully Complete · 10% Partially Done · 22% Remaining (incl. FYP-2 scope)</div>
+  </div>
+
+  <!-- ═══════ FYP-1 MODULES ═══════ -->
+  <div class="phase-section">
+    <span class="phase-label phase-1">▶ FYP-1 Scope (Current Semester)</span>
+  </div>
+
+  <div class="modules">
+
+    <!-- Auth Module -->
+    <div class="module">
+      <div class="module-header">
+        <div class="module-title">🔐 Authentication & RBAC</div>
+        <span class="module-badge badge-done">✅ Complete</span>
+      </div>
+      <div class="mini-progress"><div class="mini-progress-fill" style="width: 100%; background: var(--done);"></div></div>
+      <ul class="features">
+        <li class="feature"><span class="feature-icon icon-done">✓</span><span class="feature-text done">Email/Password signup & login</span></li>
+        <li class="feature"><span class="feature-icon icon-done">✓</span><span class="feature-text done">Role selection (Customer / Vendor / Rider)</span></li>
+        <li class="feature"><span class="feature-icon icon-done">✓</span><span class="feature-text done">Email verification flow</span></li>
+        <li class="feature"><span class="feature-icon icon-done">✓</span><span class="feature-text done">Forgot password + deep-link recovery</span></li>
+        <li class="feature"><span class="feature-icon icon-done">✓</span><span class="feature-text done">AuthGate RBAC routing (4 shells)</span></li>
+        <li class="feature"><span class="feature-icon icon-done">✓</span><span class="feature-text done">Vendor-specific signup with business info</span></li>
+        <li class="feature"><span class="feature-icon icon-done">✓</span><span class="feature-text done">FCM token registration per user</span></li>
+        <li class="feature"><span class="feature-icon icon-done">✓</span><span class="feature-text done">RLS policies on all sensitive tables</span></li>
+      </ul>
+    </div>
+
+    <!-- AI Vision Module -->
+    <div class="module">
+      <div class="module-header">
+        <div class="module-title">📸 AI Vision (YOLO11)</div>
+        <span class="module-badge badge-done">✅ Complete</span>
+      </div>
+      <div class="mini-progress"><div class="mini-progress-fill" style="width: 100%; background: var(--done);"></div></div>
+      <ul class="features">
+        <li class="feature"><span class="feature-icon icon-done">✓</span><span class="feature-text done">YOLO11-Large model trained on custom dataset</span></li>
+        <li class="feature"><span class="feature-icon icon-done">✓</span><span class="feature-text done">FastAPI inference server (/predict endpoint)</span></li>
+        <li class="feature"><span class="feature-icon icon-done">✓</span><span class="feature-text done">Real-time camera preview with viewfinder</span></li>
+        <li class="feature"><span class="feature-icon icon-done">✓</span><span class="feature-text done">Image search (gallery + camera capture)</span></li>
+        <li class="feature"><span class="feature-icon icon-done">✓</span><span class="feature-text done">Confidence threshold filtering (≥60%)</span></li>
+        <li class="feature"><span class="feature-icon icon-done">✓</span><span class="feature-text done">PartDetectionService HTTP integration</span></li>
+        <li class="feature"><span class="feature-icon icon-done">✓</span><span class="feature-text done">Scan history saved to Supabase</span></li>
+        <li class="feature"><span class="feature-icon icon-done">✓</span><span class="feature-text done">Bounding box overlay on results</span></li>
+      </ul>
+    </div>
+
+    <!-- Marketplace Module -->
+    <div class="module">
+      <div class="module-header">
+        <div class="module-title">🛒 Marketplace Platform</div>
+        <span class="module-badge badge-done">✅ Complete</span>
+      </div>
+      <div class="mini-progress"><div class="mini-progress-fill" style="width: 100%; background: var(--done);"></div></div>
+      <ul class="features">
+        <li class="feature"><span class="feature-icon icon-done">✓</span><span class="feature-text done">Customer: Browse, Cart, Checkout, Orders</span><span class="feature-note">10 screens</span></li>
+        <li class="feature"><span class="feature-icon icon-done">✓</span><span class="feature-text done">Vendor: Dashboard, Catalogue, Stock Mgmt</span><span class="feature-note">8 screens</span></li>
+        <li class="feature"><span class="feature-icon icon-done">✓</span><span class="feature-text done">Rider: Deliveries, Order accept/reject</span><span class="feature-note">4 screens</span></li>
+        <li class="feature"><span class="feature-icon icon-done">✓</span><span class="feature-text done">Admin: Order oversight, management</span><span class="feature-note">3 screens</span></li>
+        <li class="feature"><span class="feature-icon icon-done">✓</span><span class="feature-text done">Product image upload to Supabase Storage</span></li>
+        <li class="feature"><span class="feature-icon icon-done">✓</span><span class="feature-text done">Order lifecycle (Placed → Shipped → Delivered)</span></li>
+        <li class="feature"><span class="feature-icon icon-done">✓</span><span class="feature-text done">decrement_stock() RPC for atomicity</span></li>
+        <li class="feature"><span class="feature-icon icon-done">✓</span><span class="feature-text done">Push notifications via Firebase FCM</span></li>
+      </ul>
+    </div>
+
+    <!-- Performance Module -->
+    <div class="module">
+      <div class="module-header">
+        <div class="module-title">⚡ Performance & Sensor Fusion</div>
+        <span class="module-badge badge-partial">🔶 Mostly Done</span>
+      </div>
+      <div class="mini-progress"><div class="mini-progress-fill" style="width: 85%; background: linear-gradient(90deg, var(--done) 80%, var(--partial));"></div></div>
+      <ul class="features">
+        <li class="feature"><span class="feature-icon icon-done">✓</span><span class="feature-text done">Kalman filter (GPS + IMU fusion)</span></li>
+        <li class="feature"><span class="feature-icon icon-done">✓</span><span class="feature-text done">0-60, 0-100 km/h speed tests</span></li>
+        <li class="feature"><span class="feature-icon icon-done">✓</span><span class="feature-text done">¼-mile test (trapezoidal integration)</span></li>
+        <li class="feature"><span class="feature-icon icon-done">✓</span><span class="feature-text done">Braking distance test</span></li>
+        <li class="feature"><span class="feature-icon icon-done">✓</span><span class="feature-text done">Real-time speed gauge (fl_chart)</span></li>
+        <li class="feature"><span class="feature-icon icon-done">✓</span><span class="feature-text done">Pre-test calibration flow</span></li>
+        <li class="feature"><span class="feature-icon icon-done">✓</span><span class="feature-text done">OBD-II WiFi service (ELM327 / PID 010D)</span></li>
+        <li class="feature"><span class="feature-icon icon-done">✓</span><span class="feature-text done">Run history + results persistence</span></li>
+        <li class="feature"><span class="feature-icon icon-partial">◐</span><span class="feature-text partial">Kalman filter q/r tuning with real data</span><span class="feature-note">Needs field test</span></li>
+        <li class="feature"><span class="feature-icon icon-partial">◐</span><span class="feature-text partial">OBD-II live data validation</span><span class="feature-note">Needs vehicle</span></li>
+      </ul>
+    </div>
+
+    <!-- Database & Cloud -->
+    <div class="module">
+      <div class="module-header">
+        <div class="module-title">🐘 Database & Cloud Infra</div>
+        <span class="module-badge badge-done">✅ Complete</span>
+      </div>
+      <div class="mini-progress"><div class="mini-progress-fill" style="width: 95%; background: var(--done);"></div></div>
+      <ul class="features">
+        <li class="feature"><span class="feature-icon icon-done">✓</span><span class="feature-text done">Supabase Postgres 17 (13 tables)</span></li>
+        <li class="feature"><span class="feature-icon icon-done">✓</span><span class="feature-text done">pgvector extension enabled</span></li>
+        <li class="feature"><span class="feature-icon icon-done">✓</span><span class="feature-text done">Row Level Security on all tables</span></li>
+        <li class="feature"><span class="feature-icon icon-done">✓</span><span class="feature-text done">handle_new_user trigger</span></li>
+        <li class="feature"><span class="feature-icon icon-done">✓</span><span class="feature-text done">decrement_stock RPC function</span></li>
+        <li class="feature"><span class="feature-icon icon-done">✓</span><span class="feature-text done">Supabase Storage (product images)</span></li>
+        <li class="feature"><span class="feature-icon icon-done">✓</span><span class="feature-text done">Firebase Cloud Messaging setup</span></li>
+        <li class="feature"><span class="feature-icon icon-partial">◐</span><span class="feature-text partial">decrement_stock SECURITY INVOKER migration</span><span class="feature-note">Tech debt</span></li>
+      </ul>
+    </div>
+
+    <!-- UI / UX -->
+    <div class="module">
+      <div class="module-header">
+        <div class="module-title">🎨 UI / UX Design</div>
+        <span class="module-badge badge-done">✅ Complete</span>
+      </div>
+      <div class="mini-progress"><div class="mini-progress-fill" style="width: 100%; background: var(--done);"></div></div>
+      <ul class="features">
+        <li class="feature"><span class="feature-icon icon-done">✓</span><span class="feature-text done">Dark premium theme (#0A0A0F)</span></li>
+        <li class="feature"><span class="feature-icon icon-done">✓</span><span class="feature-text done">Custom app icon (adaptive, all densities)</span></li>
+        <li class="feature"><span class="feature-icon icon-done">✓</span><span class="feature-text done">Shimmer loading placeholders</span></li>
+        <li class="feature"><span class="feature-icon icon-done">✓</span><span class="feature-text done">Google Fonts (Inter / Roboto)</span></li>
+        <li class="feature"><span class="feature-icon icon-done">✓</span><span class="feature-text done">Smooth animations & transitions</span></li>
+        <li class="feature"><span class="feature-icon icon-done">✓</span><span class="feature-text done">Badge notifications on nav bar</span></li>
+        <li class="feature"><span class="feature-icon icon-done">✓</span><span class="feature-text done">Responsive layouts for all screens</span></li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- ═══════ FYP-2 MODULES ═══════ -->
+  <div class="phase-section" style="margin-top: 30px;">
+    <span class="phase-label phase-2">▶ FYP-2 Scope (Next Semester)</span>
+  </div>
+
+  <div class="modules">
+
+    <!-- RAG Module -->
+    <div class="module" style="border-color: rgba(171,71,188,0.25);">
+      <div class="module-header">
+        <div class="module-title">🧠 RAG Knowledge Base</div>
+        <span class="module-badge badge-planned">🟣 FYP-2</span>
+      </div>
+      <div class="mini-progress"><div class="mini-progress-fill" style="width: 5%; background: var(--planned);"></div></div>
+      <ul class="features">
+        <li class="feature"><span class="feature-icon icon-done">✓</span><span class="feature-text done">part_docs table with pgvector column</span><span class="feature-note">Schema only</span></li>
+        <li class="feature"><span class="feature-icon icon-missing">✗</span><span class="feature-text missing">Document chunking pipeline</span></li>
+        <li class="feature"><span class="feature-icon icon-missing">✗</span><span class="feature-text missing">Embedding generation (OpenAI / HF)</span></li>
+        <li class="feature"><span class="feature-icon icon-missing">✗</span><span class="feature-text missing">pgvector insertion service</span></li>
+        <li class="feature"><span class="feature-icon icon-missing">✗</span><span class="feature-text missing">Semantic search API endpoint</span></li>
+        <li class="feature"><span class="feature-icon icon-missing">✗</span><span class="feature-text missing">LLM-powered maintenance assistant</span></li>
+        <li class="feature"><span class="feature-icon icon-missing">✗</span><span class="feature-text missing">Flutter chat UI for Q&A</span></li>
+      </ul>
+    </div>
+
+    <!-- Google Sign-In & Social -->
+    <div class="module" style="border-color: rgba(171,71,188,0.25);">
+      <div class="module-header">
+        <div class="module-title">🔑 Advanced Auth</div>
+        <span class="module-badge badge-planned">🟣 FYP-2</span>
+      </div>
+      <div class="mini-progress"><div class="mini-progress-fill" style="width: 0%; background: var(--planned);"></div></div>
+      <ul class="features">
+        <li class="feature"><span class="feature-icon icon-missing">✗</span><span class="feature-text missing">Google Sign-In (OAuth 2.0)</span></li>
+        <li class="feature"><span class="feature-icon icon-missing">✗</span><span class="feature-text missing">Social login providers</span></li>
+        <li class="feature"><span class="feature-icon icon-missing">✗</span><span class="feature-text missing">Admin dashboard (web panel)</span></li>
+        <li class="feature"><span class="feature-icon icon-missing">✗</span><span class="feature-text missing">Leaked password protection</span></li>
+      </ul>
+    </div>
+
+    <!-- Deployment & Geo -->
+    <div class="module" style="border-color: rgba(171,71,188,0.25);">
+      <div class="module-header">
+        <div class="module-title">🚀 Cloud Deployment & Geo</div>
+        <span class="module-badge badge-planned">🟣 FYP-2</span>
+      </div>
+      <div class="mini-progress"><div class="mini-progress-fill" style="width: 0%; background: var(--planned);"></div></div>
+      <ul class="features">
+        <li class="feature"><span class="feature-icon icon-missing">✗</span><span class="feature-text missing">FastAPI → Cloud Run / Railway deployment</span></li>
+        <li class="feature"><span class="feature-icon icon-missing">✗</span><span class="feature-text missing">Geospatial search (nearby vendors)</span></li>
+        <li class="feature"><span class="feature-icon icon-missing">✗</span><span class="feature-text missing">Live rider tracking on map</span></li>
+        <li class="feature"><span class="feature-icon icon-missing">✗</span><span class="feature-text missing">Production APK signing & Play Store</span></li>
+      </ul>
+    </div>
+
+    <!-- Testing & Polish -->
+    <div class="module" style="border-color: rgba(171,71,188,0.25);">
+      <div class="module-header">
+        <div class="module-title">🧪 Testing & Polish</div>
+        <span class="module-badge badge-planned">🟣 FYP-2</span>
+      </div>
+      <div class="mini-progress"><div class="mini-progress-fill" style="width: 10%; background: var(--planned);"></div></div>
+      <ul class="features">
+        <li class="feature"><span class="feature-icon icon-partial">◐</span><span class="feature-text partial">Real-world device testing (Samsung A305F)</span><span class="feature-note">In progress</span></li>
+        <li class="feature"><span class="feature-icon icon-missing">✗</span><span class="feature-text missing">Unit tests for services</span></li>
+        <li class="feature"><span class="feature-icon icon-missing">✗</span><span class="feature-text missing">Integration tests (Flutter Driver)</span></li>
+        <li class="feature"><span class="feature-icon icon-missing">✗</span><span class="feature-text missing">Performance benchmarks & profiling</span></li>
+        <li class="feature"><span class="feature-icon icon-missing">✗</span><span class="feature-text missing">Error tracking (Sentry / Crashlytics)</span></li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- Legend -->
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background: var(--done);"></div> Fully Implemented</div>
+    <div class="legend-item"><div class="legend-dot" style="background: var(--partial);"></div> Partially Done / Needs Tuning</div>
+    <div class="legend-item"><div class="legend-dot" style="background: var(--missing);"></div> Not Yet Implemented</div>
+    <div class="legend-item"><div class="legend-dot" style="background: var(--planned);"></div> Planned for FYP-2</div>
+  </div>
+
+  <div class="footer">
+    OmniDrive AI · Ammar Akbar · BS Artificial Intelligence · Progress & Gap Analysis · June 2026
+  </div>
+
+</body>
+</html>

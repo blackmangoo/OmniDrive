@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OmniDrive AI — System Architecture</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0A0A0F;
+      --card: #111118;
+      --border: #1E1E2E;
+      --accent: #4FC3F7;
+      --accent2: #7C4DFF;
+      --green: #66BB6A;
+      --orange: #FFA726;
+      --pink: #F06292;
+      --red: #EF5350;
+      --text: #E0E0E0;
+      --muted: #888;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      padding: 40px 20px 20px;
+    }
+    .header h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+    }
+    .header p {
+      color: var(--muted);
+      margin-top: 8px;
+      font-size: 0.95rem;
+    }
+
+    /* Diagram container */
+    .diagram {
+      max-width: 1300px;
+      margin: 30px auto;
+      padding: 20px;
+      position: relative;
+    }
+
+    /* Layer rows */
+    .layer {
+      display: flex;
+      align-items: stretch;
+      gap: 16px;
+      margin-bottom: 12px;
+    }
+    .layer-label {
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      transform: rotate(180deg);
+      font-weight: 700;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      padding: 12px 6px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 36px;
+      flex-shrink: 0;
+    }
+    .layer-content {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      flex: 1;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      position: relative;
+    }
+
+    /* Cards */
+    .card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+      flex: 1;
+      min-width: 170px;
+      transition: transform 0.2s, border-color 0.3s;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      border-color: var(--accent);
+    }
+    .card h3 {
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .card ul {
+      list-style: none;
+      font-size: 0.75rem;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+    .card ul li::before {
+      content: '▸ ';
+      color: var(--accent);
+    }
+    .badge {
+      display: inline-block;
+      font-size: 0.55rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 600;
+      vertical-align: middle;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Layer colors */
+    .layer-user .layer-label { background: rgba(79,195,247,0.1); color: var(--accent); }
+    .layer-user .layer-content { border-color: rgba(79,195,247,0.15); }
+    .layer-user .card h3 { color: var(--accent); }
+
+    .layer-app .layer-label { background: rgba(124,77,255,0.1); color: var(--accent2); }
+    .layer-app .layer-content { border-color: rgba(124,77,255,0.15); }
+    .layer-app .card h3 { color: var(--accent2); }
+
+    .layer-service .layer-label { background: rgba(102,187,106,0.1); color: var(--green); }
+    .layer-service .layer-content { border-color: rgba(102,187,106,0.15); }
+    .layer-service .card h3 { color: var(--green); }
+
+    .layer-ai .layer-label { background: rgba(255,167,38,0.1); color: var(--orange); }
+    .layer-ai .layer-content { border-color: rgba(255,167,38,0.15); }
+    .layer-ai .card h3 { color: var(--orange); }
+
+    .layer-cloud .layer-label { background: rgba(240,98,146,0.1); color: var(--pink); }
+    .layer-cloud .layer-content { border-color: rgba(240,98,146,0.15); }
+    .layer-cloud .card h3 { color: var(--pink); }
+
+    .layer-hw .layer-label { background: rgba(239,83,80,0.1); color: var(--red); }
+    .layer-hw .layer-content { border-color: rgba(239,83,80,0.15); }
+    .layer-hw .card h3 { color: var(--red); }
+
+    /* Arrows */
+    .arrow-section {
+      display: flex;
+      justify-content: center;
+      gap: 80px;
+      padding: 4px 0;
+    }
+    .arrow {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: var(--muted);
+      font-size: 0.6rem;
+      letter-spacing: 0.5px;
+    }
+    .arrow svg { width: 16px; height: 24px; }
+    .arrow .label { margin-top: 2px; }
+
+    /* Data flow legend */
+    .legend {
+      max-width: 1300px;
+      margin: 20px auto;
+      padding: 16px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      justify-content: center;
+      border-top: 1px solid var(--border);
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .tech-tag {
+      display: inline-block;
+      font-size: 0.55rem;
+      padding: 1px 5px;
+      border-radius: 3px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--muted);
+      margin-left: 2px;
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.7rem;
+      padding: 20px;
+      border-top: 1px solid var(--border);
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>🚗 OmniDrive AI — System Architecture</h1>
+    <p>End-to-End Intelligent Automotive Platform · BS Artificial Intelligence FYP</p>
+  </div>
+
+  <div class="diagram">
+
+    <!-- ═══════ LAYER 1: USER LAYER ═══════ -->
+    <div class="layer layer-user">
+      <div class="layer-label">Users</div>
+      <div class="layer-content">
+        <div class="card">
+          <h3>👤 Customer</h3>
+          <ul>
+            <li>Scan & identify car parts (AI Vision)</li>
+            <li>Browse marketplace & place orders</li>
+            <li>Vehicle performance testing (0-100, ¼ mile)</li>
+            <li>View scan history & order tracking</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>🏪 Vendor</h3>
+          <ul>
+            <li>List car parts for sale</li>
+            <li>Manage product catalogue & stock</li>
+            <li>Process incoming orders</li>
+            <li>Revenue dashboard analytics</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>🚚 Rider</h3>
+          <ul>
+            <li>View assigned deliveries</li>
+            <li>Accept / reject delivery requests</li>
+            <li>Update delivery status live</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>🔑 Admin</h3>
+          <ul>
+            <li>Oversee all platform orders</li>
+            <li>Platform-wide order management</li>
+            <li>User & vendor administration</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Arrow -->
+    <div class="arrow-section">
+      <div class="arrow">
+        <svg viewBox="0 0 16 24"><path d="M8 0 L8 20 M3 15 L8 22 L13 15" stroke="#4FC3F7" fill="none" stroke-width="1.5"/></svg>
+        <span class="label">Interacts via</span>
+      </div>
+    </div>
+
+    <!-- ═══════ LAYER 2: FLUTTER UI LAYER ═══════ -->
+    <div class="layer layer-app">
+      <div class="layer-label">Flutter UI</div>
+      <div class="layer-content">
+        <div class="card">
+          <h3>🔐 Auth Module <span class="tech-tag">Supabase Auth</span></h3>
+          <ul>
+            <li>Login / Signup (Email + Password)</li>
+            <li>Role Selection (Customer, Vendor, Rider)</li>
+            <li>Email Verification Flow</li>
+            <li>Forgot & Update Password (Deep Link)</li>
+            <li>RBAC AuthGate routing</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>📸 AI Vision Module <span class="tech-tag">Camera + HTTP</span></h3>
+          <ul>
+            <li>Camera Preview (real-time viewfinder)</li>
+            <li>Image Search (gallery / capture)</li>
+            <li>Part Detection Results with confidence %</li>
+            <li>Scan History Persistence</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>🛒 Marketplace Module <span class="tech-tag">4 Role Shells</span></h3>
+          <ul>
+            <li>Product Catalogue & Search</li>
+            <li>Shopping Cart & Checkout</li>
+            <li>Order Lifecycle (Placed → Shipped → Delivered)</li>
+            <li>Stock Management & Notifications</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>⚡ Performance Module <span class="tech-tag">Sensors+</span></h3>
+          <ul>
+            <li>0-60, 0-100, ¼-Mile, Braking Tests</li>
+            <li>Real-time Speed Gauge (fl_chart)</li>
+            <li>Pre-test calibration flow</li>
+            <li>Run History & Results Persistence</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Arrow -->
+    <div class="arrow-section">
+      <div class="arrow">
+        <svg viewBox="0 0 16 24"><path d="M8 0 L8 20 M3 15 L8 22 L13 15" stroke="#7C4DFF" fill="none" stroke-width="1.5"/></svg>
+        <span class="label">Calls Services</span>
+      </div>
+    </div>
+
+    <!-- ═══════ LAYER 3: SERVICE LAYER ═══════ -->
+    <div class="layer layer-service">
+      <div class="layer-label">Services</div>
+      <div class="layer-content">
+        <div class="card">
+          <h3>🔧 PartDetectionService</h3>
+          <ul>
+            <li>Image → multipart POST to FastAPI</li>
+            <li>Parses YOLO bounding boxes + classes</li>
+            <li>Confidence threshold filtering (≥60%)</li>
+            <li>Writes scan results → Supabase DB</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>📊 MarketplaceService</h3>
+          <ul>
+            <li>Unified CRUD for products, orders, cart</li>
+            <li>Role-based data access (RLS)</li>
+            <li>Atomic stock decrement via Postgres RPC</li>
+            <li>FCM token management & notifications</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>🏎️ SensorFusionService</h3>
+          <ul>
+            <li>1-D Kalman Filter (GPS + IMU fusion)</li>
+            <li>Prediction: IMU accel → speed delta @ 50Hz</li>
+            <li>Correction: GPS speed → Kalman update @ 1-10Hz</li>
+            <li>Braking mode (sign inversion)</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>🔌 OBD WiFi Service</h3>
+          <ul>
+            <li>TCP socket → ELM327 adapter (192.168.0.10)</li>
+            <li>PID 010D (vehicle speed) polling</li>
+            <li>AT command initialization sequence</li>
+            <li>Hex response parsing → km/h</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>📈 PerformanceRunService</h3>
+          <ul>
+            <li>Test orchestration (countdown, timing)</li>
+            <li>Speed milestone detection (0-60, 0-100)</li>
+            <li>¼-mile distance via trapezoidal integration</li>
+            <li>Results persistence → Supabase</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Arrow -->
+    <div class="arrow-section">
+      <div class="arrow">
+        <svg viewBox="0 0 16 24"><path d="M8 0 L8 20 M3 15 L8 22 L13 15" stroke="#66BB6A" fill="none" stroke-width="1.5"/></svg>
+        <span class="label">HTTP / SDK</span>
+      </div>
+    </div>
+
+    <!-- ═══════ LAYER 4: AI BACKEND ═══════ -->
+    <div class="layer layer-ai">
+      <div class="layer-label">AI Backend</div>
+      <div class="layer-content">
+        <div class="card">
+          <h3>🤖 FastAPI Server <span class="tech-tag">Python 3.11</span></h3>
+          <ul>
+            <li>POST /predict — YOLO11 inference</li>
+            <li>Model: car_parts_large_v1.pt (YOLO11-L)</li>
+            <li>Returns: class, confidence, bounding box</li>
+            <li>CORS enabled for Flutter client</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>📦 Model Pipeline</h3>
+          <ul>
+            <li>Dataset: Custom car parts (Kaggle)</li>
+            <li>Training: Google Colab (YOLO11 Large)</li>
+            <li>Export: PyTorch → .pt weight file</li>
+            <li>Inference: Ultralytics predict API</li>
+          </ul>
+        </div>
+        <div class="card" style="border-color: rgba(255,167,38,0.2); background: rgba(255,167,38,0.03);">
+          <h3>🧠 FYP-2: RAG Module <span class="badge" style="background:rgba(255,167,38,0.2); color: var(--orange);">Planned</span></h3>
+          <ul>
+            <li>Document chunking pipeline</li>
+            <li>pgvector embedding insertion</li>
+            <li>Semantic search on part_docs table</li>
+            <li>LLM-powered maintenance assistant</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Arrow -->
+    <div class="arrow-section">
+      <div class="arrow">
+        <svg viewBox="0 0 16 24"><path d="M8 0 L8 20 M3 15 L8 22 L13 15" stroke="#FFA726" fill="none" stroke-width="1.5"/></svg>
+        <span class="label">Reads / Writes</span>
+      </div>
+    </div>
+
+    <!-- ═══════ LAYER 5: CLOUD INFRASTRUCTURE ═══════ -->
+    <div class="layer layer-cloud">
+      <div class="layer-label">Cloud</div>
+      <div class="layer-content">
+        <div class="card">
+          <h3>🐘 Supabase (PostgreSQL 17) <span class="tech-tag">pgvector</span></h3>
+          <ul>
+            <li>13 tables with RLS policies</li>
+            <li>user_profiles, vendor_profiles</li>
+            <li>products, orders, order_items, cart_items</li>
+            <li>scan_history, performance_runs</li>
+            <li>categories, notifications</li>
+            <li>car_parts, part_docs (pgvector)</li>
+            <li>user_cars</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>📁 Supabase Storage</h3>
+          <ul>
+            <li>product-images bucket (vendor uploads)</li>
+            <li>Public URLs for marketplace images</li>
+            <li>Image compression before upload</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>🔥 Firebase (FCM)</h3>
+          <ul>
+            <li>Push Notifications (order updates)</li>
+            <li>Background message handler</li>
+            <li>Android notification channel</li>
+            <li>Token registration per user</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>⚙️ Supabase RPCs & Triggers</h3>
+          <ul>
+            <li>decrement_stock() — atomic stock update</li>
+            <li>handle_new_user() — auto-create profile</li>
+            <li>Row Level Security on all tables</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Arrow -->
+    <div class="arrow-section">
+      <div class="arrow">
+        <svg viewBox="0 0 16 24"><path d="M8 0 L8 20 M3 15 L8 22 L13 15" stroke="#F06292" fill="none" stroke-width="1.5"/></svg>
+        <span class="label">Sensor Data</span>
+      </div>
+    </div>
+
+    <!-- ═══════ LAYER 6: HARDWARE ═══════ -->
+    <div class="layer layer-hw">
+      <div class="layer-label">Hardware</div>
+      <div class="layer-content">
+        <div class="card">
+          <h3>📱 Android Device</h3>
+          <ul>
+            <li>Samsung SM-A305F (test device)</li>
+            <li>Camera (rear) for part scanning</li>
+            <li>GPS receiver (Geolocator API)</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>🔩 Sensors (IMU)</h3>
+          <ul>
+            <li>Accelerometer (linear, gravity-removed)</li>
+            <li>userAccelerometerEventStream @ 50Hz</li>
+            <li>Forward axis (Z) → speed prediction</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>🚘 OBD-II Adapter</h3>
+          <ul>
+            <li>ELM327 WiFi (192.168.0.10:35000)</li>
+            <li>CAN bus → vehicle speed (PID 010D)</li>
+            <li>Fallback when GPS is unavailable</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Legend -->
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background: var(--accent)"></div> User / Presentation</div>
+    <div class="legend-item"><div class="legend-dot" style="background: var(--accent2)"></div> Flutter UI Layer</div>
+    <div class="legend-item"><div class="legend-dot" style="background: var(--green)"></div> Business Logic / Services</div>
+    <div class="legend-item"><div class="legend-dot" style="background: var(--orange)"></div> AI Backend (FastAPI + YOLO)</div>
+    <div class="legend-item"><div class="legend-dot" style="background: var(--pink)"></div> Cloud Infrastructure</div>
+    <div class="legend-item"><div class="legend-dot" style="background: var(--red)"></div> Hardware / Sensors</div>
+  </div>
+
+  <div class="footer">
+    OmniDrive AI · Ammar Akbar · BS Artificial Intelligence · FYP Architecture Diagram · June 2026
+  </div>
+
+</body>
+</html>
