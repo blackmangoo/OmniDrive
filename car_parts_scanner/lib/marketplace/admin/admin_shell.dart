@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../marketplace_constants.dart';
 import 'admin_orders_screen.dart';
+import 'admin_approvals_screen.dart';
 import 'admin_profile_screen.dart';
 
 class AdminShell extends StatefulWidget {
@@ -14,6 +15,7 @@ class _AdminShellState extends State<AdminShell> {
 
   final List<Widget> _screens = const [
     AdminOrdersScreen(),
+    AdminApprovalsScreen(),
     AdminProfileScreen(),
   ];
 
@@ -40,6 +42,11 @@ class _AdminShellState extends State<AdminShell> {
               label: 'Orders',
             ),
             NavigationDestination(
+              icon: Icon(Icons.verified_outlined, color: Colors.white38),
+              selectedIcon: Icon(Icons.verified_rounded, color: kError),
+              label: 'Approvals',
+            ),
+            NavigationDestination(
               icon: Icon(Icons.person_outline_rounded, color: Colors.white38),
               selectedIcon: Icon(Icons.person_rounded, color: kError),
               label: 'Profile',
@@ -50,3 +57,4 @@ class _AdminShellState extends State<AdminShell> {
     );
   }
 }
+

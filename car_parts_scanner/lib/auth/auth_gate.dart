@@ -5,6 +5,9 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:app_links/app_links.dart';
 import 'login_screen.dart';
 import 'update_password_screen.dart';
+import 'verify_email_screen.dart';
+import 'admin_mfa_screen.dart';
+import 'pending_approval_screen.dart';
 import '../marketplace/marketplace_service.dart';
 import '../marketplace/customer/customer_shell.dart';
 import '../marketplace/vendor/vendor_shell.dart';
@@ -26,6 +29,8 @@ class _AuthGateState extends State<AuthGate> {
   StreamSubscription<Uri>? _linkSub;
   String? _role;
   bool _loadingRole = false;
+  bool _needsMfa = false;
+  bool _isPendingApproval = false;
 
   bool _recoveryHandled = false;
 
@@ -81,10 +86,17 @@ class _AuthGateState extends State<AuthGate> {
         _handleRecovery();
         return;
       }
-      // Only reset role on meaningful auth transitions
+      // Only reset role and MFA on meaningful auth transitions
       if (data.event == AuthChangeEvent.signedIn ||
           data.event == AuthChangeEvent.signedOut) {
-        if (mounted) setState(() { _role = null; _loadingRole = false; });
+        if (mounted) {
+          setState(() {
+            _role = null;
+            _loadingRole = false;
+            _needsMfa = false;
+            _isPendingApproval = false;
+          });
+        }
       }
     });
     _initFcm();
@@ -100,9 +112,23 @@ class _AuthGateState extends State<AuthGate> {
 
   Future<String> _fetchRole() async {
     final r = await MarketplaceService.getUserRole();
+    final approved = await MarketplaceService.isUserApproved();
+    final aal = Supabase.instance.client.auth.mfa.getAuthenticatorAssuranceLevel();
     if (mounted) {
       setState(() { 
         _role = r; 
+        if (r == 'admin' && aal.currentLevel == AuthenticatorAssuranceLevels.aal1) {
+          _needsMfa = true;
+        } else {
+          _needsMfa = false;
+        }
+
+        if ((r == 'vendor' || r == 'rider') && !approved) {
+          _isPendingApproval = true;
+        } else {
+          _isPendingApproval = false;
+        }
+
         _loadingRole = false; 
       });
     }
@@ -128,7 +154,15 @@ class _AuthGateState extends State<AuthGate> {
         final session = snapshot.data?.session
             ?? Supabase.instance.client.auth.currentSession;
 
-        if (session == null) return const LoginScreen();
+        if (session == null) {
+          _needsMfa = false;
+          _isPendingApproval = false;
+          return const LoginScreen();
+        }
+
+        if (session.user.emailConfirmedAt == null) {
+          return VerifyEmailScreen(email: session.user.email ?? '');
+        }
 
         // User is logged in – fetch role once
         if (_role == null && !_loadingRole) {
@@ -137,6 +171,24 @@ class _AuthGateState extends State<AuthGate> {
           return const _Splash(); // show spinner while role loads
         }
         if (_loadingRole) return const _Splash();
+
+        if (_role == 'admin' && _needsMfa) {
+          return const AdminMfaScreen();
+        }
+
+        if (_isPendingApproval) {
+          return PendingApprovalScreen(
+            role: _role,
+            onCheckStatus: () {
+              if (mounted) {
+                setState(() {
+                  _role = null;
+                  _loadingRole = false;
+                });
+              }
+            },
+          );
+        }
 
         switch (_role) {
           case 'vendor': return const VendorShell();

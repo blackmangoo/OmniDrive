@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'signup_screen.dart';
 import 'vendor_signup_screen.dart';
 import 'forgot_password_screen.dart';
+import 'verify_email_screen.dart';
 import '../marketplace/marketplace_service.dart';
 
 
@@ -89,7 +90,7 @@ class _LoginScreenState extends State<LoginScreen>
         final actualRole = await MarketplaceService.getUserRole();
         final selectedRole = _roleLabel.toLowerCase();
 
-        if (actualRole != selectedRole) {
+        if (actualRole != selectedRole && actualRole != 'admin') {
           await Supabase.instance.client.auth.signOut();
           if (!mounted) return;
           _showErrorDialog(
@@ -105,8 +106,13 @@ class _LoginScreenState extends State<LoginScreen>
       String title = 'Login Failed';
       String msg = e.message;
       if (msg.contains('email_not_confirmed') || msg.contains('Email not confirmed')) {
-        title = 'Email Not Verified';
-        msg = 'Please check your inbox and click the verification link before logging in.';
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => VerifyEmailScreen(email: _emailCtrl.text.trim()),
+          ),
+        );
+        return;
       } else if (msg.contains('Invalid login credentials')) {
         title = 'Invalid Credentials';
         msg = 'The email or password you entered is incorrect. Please try again.';

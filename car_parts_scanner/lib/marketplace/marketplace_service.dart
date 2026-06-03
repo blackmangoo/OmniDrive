@@ -539,6 +539,56 @@ class MarketplaceService {
     }
   }
 
+  static Future<bool> isUserApproved() async {
+    try {
+      final user = _sb.auth.currentUser;
+      if (user == null) return false;
+      final data = await _sb
+          .from('user_profiles')
+          .select('is_approved')
+          .eq('id', user.id)
+          .maybeSingle();
+      if (data == null) return false;
+      return data['is_approved'] as bool? ?? false;
+    } catch (e) {
+      debugPrint('isUserApproved error: $e');
+      return false;
+    }
+  }
+
+  static Future<List<Map<String, dynamic>>> fetchPendingApprovals() async {
+    try {
+      final data = await _sb.rpc('get_pending_approvals');
+      return List<Map<String, dynamic>>.from(data as List);
+    } catch (e) {
+      debugPrint('fetchPendingApprovals error: $e');
+      return [];
+    }
+  }
+
+  static Future<void> approveUser(String id, String role) async {
+    try {
+      await _sb.rpc('approve_user', params: {
+        'p_user_id': id,
+        'p_role': role,
+      });
+    } catch (e) {
+      debugPrint('approveUser error: $e');
+      rethrow;
+    }
+  }
+
+  static Future<void> rejectUser(String id) async {
+    try {
+      await _sb.rpc('reject_user', params: {
+        'p_user_id': id,
+      });
+    } catch (e) {
+      debugPrint('rejectUser error: $e');
+      rethrow;
+    }
+  }
+
   // ── Realtime ───────────────────────────────────────────────────────────────
   /// Stream of vendor's live orders (for vendor bell icon)
   static RealtimeChannel vendorOrdersStream(void Function(dynamic) onInsert) {

@@ -19,10 +19,12 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen>
     with SingleTickerProviderStateMixin {
   bool _resending = false;
   bool _verified  = false;
+  bool _checkingStatus = false;
 
   late final AnimationController _pulseCtrl;
   late final Animation<double> _pulse;
   StreamSubscription<AuthState>? _authSub;
+  Timer? _pollTimer;
 
   @override
   void initState() {
@@ -38,8 +40,13 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen>
     // deep-link in the email. When it fires, pop ALL screens and go straight to
     // the AuthGate, which will then route to MainShell automatically.
     _authSub = Supabase.instance.client.auth.onAuthStateChange.listen((data) {
-      if (data.event == AuthChangeEvent.signedIn) {
+      final session = data.session;
+      if (data.event == AuthChangeEvent.signedIn &&
+          session != null &&
+          session.user.emailConfirmedAt != null) {
         if (!mounted) return;
+        _pollTimer?.cancel();
+        _pollTimer = null;
         setState(() => _verified = true);
         _pulseCtrl.stop();
 
@@ -54,10 +61,13 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen>
         });
       }
     });
+
+    _startPolling();
   }
 
   @override
   void dispose() {
+    _pollTimer?.cancel();
     _authSub?.cancel();
     _pulseCtrl.dispose();
     super.dispose();
@@ -85,6 +95,79 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen>
       ));
     } finally {
       if (mounted) setState(() => _resending = false);
+    }
+  }
+
+  void _startPolling() {
+    _pollTimer = Timer.periodic(const Duration(seconds: 4), (timer) async {
+      try {
+        final response = await Supabase.instance.client.auth.getUser();
+        final user = response.user;
+        if (user != null && user.emailConfirmedAt != null) {
+          _pollTimer?.cancel();
+          _pollTimer = null;
+
+          await Supabase.instance.client.auth.refreshSession();
+
+          if (!mounted) return;
+          setState(() => _verified = true);
+          _pulseCtrl.stop();
+
+          Future.delayed(const Duration(milliseconds: 800), () {
+            if (!mounted) return;
+            Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (_) => const AuthGate()),
+              (_) => false,
+            );
+          });
+        }
+      } catch (e) {
+        debugPrint('Email verification polling error: $e');
+      }
+    });
+  }
+
+  Future<void> _checkVerificationStatus() async {
+    setState(() => _checkingStatus = true);
+    try {
+      final response = await Supabase.instance.client.auth.getUser();
+      final user = response.user;
+      if (user != null && user.emailConfirmedAt != null) {
+        _pollTimer?.cancel();
+        _pollTimer = null;
+
+        await Supabase.instance.client.auth.refreshSession();
+
+        if (!mounted) return;
+        setState(() => _verified = true);
+        _pulseCtrl.stop();
+
+        Future.delayed(const Duration(milliseconds: 800), () {
+          if (!mounted) return;
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (_) => const AuthGate()),
+            (_) => false,
+          );
+        });
+      } else {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("Email has not been verified yet. Please check your inbox."),
+          backgroundColor: Colors.orangeAccent,
+          behavior: SnackBarBehavior.floating,
+        ));
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Verification check failed: $e'),
+        backgroundColor: Colors.redAccent,
+        behavior: SnackBarBehavior.floating,
+      ));
+    } finally {
+      if (mounted) {
+        setState(() => _checkingStatus = false);
+      }
     }
   }
 
@@ -152,7 +235,13 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen>
         const SizedBox(height: 36),
 
         TextButton.icon(
-          onPressed: () {
+          onPressed: () async {
+            try {
+              await Supabase.instance.client.auth.signOut();
+            } catch (e) {
+              debugPrint('Sign out error: $e');
+            }
+            if (!mounted) return;
             Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(builder: (_) => const LoginScreen()),
               (_) => false,
@@ -169,11 +258,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen>
           width: double.infinity,
           height: 52,
           child: ElevatedButton(
-            onPressed: () => Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (_) => const AuthGate()),
-              (_) => false,
-            ),
+            onPressed: _checkingStatus ? null : _checkVerificationStatus,
             style: ElevatedButton.styleFrom(
               backgroundColor: _kAccent,
               foregroundColor: Colors.black,
@@ -181,8 +266,17 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen>
                   borderRadius: BorderRadius.circular(14)),
               elevation: 0,
             ),
-            child: const Text("I've verified — Log In",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            child: _checkingStatus
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      color: Colors.black,
+                      strokeWidth: 2,
+                    ),
+                  )
+                : const Text("I've verified — Log In",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           ),
         ),
 
