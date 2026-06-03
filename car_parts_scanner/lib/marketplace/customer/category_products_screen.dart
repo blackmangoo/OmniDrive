@@ -74,7 +74,7 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
                                   borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
                                   child: p.primaryImage.isNotEmpty
                                       ? CachedNetworkImage(imageUrl: p.primaryImage, fit: BoxFit.cover, width: double.infinity,
-                                          errorWidget: (_, __, ___) => _imgPlaceholder())
+                                          errorWidget: (ctx, url, err) => _imgPlaceholder())
                                       : _imgPlaceholder(),
                                 ),
                               ),
@@ -105,7 +105,7 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
     child: GridView.builder(
       padding: const EdgeInsets.all(16), itemCount: 6,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, childAspectRatio: 0.72, crossAxisSpacing: 12, mainAxisSpacing: 12),
-      itemBuilder: (_, __) => Container(decoration: BoxDecoration(color: kSurface, borderRadius: BorderRadius.circular(16))),
+      itemBuilder: (_, index) => Container(decoration: BoxDecoration(color: kSurface, borderRadius: BorderRadius.circular(16))),
     ),
   );
 }

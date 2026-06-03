@@ -4,6 +4,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../marketplace_constants.dart';
 import '../marketplace_models.dart';
 import '../marketplace_service.dart';
+import '../../core/motion/motion_tappable.dart';
+import '../../core/motion/motion_counter.dart';
 
 class VendorProfileScreen extends StatefulWidget {
   const VendorProfileScreen({super.key});
@@ -23,10 +25,16 @@ class _VendorProfileScreenState extends State<VendorProfileScreen> {
   }
 
   Future<void> _load() async {
-    setState(() => _loading = true);
+    if (mounted) setState(() => _loading = true);
     final user   = await MarketplaceService.fetchCurrentUser();
     final vendor = await MarketplaceService.fetchVendorProfile();
-    if (mounted) setState(() { _user = user; _vendor = vendor; _loading = false; });
+    if (mounted) {
+      setState(() {
+        _user = user;
+        _vendor = vendor;
+        _loading = false;
+      });
+    }
   }
 
   @override
@@ -66,11 +74,29 @@ class _VendorProfileScreenState extends State<VendorProfileScreen> {
                     ],
                     const SizedBox(height: 12),
                     Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                      _statChip('${_vendor?.totalOrders ?? 0}', 'Orders'),
+                      _statChip(
+                        MotionCounter(
+                          value: _vendor?.totalOrders ?? 0,
+                          style: GoogleFonts.inter(color: kVendor, fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                        'Orders',
+                      ),
                       const SizedBox(width: 16),
-                      _statChip('${_vendor?.rating.toStringAsFixed(1) ?? '0.0'} ⭐', 'Rating'),
+                      _statChip(
+                        MotionCounter(
+                          value: _vendor?.rating ?? 0.0,
+                          decimals: 1,
+                          suffix: ' ⭐',
+                          style: GoogleFonts.inter(color: kVendor, fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                        'Rating',
+                      ),
                       const SizedBox(width: 16),
-                      _statChip(_vendor?.isVerified == true ? '✅' : '⏳', _vendor?.isVerified == true ? 'Verified' : 'Pending'),
+                      _statChip(
+                        Text(_vendor?.isVerified == true ? '✅' : '⏳',
+                            style: GoogleFonts.inter(color: kVendor, fontSize: 16, fontWeight: FontWeight.bold)),
+                        _vendor?.isVerified == true ? 'Verified' : 'Pending',
+                      ),
                     ]),
                   ]),
                 ),
@@ -86,7 +112,7 @@ class _VendorProfileScreenState extends State<VendorProfileScreen> {
                 const SizedBox(height: 24),
 
                 // ── Logout ───────────────────────────────────────────────
-                GestureDetector(
+                TappableScale(
                   onTap: () async => await Supabase.instance.client.auth.signOut(),
                   child: Container(
                     padding: const EdgeInsets.all(16),
@@ -107,8 +133,9 @@ class _VendorProfileScreenState extends State<VendorProfileScreen> {
     );
   }
 
-  Widget _statChip(String val, String label) => Column(children: [
-    Text(val, style: GoogleFonts.inter(color: kVendor, fontSize: 16, fontWeight: FontWeight.bold)),
+  Widget _statChip(Widget child, String label) => Column(children: [
+    child,
+    const SizedBox(height: 4),
     Text(label, style: GoogleFonts.inter(color: Colors.white38, fontSize: 11)),
   ]);
 
@@ -124,11 +151,13 @@ class _VendorProfileScreenState extends State<VendorProfileScreen> {
     child: Row(children: [
       Icon(icon, color: kVendor, size: 20),
       const SizedBox(width: 14),
-      Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(label, style: GoogleFonts.inter(color: Colors.white38, fontSize: 11)),
-        const SizedBox(height: 2),
-        Text(value, style: GoogleFonts.inter(color: Colors.white, fontSize: 13)),
-      ]),
+      Expanded(
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text(label, style: GoogleFonts.inter(color: Colors.white38, fontSize: 11)),
+          const SizedBox(height: 2),
+          Text(value, style: GoogleFonts.inter(color: Colors.white, fontSize: 13), overflow: TextOverflow.ellipsis, maxLines: 3),
+        ]),
+      ),
     ]),
   );
 }

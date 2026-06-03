@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import '../marketplace_constants.dart';
 import '../marketplace_service.dart';
+import '../../core/motion/motion_stagger.dart';
+import '../../core/motion/motion_tappable.dart';
 
 class AdminApprovalsScreen extends StatefulWidget {
   const AdminApprovalsScreen({super.key});
@@ -21,7 +24,7 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen> {
   }
 
   Future<void> _loadApprovals() async {
-    setState(() => _loading = true);
+    if (mounted) setState(() => _loading = true);
     final users = await MarketplaceService.fetchPendingApprovals();
     if (mounted) {
       setState(() {
@@ -98,17 +101,16 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen> {
               style: kBody(14, color: kTextMuted),
             ),
           ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context, true),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: kError,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
+          TappableScale(
+            onTap: () => Navigator.pop(context, true),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: kError,
                 borderRadius: BorderRadius.circular(8),
               ),
-              elevation: 0,
+              child: const Text('Reject & Block', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
             ),
-            child: const Text('Reject & Block'),
           ),
         ],
       ),
@@ -117,6 +119,7 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen> {
     if (confirm != true) return;
 
     // Show loading dialog
+    if (!mounted) return;
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -163,9 +166,12 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen> {
           style: kHeadline(22, color: Colors.white),
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh_rounded, color: Colors.white70),
-            onPressed: _loadApprovals,
+          TappableScale(
+            onTap: _loadApprovals,
+            child: const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: Icon(Icons.refresh_rounded, color: Colors.white70),
+            ),
           ),
         ],
       ),
@@ -182,7 +188,10 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen> {
                       itemCount: _pendingUsers.length,
                       itemBuilder: (context, index) {
                         final item = _pendingUsers[index];
-                        return _buildApprovalCard(item);
+                        return StaggeredEntrance(
+                          index: index,
+                          child: _buildApprovalCard(item),
+                        );
                       },
                     ),
             ),
@@ -197,19 +206,14 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: kSurface,
-                  shape: BoxShape.circle,
-                  border: Border.all(color: kBorder),
-                ),
-                child: const Icon(
-                  Icons.shield_outlined,
-                  color: kTextMuted,
-                  size: 48,
-                ),
-              ),
+              Image.asset(
+                'assets/nano_banana_empty.png',
+                width: 120,
+                height: 120,
+              )
+              .animate()
+              .scaleXY(begin: 0.8, end: 1.0, duration: 600.ms, curve: Curves.easeOutBack)
+              .fadeIn(duration: 500.ms),
               const SizedBox(height: 20),
               Text(
                 'All Caught Up!',
@@ -217,7 +221,7 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen> {
               ),
               const SizedBox(height: 6),
               Text(
-                'No pending vendor or rider registration requests.',
+                'No pending registration requests.',
                 style: kBody(13, color: kTextMuted),
               ),
             ],
@@ -323,43 +327,44 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen> {
               child: Row(
                 children: [
                   Expanded(
-                    child: TextButton(
-                      onPressed: () => _rejectUser(userId),
-                      style: TextButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        shape: RoundedRectangleBorder(
+                    child: TappableScale(
+                      onTap: () => _rejectUser(userId),
+                      child: Container(
+                        height: 44,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
-                          side: const BorderSide(color: kBorder),
+                          border: Border.all(color: kBorder),
                         ),
-                      ),
-                      child: Text(
-                        'Reject',
-                        style: GoogleFonts.inter(
-                          color: kError,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
+                        child: Text(
+                          'Reject',
+                          style: GoogleFonts.inter(
+                            color: kError,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
                     ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
-                    child: ElevatedButton(
-                      onPressed: () => _approveUser(userId, role),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: roleAccent,
-                        foregroundColor: Colors.black,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        shape: RoundedRectangleBorder(
+                    child: TappableScale(
+                      onTap: () => _approveUser(userId, role),
+                      child: Container(
+                        height: 44,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: roleAccent,
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        elevation: 0,
-                      ),
-                      child: Text(
-                        'Approve',
-                        style: GoogleFonts.inter(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
+                        child: Text(
+                          'Approve',
+                          style: GoogleFonts.inter(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
                         ),
                       ),
                     ),
@@ -432,7 +437,7 @@ class _SuccessFeedbackDialog extends StatelessWidget {
                 color: Colors.black,
                 size: 40,
               ),
-            ),
+            ).animate().scale(duration: 400.ms, curve: Curves.easeOutBack),
             const SizedBox(height: 24),
             Text(
               'User Approved!',

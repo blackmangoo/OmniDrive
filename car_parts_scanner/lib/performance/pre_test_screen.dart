@@ -1,17 +1,15 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'live_test_screen.dart';
 import 'performance_models.dart';
 import 'performance_run_service.dart';
 import 'sensor_fusion_service.dart';
 import 'obd_wifi_service.dart';
-
-const _kBg      = Color(0xFF0A0A0F);
-const _kSurface = Color(0xFF1C1C2E);
-const _kAccent  = Color(0xFF4FC3F7);
-const _kGreen   = Color(0xFF34D399);
+import '../core/theme/app_colors.dart';
+import '../../core/motion/motion_tappable.dart';
 
 /// Pre-test check:
 /// 1. Phone placement warning
@@ -39,7 +37,6 @@ class _PreTestScreenState extends State<PreTestScreen> with SingleTickerProvider
   ObdWifiService?      _obdService;
   late final PerformanceRunService _runService;
 
-  // FIX A2: Hold a ref to the GPS polling timer so we can cancel it on dispose.
   Timer? _gpsPollingTimer;
 
   // State
@@ -64,11 +61,8 @@ class _PreTestScreenState extends State<PreTestScreen> with SingleTickerProvider
 
   @override
   void dispose() {
-    // FIX A2: Cancel the GPS polling timer if user backs out mid-acquisition.
     _gpsPollingTimer?.cancel();
     _pulseCtrl.dispose();
-    // Only dispose services if we never launched the live test
-    // (if we did, LiveTestScreen owns them)
     if (!_isCountingDown) {
       _gpsService?.dispose();
       _obdService?.dispose();
@@ -80,7 +74,7 @@ class _PreTestScreenState extends State<PreTestScreen> with SingleTickerProvider
     _runService = PerformanceRunService(
       selectedMetrics: widget.metrics,
       sensorMode: widget.obdMode ? 'obd2' : 'gps_imu',
-      sensorFusionRef: widget.obdMode ? null : null, // set after init
+      sensorFusionRef: null,
     );
 
     try {
@@ -91,7 +85,7 @@ class _PreTestScreenState extends State<PreTestScreen> with SingleTickerProvider
         
         _runService.attachStreams(
           speedStream: _obdService!.speedStream,
-          positionStream: const Stream.empty(), // OBD doesn't give GPS pos
+          positionStream: const Stream.empty(),
         );
 
         if (mounted) {
@@ -106,7 +100,6 @@ class _PreTestScreenState extends State<PreTestScreen> with SingleTickerProvider
         _runService.sensorFusionRef = _gpsService;
         await _gpsService!.start();
         
-        // FIX A2: Store the timer so it can be cancelled on dispose.
         _gpsPollingTimer = Timer.periodic(const Duration(milliseconds: 500), (t) {
           if (!mounted) {
             t.cancel();
@@ -143,7 +136,6 @@ class _PreTestScreenState extends State<PreTestScreen> with SingleTickerProvider
     if (!_sensorReady) return;
     setState(() => _isCountingDown = true);
 
-    // Calibrate accelerometer at rest before starting (if GPS mode)
     if (!widget.obdMode && _gpsService != null) {
       setState(() => _statusMsg = 'Calibrating sensors (hold still)...');
       await _gpsService!.calibrate(durationMs: 1500);
@@ -152,7 +144,7 @@ class _PreTestScreenState extends State<PreTestScreen> with SingleTickerProvider
     for (int i = 3; i > 0; i--) {
       if (!mounted) return;
       setState(() => _countdown = i);
-      _pulseCtrl.forward(from: 0); // Trigger pulse animation
+      _pulseCtrl.forward(from: 0);
       HapticFeedback.heavyImpact();
       await Future.delayed(const Duration(seconds: 1));
     }
@@ -160,7 +152,6 @@ class _PreTestScreenState extends State<PreTestScreen> with SingleTickerProvider
     if (!mounted) return;
     HapticFeedback.vibrate();
 
-    // Launch live test and pass the initialized services forward
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
@@ -177,13 +168,13 @@ class _PreTestScreenState extends State<PreTestScreen> with SingleTickerProvider
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _kBg,
+      backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.close_rounded, color: Colors.white70),
-          onPressed: () => Navigator.pop(context),
+        leading: TappableScale(
+          onTap: () => Navigator.pop(context),
+          child: const Icon(Icons.close_rounded, color: Colors.white70),
         ),
         title: const Text('Pre-Test Check', style: TextStyle(color: Colors.white70, fontSize: 15)),
       ),
@@ -198,11 +189,11 @@ class _PreTestScreenState extends State<PreTestScreen> with SingleTickerProvider
                 width: 110, height: 110,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: _kSurface,
-                  border: Border.all(color: _kAccent.withValues(alpha: 0.3), width: 2),
+                  color: AppColors.surface,
+                  border: Border.all(color: AppColors.cyan.withValues(alpha: 0.3), width: 2),
                 ),
                 child: const Icon(Icons.phone_android_rounded,
-                  color: _kAccent, size: 60),
+                  color: AppColors.cyan, size: 60),
               ),
               const SizedBox(height: 28),
 
@@ -225,25 +216,25 @@ class _PreTestScreenState extends State<PreTestScreen> with SingleTickerProvider
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                 decoration: BoxDecoration(
                   color: _sensorReady 
-                      ? _kGreen.withValues(alpha: 0.08) 
-                      : _kSurface.withValues(alpha: 0.8),
+                      ? AppColors.success.withValues(alpha: 0.08) 
+                      : AppColors.surface.withValues(alpha: 0.8),
                   borderRadius: BorderRadius.circular(14),
                   border: Border.all(
-                    color: _sensorReady ? _kGreen.withValues(alpha: 0.5) : Colors.white12,
+                    color: _sensorReady ? AppColors.success.withValues(alpha: 0.5) : AppColors.border,
                   ),
                 ),
                 child: Row(
                   children: [
                     Icon(
                       _sensorReady ? Icons.check_circle_rounded : Icons.sensors_rounded,
-                      color: _sensorReady ? _kGreen : _kAccent,
+                      color: _sensorReady ? AppColors.success : AppColors.cyan,
                     ),
                     const SizedBox(width: 14),
                     Expanded(
                       child: Text(
                         _statusMsg,
                         style: TextStyle(
-                          color: _sensorReady ? _kGreen : Colors.white70,
+                          color: _sensorReady ? AppColors.success : Colors.white70,
                           fontWeight: FontWeight.w600,
                           fontSize: 13,
                         ),
@@ -252,7 +243,7 @@ class _PreTestScreenState extends State<PreTestScreen> with SingleTickerProvider
                     if (!_sensorReady && !_isCountingDown)
                       const SizedBox(
                         width: 16, height: 16,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: _kAccent),
+                        child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.cyan),
                       )
                   ],
                 ),
@@ -269,7 +260,7 @@ class _PreTestScreenState extends State<PreTestScreen> with SingleTickerProvider
                   child: Text(
                     _countdown.toString(),
                     style: const TextStyle(
-                      color: _kAccent,
+                      color: AppColors.cyan,
                       fontSize: 100,
                       fontWeight: FontWeight.w900,
                       letterSpacing: -2,
@@ -280,18 +271,24 @@ class _PreTestScreenState extends State<PreTestScreen> with SingleTickerProvider
                 SizedBox(
                   width: double.infinity,
                   height: 56,
-                  child: ElevatedButton(
-                    onPressed: _sensorReady ? _startCountdown : null,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: _kAccent,
-                      foregroundColor: Colors.black,
-                      disabledBackgroundColor: Colors.white.withValues(alpha: 0.08),
-                      disabledForegroundColor: Colors.white38,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                      elevation: 0,
+                  child: TappableScale(
+                    onTap: _sensorReady ? _startCountdown : null,
+                    child: Container(
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: _sensorReady ? AppColors.cyan : Colors.white.withValues(alpha: 0.08),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Text(
+                        'START TEST',
+                        style: GoogleFonts.inter(
+                          fontSize: 17,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1.4,
+                          color: _sensorReady ? Colors.black : Colors.white38,
+                        ),
+                      ),
                     ),
-                    child: const Text('START TEST',
-                      style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, letterSpacing: 1.4)),
                   ),
                 ),
             ],

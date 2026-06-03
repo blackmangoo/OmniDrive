@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import '../marketplace_constants.dart';
 import '../marketplace_models.dart';
 import '../marketplace_service.dart';
+import '../../core/theme/app_typography.dart';
+import '../../core/motion/motion_tappable.dart';
 
 // ── Product Detail Screen (Stitch Design) ─────────────────────────────────────
 class ProductDetailScreen extends StatefulWidget {
@@ -45,7 +47,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             const Icon(Icons.shopping_cart_checkout_rounded,
                 color: Colors.black, size: 18),
             const SizedBox(width: 8),
-            Text('Added to cart', style: GoogleFonts.inter(
+            Text('Added to cart', style: AppTypography.label.copyWith(
               fontSize: 13, fontWeight: FontWeight.w600, color: Colors.black)),
           ]),
           backgroundColor: kCyan,
@@ -75,7 +77,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 expandedHeight: 300,
                 pinned: true,
                 backgroundColor: kSurface,
-                leading: GestureDetector(
+                leading: TappableScale(
                   onTap: () => Navigator.pop(context),
                   child: Container(
                     margin: const EdgeInsets.all(8),
@@ -88,7 +90,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   ),
                 ),
                 actions: [
-                  GestureDetector(
+                  TappableScale(
                     onTap: () => setState(() => _inWishlist = !_inWishlist),
                     child: Container(
                       margin: const EdgeInsets.all(8),
@@ -108,14 +110,17 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 flexibleSpace: FlexibleSpaceBar(
                   background: Stack(
                     children: [
-                      PageView.builder(
-                        controller: _imgCtrl,
-                        onPageChanged: (i) => setState(() => _imageIdx = i),
-                        itemCount: images.length,
-                        itemBuilder: (_, i) => images[i].isNotEmpty
-                            ? Image.network(images[i], fit: BoxFit.cover,
-                                errorBuilder: (_, __, ___) => _ImgPlaceholder())
-                            : _ImgPlaceholder(),
+                      Hero(
+                        tag: 'product_image_${product.id}',
+                        child: PageView.builder(
+                          controller: _imgCtrl,
+                          onPageChanged: (i) => setState(() => _imageIdx = i),
+                          itemCount: images.length,
+                          itemBuilder: (_, i) => images[i].isNotEmpty
+                              ? Image.network(images[i], fit: BoxFit.cover,
+                                  errorBuilder: (ctx, err, stack) => _ImgPlaceholder())
+                              : _ImgPlaceholder(),
+                        ),
                       ),
                       if (images.length > 1) Positioned(
                         bottom: 12, left: 0, right: 0,
@@ -244,8 +249,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                             ),
                             _QtyBtn(Icons.add_rounded, () {
                               if (_qty < (product.stockQuantity > 0 
-                                  ? product.stockQuantity : 99))
+                                  ? product.stockQuantity : 99)) {
                                 setState(() => _qty++);
+                              }
                             }),
                           ]),
                         ),
@@ -275,52 +281,49 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               ),
               child: Row(children: [
                 // Wishlist button
-                Container(
-                  width: 52, height: 52,
-                  decoration: BoxDecoration(
-                    color: kCard, borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: kBorder),
-                  ),
-                  child: IconButton(
-                    icon: Icon(_inWishlist ? Icons.favorite_rounded
-                        : Icons.favorite_border_rounded,
+                TappableScale(
+                  onTap: () => setState(() => _inWishlist = !_inWishlist),
+                  child: Container(
+                    width: 52, height: 52,
+                    decoration: BoxDecoration(
+                      color: kCard, borderRadius: BorderRadius.circular(14),
+                      border: Border.all(color: kBorder),
+                    ),
+                    child: Icon(
+                      _inWishlist ? Icons.favorite_rounded
+                          : Icons.favorite_border_rounded,
                       color: _inWishlist ? kError : kTextMuted),
-                    onPressed: () => setState(() => _inWishlist = !_inWishlist),
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    height: 52,
-                    decoration: BoxDecoration(
-                      gradient: product.stockQuantity > 0 ? kCyanGradient : null,
-                      color: product.stockQuantity == 0 ? kCard : null,
-                      borderRadius: BorderRadius.circular(14),
-                      boxShadow: product.stockQuantity > 0
-                          ? [BoxShadow(color: kCyan.withValues(alpha: 0.3),
-                              blurRadius: 16, offset: const Offset(0, 6))]
-                          : [],
-                    ),
-                    child: Material(
-                      color: Colors.transparent,
-                      child: InkWell(
+                  child: TappableScale(
+                    onTap: product.stockQuantity > 0 && !_addingToCart
+                        ? _addToCart : null,
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      height: 52,
+                      decoration: BoxDecoration(
+                        gradient: product.stockQuantity > 0 ? kCyanGradient : null,
+                        color: product.stockQuantity == 0 ? kCard : null,
                         borderRadius: BorderRadius.circular(14),
-                        onTap: product.stockQuantity > 0 && !_addingToCart
-                            ? _addToCart : null,
-                        child: Center(
-                          child: _addingToCart
-                              ? const SizedBox(width: 20, height: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2, color: Colors.black))
-                              : Text(
-                                  product.stockQuantity > 0
-                                      ? 'Add to Cart' : 'Out of Stock',
-                                  style: GoogleFonts.inter(fontSize: 15,
-                                    fontWeight: FontWeight.w700,
-                                    color: product.stockQuantity > 0
-                                        ? Colors.black : kTextMuted)),
-                        ),
+                        boxShadow: product.stockQuantity > 0
+                            ? [BoxShadow(color: kCyan.withValues(alpha: 0.3),
+                                blurRadius: 16, offset: const Offset(0, 6))]
+                            : [],
+                      ),
+                      child: Center(
+                        child: _addingToCart
+                            ? const SizedBox(width: 20, height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2, color: Colors.black))
+                            : Text(
+                                product.stockQuantity > 0
+                                    ? 'Add to Cart' : 'Out of Stock',
+                                style: GoogleFonts.inter(fontSize: 15,
+                                  fontWeight: FontWeight.w700,
+                                  color: product.stockQuantity > 0
+                                      ? Colors.black : kTextMuted)),
                       ),
                     ),
                   ),
@@ -375,9 +378,9 @@ class _QtyBtn extends StatelessWidget {
   const _QtyBtn(this.icon, this.onTap);
 
   @override
-  Widget build(BuildContext context) => GestureDetector(
+  Widget build(BuildContext context) => TappableScale(
     onTap: onTap,
-    child: Container(
+    child: SizedBox(
       width: 42, height: 42,
       child: Icon(icon, color: kTextSecondary, size: 20)),
   );

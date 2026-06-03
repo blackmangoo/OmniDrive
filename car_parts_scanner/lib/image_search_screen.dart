@@ -5,17 +5,11 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'camera_preview_screen.dart';
 import 'part_detection_service.dart';
-
-// ─── Colour palette ──────────────────────────────────────────────────────────
-const _kBg = Color(0xFF0A0A0F);
-const _kSurface = Color(0xFF1C1C2E);
-const _kAccent = Color(0xFF4FC3F7);
-const _kAccent2 = Color(0xFF818CF8);
-const _kGreen = Color(0xFF34D399);
-const _kAmber = Color(0xFFF59E0B);
-const _kTextMuted = Color(0xFF6B7280);
-const _kTextSub = Color(0xFF4B5563);
-// ─────────────────────────────────────────────────────────────────────────────
+import 'core/theme/app_colors.dart';
+import 'core/theme/app_spacing.dart';
+import 'core/theme/app_typography.dart';
+import 'core/motion/motion_stagger.dart';
+import 'core/motion/motion_tappable.dart';
 
 class ImageSearchScreen extends StatefulWidget {
   final List<CameraDescription> cameras;
@@ -78,11 +72,11 @@ class _ImageSearchScreenState extends State<ImageSearchScreen>
     if (_isAnalyzing) return;
     HapticFeedback.lightImpact();
     try {
+      setState(() => _isAnalyzing = true);
       final XFile? image =
           await _picker.pickImage(source: ImageSource.gallery);
       if (image == null) return;
 
-      setState(() => _isAnalyzing = true);
       final result =
           await _service.analyzeAndFetchPart(File(image.path));
       if (mounted) _showResultsModal(result);
@@ -114,7 +108,7 @@ class _ImageSearchScreenState extends State<ImageSearchScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _kBg,
+      backgroundColor: AppColors.background,
       body: Stack(
         children: [
           // Subtle radial background glow
@@ -127,7 +121,7 @@ class _ImageSearchScreenState extends State<ImageSearchScreen>
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: RadialGradient(colors: [
-                  _kAccent.withOpacity(0.07),
+                  AppColors.cyan.withValues(alpha: 0.07),
                   Colors.transparent,
                 ]),
               ),
@@ -174,12 +168,12 @@ class _ImageSearchScreenState extends State<ImageSearchScreen>
                   height: 9,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: _kAccent
-                        .withOpacity(0.5 + _pulseCtrl.value * 0.5),
+                    color: AppColors.cyan
+                        .withValues(alpha: 0.5 + _pulseCtrl.value * 0.5),
                     boxShadow: [
                       BoxShadow(
-                        color: _kAccent
-                            .withOpacity(_pulseCtrl.value * 0.6),
+                        color: AppColors.cyan
+                            .withValues(alpha: _pulseCtrl.value * 0.6),
                         blurRadius: 8,
                         spreadRadius: 2,
                       )
@@ -188,9 +182,9 @@ class _ImageSearchScreenState extends State<ImageSearchScreen>
                 ),
               ),
               const SizedBox(width: 9),
-              const Text(
+              Text(
                 'OmniDrive AI',
-                style: TextStyle(
+                style: AppTypography.h2.copyWith(
                   color: Colors.white,
                   fontSize: 22,
                   fontWeight: FontWeight.w800,
@@ -199,35 +193,35 @@ class _ImageSearchScreenState extends State<ImageSearchScreen>
               ),
               const Spacer(),
               // API status badge
-              GestureDetector(
+              TappableScale(
                 onTap: _checkApi,
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 400),
                   padding: const EdgeInsets.symmetric(
                       horizontal: 10, vertical: 5),
                   decoration: BoxDecoration(
-                    color: (_apiLive ? _kGreen : Colors.redAccent)
-                        .withOpacity(0.12),
+                    color: (_apiLive ? AppColors.success : AppColors.error)
+                        .withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
                         color:
-                            (_apiLive ? _kGreen : Colors.redAccent)
-                                .withOpacity(0.45)),
+                            (_apiLive ? AppColors.success : AppColors.error)
+                                .withValues(alpha: 0.45)),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(Icons.circle,
                           color:
-                              _apiLive ? _kGreen : Colors.redAccent,
+                              _apiLive ? AppColors.success : AppColors.error,
                           size: 7),
                       const SizedBox(width: 5),
                       Text(
                         _apiLive ? 'API Live' : 'API Offline',
                         style: TextStyle(
                           color: _apiLive
-                              ? _kGreen
-                              : Colors.redAccent,
+                              ? AppColors.success
+                              : AppColors.error,
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
                         ),
@@ -239,10 +233,10 @@ class _ImageSearchScreenState extends State<ImageSearchScreen>
             ],
           ),
           const SizedBox(height: 4),
-          const Text(
+          Text(
             'Automotive Vision System',
-            style: TextStyle(
-                color: _kAccent, fontSize: 12, letterSpacing: 1.8),
+            style: AppTypography.caption.copyWith(
+                color: AppColors.cyan, fontSize: 12, letterSpacing: 1.8),
           ),
         ],
       ),
@@ -255,12 +249,12 @@ class _ImageSearchScreenState extends State<ImageSearchScreen>
       child: Container(
         height: 60,
         decoration: BoxDecoration(
-          color: _kSurface,
+          color: AppColors.surface,
           borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: _kAccent.withOpacity(0.4), width: 1.5),
+          border: Border.all(color: AppColors.cyan.withValues(alpha: 0.4), width: 1.5),
           boxShadow: [
             BoxShadow(
-              color: _kAccent.withOpacity(0.08),
+              color: AppColors.cyan.withValues(alpha: 0.08),
               blurRadius: 24,
               spreadRadius: 2,
             ),
@@ -269,27 +263,30 @@ class _ImageSearchScreenState extends State<ImageSearchScreen>
         child: Row(
           children: [
             // Gallery button
-            _SearchBarButton(
-              icon: Icons.photo_library_rounded,
-              tooltip: 'Pick from Gallery',
-              radius: const BorderRadius.horizontal(
-                  left: Radius.circular(18)),
+            TappableScale(
               onTap: _isAnalyzing ? null : _pickFromGallery,
+              child: _SearchBarButton(
+                icon: Icons.photo_library_rounded,
+                tooltip: 'Pick from Gallery',
+                radius: const BorderRadius.horizontal(
+                    left: Radius.circular(18)),
+                onTap: _isAnalyzing ? null : _pickFromGallery,
+              ),
             ),
 
             // Divider
             Container(
                 width: 1,
                 height: 28,
-                color: _kAccent.withOpacity(0.18)),
+                color: AppColors.cyan.withValues(alpha: 0.18)),
 
             // Hint text
-            const Expanded(
+            Expanded(
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
                   'Scan or upload a car part…',
-                  style: TextStyle(color: _kTextMuted, fontSize: 14),
+                  style: AppTypography.body.copyWith(color: AppColors.textMuted, fontSize: 14),
                 ),
               ),
             ),
@@ -298,15 +295,24 @@ class _ImageSearchScreenState extends State<ImageSearchScreen>
             Container(
                 width: 1,
                 height: 28,
-                color: _kAccent.withOpacity(0.18)),
+                color: AppColors.cyan.withValues(alpha: 0.18)),
 
             // Camera scan button
-            _SearchBarButton(
-              icon: Icons.camera_alt_rounded,
-              tooltip: 'Open Camera Scanner',
-              radius: const BorderRadius.horizontal(
-                  right: Radius.circular(18)),
-              onTap: _isAnalyzing ? null : _openCameraScanner,
+            Hero(
+              tag: 'scan_results_hud',
+              child: Material(
+                color: Colors.transparent,
+                child: TappableScale(
+                  onTap: _isAnalyzing ? null : _openCameraScanner,
+                  child: _SearchBarButton(
+                    icon: Icons.camera_alt_rounded,
+                    tooltip: 'Open Camera Scanner',
+                    radius: const BorderRadius.horizontal(
+                        right: Radius.circular(18)),
+                    onTap: _isAnalyzing ? null : _openCameraScanner,
+                  ),
+                ),
+              ),
             ),
           ],
         ),
@@ -319,8 +325,8 @@ class _ImageSearchScreenState extends State<ImageSearchScreen>
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Text(
         label,
-        style: const TextStyle(
-          color: _kTextSub,
+        style: AppTypography.caption.copyWith(
+          color: AppColors.textMuted,
           fontSize: 11,
           letterSpacing: 2.2,
           fontWeight: FontWeight.w600,
@@ -332,57 +338,69 @@ class _ImageSearchScreenState extends State<ImageSearchScreen>
   Widget _buildFeatureList() {
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 20),
-      children: const [
-        _FeatureCard(
-          icon: Icons.camera_alt_rounded,
-          iconColor: _kAccent,
-          title: 'Scan a Part',
-          subtitle:
-              'Point the camera at any car part — YOLO11 identifies it in ~110ms.',
+      children: [
+        StaggeredEntrance(
+          index: 0,
+          child: _FeatureCard(
+            icon: Icons.camera_alt_rounded,
+            iconColor: AppColors.cyan,
+            title: 'Scan a Part',
+            subtitle:
+                'Point the camera at any car part — YOLO11 identifies it in ~110ms.',
+          ),
         ),
-        SizedBox(height: 12),
-        _FeatureCard(
-          icon: Icons.photo_library_rounded,
-          iconColor: _kAccent2,
-          title: 'Upload from Gallery',
-          subtitle:
-              'Select an existing photo of a part and get instant AI identification.',
+        const SizedBox(height: 12),
+        StaggeredEntrance(
+          index: 1,
+          child: _FeatureCard(
+            icon: Icons.photo_library_rounded,
+            iconColor: AppColors.violet,
+            title: 'Upload from Gallery',
+            subtitle:
+                'Select an existing photo of a part and get instant AI identification.',
+          ),
         ),
-        SizedBox(height: 12),
-        _FeatureCard(
-          icon: Icons.analytics_rounded,
-          iconColor: _kGreen,
-          title: '99.1% Top-1 Accuracy',
-          subtitle:
-              'Trained on 26,820 images across 50 car part classes (YOLO11 Large).',
+        const SizedBox(height: 12),
+        StaggeredEntrance(
+          index: 2,
+          child: _FeatureCard(
+            icon: Icons.analytics_rounded,
+            iconColor: AppColors.success,
+            title: '99.1% Top-1 Accuracy',
+            subtitle:
+                'Trained on 26,820 images across 50 car part classes (YOLO11 Large).',
+          ),
         ),
-        SizedBox(height: 12),
-        _FeatureCard(
-          icon: Icons.store_rounded,
-          iconColor: _kAmber,
-          title: 'Marketplace — Coming Soon',
-          subtitle:
-              'Vendor listings, real-time pricing and delivery — Phase 4.',
+        const SizedBox(height: 12),
+        StaggeredEntrance(
+          index: 3,
+          child: _FeatureCard(
+            icon: Icons.store_rounded,
+            iconColor: AppColors.vendor,
+            title: 'Marketplace — Coming Soon',
+            subtitle:
+                'Vendor listings, real-time pricing and delivery — Phase 4.',
+          ),
         ),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
       ],
     );
   }
 
   Widget _buildLoadingOverlay() {
     return Container(
-      color: Colors.black.withOpacity(0.78),
-      child: const Center(
+      color: Colors.black.withValues(alpha: 0.78),
+      child: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            CircularProgressIndicator(
-                color: _kAccent, strokeWidth: 2.5),
-            SizedBox(height: 18),
+            const CircularProgressIndicator(
+                color: AppColors.cyan, strokeWidth: 2.5),
+            const SizedBox(height: 18),
             Text(
               'ANALYSING IMAGE…',
-              style: TextStyle(
-                color: _kAccent,
+              style: AppTypography.label.copyWith(
+                color: AppColors.cyan,
                 letterSpacing: 2.5,
                 fontWeight: FontWeight.w600,
                 fontSize: 13,
@@ -419,13 +437,13 @@ class _SearchBarButton extends StatelessWidget {
         child: InkWell(
           onTap: onTap,
           borderRadius: radius,
-          splashColor: _kAccent.withOpacity(0.15),
+          splashColor: AppColors.cyan.withValues(alpha: 0.15),
           child: SizedBox(
             width: 58,
             height: double.infinity,
             child: Icon(
               icon,
-              color: onTap == null ? Colors.grey[700] : _kAccent,
+              color: onTap == null ? Colors.grey[700] : AppColors.cyan,
               size: 25,
             ),
           ),
@@ -455,10 +473,10 @@ class _FeatureCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: _kSurface,
-        borderRadius: BorderRadius.circular(16),
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(AppSpacing.rMd),
         border:
-            Border.all(color: Colors.white.withOpacity(0.05)),
+            Border.all(color: Colors.white.withValues(alpha: 0.05)),
       ),
       child: Row(
         children: [
@@ -466,7 +484,7 @@ class _FeatureCard extends StatelessWidget {
             width: 46,
             height: 46,
             decoration: BoxDecoration(
-              color: iconColor.withOpacity(0.12),
+              color: iconColor.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(13),
             ),
             child: Icon(icon, color: iconColor, size: 22),
@@ -477,14 +495,14 @@ class _FeatureCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(title,
-                    style: const TextStyle(
+                    style: AppTypography.title.copyWith(
                         color: Colors.white,
                         fontSize: 15,
                         fontWeight: FontWeight.w600)),
                 const SizedBox(height: 4),
                 Text(subtitle,
-                    style: const TextStyle(
-                        color: _kTextMuted, fontSize: 12, height: 1.4)),
+                    style: AppTypography.body.copyWith(
+                        color: AppColors.textMuted, fontSize: 12, height: 1.4)),
               ],
             ),
           ),
@@ -511,7 +529,7 @@ class _ResultsSheet extends StatelessWidget {
       minChildSize: 0.35,
       builder: (_, scrollCtrl) => Container(
         decoration: const BoxDecoration(
-          color: _kSurface,
+          color: AppColors.surface,
           borderRadius:
               BorderRadius.vertical(top: Radius.circular(26)),
         ),
@@ -527,20 +545,40 @@ class _ResultsSheet extends StatelessWidget {
                 height: 4,
                 margin: const EdgeInsets.only(bottom: 20),
                 decoration: BoxDecoration(
-                    color: Colors.grey[700],
+                    color: Colors.grey[800],
                     borderRadius: BorderRadius.circular(10)),
               ),
             ),
+
+            // Top Hero Badge
+            Center(
+              child: Hero(
+                tag: 'scan_results_hud',
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: (hasError ? AppColors.error : AppColors.cyan).withValues(alpha: 0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    hasError ? Icons.error_outline : Icons.analytics_rounded,
+                    color: hasError ? AppColors.error : AppColors.cyan,
+                    size: 32,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
 
             // ── Error state ──────────────────────────────────────────
             if (hasError) ...[
               Row(children: [
                 const Icon(Icons.error_outline,
-                    color: Colors.redAccent, size: 26),
+                    color: AppColors.error, size: 26),
                 const SizedBox(width: 10),
-                const Expanded(
+                Expanded(
                   child: Text('Analysis Result',
-                      style: TextStyle(
+                      style: AppTypography.h2.copyWith(
                           color: Colors.white,
                           fontSize: 20,
                           fontWeight: FontWeight.bold)),
@@ -548,8 +586,8 @@ class _ResultsSheet extends StatelessWidget {
               ]),
               const SizedBox(height: 10),
               Text(result.error!,
-                  style: const TextStyle(
-                      color: Color(0xFF9CA3AF), fontSize: 14, height: 1.5)),
+                  style: AppTypography.body.copyWith(
+                      color: AppColors.textSecondary, fontSize: 14, height: 1.5)),
             ],
 
             // ── Success state ─────────────────────────────────────────
@@ -561,7 +599,7 @@ class _ResultsSheet extends StatelessWidget {
                   Expanded(
                     child: Text(
                       result.part!.className,
-                      style: const TextStyle(
+                      style: AppTypography.h1.copyWith(
                           color: Colors.white,
                           fontSize: 24,
                           fontWeight: FontWeight.w800,
@@ -573,13 +611,24 @@ class _ResultsSheet extends StatelessWidget {
                       value: result.confidence),
                 ],
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 12),
+
+              // Animated Confidence Bar
+              _ConfidenceProgressBar(
+                confidence: result.confidence,
+                color: result.confidence >= 80
+                    ? AppColors.success
+                    : result.confidence >= 50
+                        ? AppColors.warning
+                        : AppColors.error,
+              ),
+              const SizedBox(height: 20),
 
               // Price card
               if (result.part!.averagePrice != null)
                 _InfoCard(
                   icon: Icons.local_offer_rounded,
-                  iconColor: _kAccent,
+                  iconColor: AppColors.cyan,
                   label: 'Estimated Price',
                   value:
                       '\$${result.part!.averagePrice!.toStringAsFixed(2)}',
@@ -590,8 +639,8 @@ class _ResultsSheet extends StatelessWidget {
                 _SectionLabel('DESCRIPTION'),
                 const SizedBox(height: 6),
                 Text(result.part!.description!,
-                    style: const TextStyle(
-                        color: Color(0xFFD1D5DB),
+                    style: AppTypography.body.copyWith(
+                        color: AppColors.textSecondary,
                         fontSize: 14,
                         height: 1.5)),
               ],
@@ -601,8 +650,8 @@ class _ResultsSheet extends StatelessWidget {
                 _SectionLabel('COMPATIBILITY'),
                 const SizedBox(height: 6),
                 Text(result.part!.compatibilityNotes!,
-                    style: const TextStyle(
-                        color: Color(0xFFD1D5DB),
+                    style: AppTypography.body.copyWith(
+                        color: AppColors.textSecondary,
                         fontSize: 14,
                         height: 1.5)),
               ],
@@ -613,48 +662,64 @@ class _ResultsSheet extends StatelessWidget {
                 result.allPredictions!.isNotEmpty) ...[
               const SizedBox(height: 20),
               _SectionLabel('ALL PREDICTIONS'),
-              const SizedBox(height: 10),
+              const SizedBox(height: 12),
               ...result.allPredictions!.asMap().entries.map((e) {
                 final idx = e.key;
                 final p = e.value;
                 final cls = p['class'] as String;
                 final conf =
                     (p['confidence'] as num).toDouble();
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: Row(children: [
-                    Container(
-                      width: 22,
-                      height: 22,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: (idx == 0 ? _kAccent : Colors.grey)
-                            .withOpacity(0.15),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Text('${idx + 1}',
-                          style: TextStyle(
-                            color: idx == 0 ? _kAccent : Colors.grey,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
-                          )),
+                return StaggeredEntrance(
+                  index: idx,
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(children: [
+                          Container(
+                            width: 22,
+                            height: 22,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: (idx == 0 ? AppColors.cyan : AppColors.textMuted)
+                                  .withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text('${idx + 1}',
+                                style: TextStyle(
+                                  color: idx == 0 ? AppColors.cyan : AppColors.textMuted,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w700,
+                                )),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child:
+                                Text(cls,
+                                    style: AppTypography.body.copyWith(
+                                        color: Colors.white, fontSize: 13)),
+                          ),
+                          Text('${conf.toStringAsFixed(1)}%',
+                              style: AppTypography.body.copyWith(
+                                color: idx == 0 ? AppColors.cyan : AppColors.textMuted,
+                                fontSize: 13,
+                                fontWeight: idx == 0
+                                    ? FontWeight.w700
+                                    : FontWeight.normal,
+                              )),
+                        ]),
+                        const SizedBox(height: 6),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 32),
+                          child: _ConfidenceProgressBar(
+                            confidence: conf,
+                            color: idx == 0 ? AppColors.cyan : AppColors.textMuted,
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child:
-                          Text(cls,
-                              style: const TextStyle(
-                                  color: Colors.white, fontSize: 13)),
-                    ),
-                    Text('${conf.toStringAsFixed(1)}%',
-                        style: TextStyle(
-                          color: idx == 0 ? _kAccent : _kTextMuted,
-                          fontSize: 13,
-                          fontWeight: idx == 0
-                              ? FontWeight.w700
-                              : FontWeight.normal,
-                        )),
-                  ]),
+                  ),
                 );
               }),
             ],
@@ -666,8 +731,8 @@ class _ResultsSheet extends StatelessWidget {
                 alignment: Alignment.centerRight,
                 child: Text(
                   '⚡ ${result.inferenceTimeMs!.toStringAsFixed(0)} ms inference',
-                  style: const TextStyle(
-                      color: _kTextSub, fontSize: 11),
+                  style: AppTypography.caption.copyWith(
+                      color: AppColors.textMuted, fontSize: 11),
                 ),
               ),
             ],
@@ -684,17 +749,17 @@ class _ConfidenceBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = value >= 80
-        ? _kGreen
+        ? AppColors.success
         : value >= 50
-            ? _kAmber
-            : Colors.redAccent;
+            ? AppColors.warning
+            : AppColors.error;
     return Container(
       padding:
           const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.15),
+        color: color.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: color.withOpacity(0.45)),
+        border: Border.all(color: color.withValues(alpha: 0.45)),
       ),
       child: Text(
         '${value.toStringAsFixed(1)}%',
@@ -722,17 +787,17 @@ class _InfoCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: iconColor.withOpacity(0.06),
+        color: iconColor.withValues(alpha: 0.06),
         borderRadius: BorderRadius.circular(13),
-        border: Border.all(color: iconColor.withOpacity(0.2)),
+        border: Border.all(color: iconColor.withValues(alpha: 0.2)),
       ),
       child: Row(children: [
         Icon(icon, color: iconColor, size: 20),
         const SizedBox(width: 10),
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(label,
-              style: const TextStyle(
-                  color: _kTextMuted, fontSize: 11, letterSpacing: 0.5)),
+              style: AppTypography.caption.copyWith(
+                  color: AppColors.textMuted, fontSize: 11, letterSpacing: 0.5)),
           Text(value,
               style: TextStyle(
                   color: iconColor,
@@ -750,10 +815,72 @@ class _SectionLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Text(
         text,
-        style: const TextStyle(
-            color: _kTextSub,
+        style: AppTypography.caption.copyWith(
+            color: AppColors.textMuted,
             fontSize: 11,
             letterSpacing: 2,
             fontWeight: FontWeight.w600),
       );
+}
+
+// ─── Confidence animated progress bar ──────────────────────────────────────────
+
+class _ConfidenceProgressBar extends StatefulWidget {
+  final double confidence;
+  final Color color;
+  const _ConfidenceProgressBar({required this.confidence, required this.color});
+
+  @override
+  State<_ConfidenceProgressBar> createState() => _ConfidenceProgressBarState();
+}
+
+class _ConfidenceProgressBarState extends State<_ConfidenceProgressBar>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _animCtrl;
+  late final Animation<double> _progressAnim;
+
+  @override
+  void initState() {
+    super.initState();
+    _animCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    );
+    _progressAnim = Tween<double>(begin: 0.0, end: widget.confidence / 100.0)
+        .animate(CurvedAnimation(parent: _animCtrl, curve: Curves.easeOutCubic));
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        if (MediaQuery.of(context).disableAnimations) {
+          _animCtrl.value = 1.0;
+        } else {
+          _animCtrl.forward();
+        }
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _animCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _progressAnim,
+      builder: (context, _) {
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(4),
+          child: LinearProgressIndicator(
+            value: _progressAnim.value,
+            backgroundColor: widget.color.withValues(alpha: 0.1),
+            color: widget.color,
+            minHeight: 6,
+          ),
+        );
+      },
+    );
+  }
 }

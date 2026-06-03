@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:shimmer/shimmer.dart';
 import '../marketplace_constants.dart';
 import '../marketplace_models.dart';
 import '../marketplace_service.dart';
 import 'order_detail_screen.dart';
+import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_typography.dart';
+import '../../core/motion/motion_stagger.dart';
+import '../../core/motion/motion_tappable.dart';
+import '../../core/motion/motion_counter.dart';
 
 class OrdersScreen extends StatefulWidget {
   const OrdersScreen({super.key});
@@ -23,7 +29,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
   }
 
   Future<void> _load() async {
-    setState(() => _loading = true);
+    if (mounted) setState(() => _loading = true);
     final orders = await MarketplaceService.fetchCustomerOrders();
     if (mounted) setState(() { _orders = orders; _loading = false; });
   }
@@ -35,10 +41,25 @@ class _OrdersScreenState extends State<OrdersScreen> {
       appBar: AppBar(
         backgroundColor: kBg,
         automaticallyImplyLeading: false,
-        title: Text('My Orders', style: GoogleFonts.inter(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+        title: Text('My Orders', style: AppTypography.h2.copyWith(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
       ),
       body: _loading
-          ? const Center(child: CircularProgressIndicator(color: kAccent))
+          ? Shimmer.fromColors(
+              baseColor: AppColors.surface,
+              highlightColor: AppColors.card,
+              child: ListView.builder(
+                padding: const EdgeInsets.all(16),
+                itemCount: 4,
+                itemBuilder: (_, index) => Container(
+                  height: 104,
+                  margin: const EdgeInsets.only(bottom: 12),
+                  decoration: BoxDecoration(
+                    color: AppColors.surface,
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                ),
+              ),
+            )
           : _orders.isEmpty
               ? _empty()
               : RefreshIndicator(
@@ -47,8 +68,11 @@ class _OrdersScreenState extends State<OrdersScreen> {
                   child: ListView.separated(
                     padding: const EdgeInsets.all(16),
                     itemCount: _orders.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 12),
-                    itemBuilder: (_, i) => _OrderTile(order: _orders[i]),
+                    separatorBuilder: (_, index) => const SizedBox(height: 12),
+                    itemBuilder: (_, i) => StaggeredEntrance(
+                      index: i,
+                      child: _OrderTile(order: _orders[i]),
+                    ),
                   ),
                 ),
     );
@@ -56,9 +80,9 @@ class _OrdersScreenState extends State<OrdersScreen> {
 
   Widget _empty() => Center(
     child: Column(mainAxisSize: MainAxisSize.min, children: [
-      Icon(Icons.receipt_long_outlined, size: 72, color: Colors.white12),
+      const Icon(Icons.receipt_long_outlined, size: 72, color: Colors.white12),
       const SizedBox(height: 16),
-      Text("No orders yet", style: GoogleFonts.inter(color: Colors.white38, fontSize: 16)),
+      Text("No orders yet", style: AppTypography.body.copyWith(color: AppColors.textMuted, fontSize: 16)),
     ]),
   );
 }
@@ -71,7 +95,7 @@ class _OrderTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final color = statusColor(order.status);
     final date  = DateFormat('d MMM, hh:mm a').format(order.createdAt.toLocal());
-    return GestureDetector(
+    return TappableScale(
       onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => OrderDetailScreen(order: order))),
       child: Container(
         padding: const EdgeInsets.all(16),
@@ -84,16 +108,19 @@ class _OrderTile extends StatelessWidget {
             _StatusPill(status: order.status),
           ]),
           const SizedBox(height: 8),
-          Text(order.vendorShopName ?? 'Vendor', style: GoogleFonts.inter(color: Colors.white54, fontSize: 12)),
+          Text(order.vendorShopName ?? 'Vendor', style: AppTypography.body.copyWith(color: AppColors.textSecondary, fontSize: 12)),
           const SizedBox(height: 6),
           Row(children: [
-            Text('${order.items.length} item(s)', style: GoogleFonts.inter(color: Colors.white38, fontSize: 12)),
+            Text('${order.items.length} item(s)', style: AppTypography.body.copyWith(color: AppColors.textMuted, fontSize: 12)),
             const Spacer(),
-            Text('Rs ${order.totalAmount.toStringAsFixed(0)}',
-                style: GoogleFonts.inter(color: kAccent, fontSize: 15, fontWeight: FontWeight.bold)),
+            MotionCounter(
+              value: order.totalAmount,
+              prefix: 'Rs ',
+              style: GoogleFonts.inter(color: kAccent, fontSize: 15, fontWeight: FontWeight.bold),
+            ),
           ]),
           const SizedBox(height: 6),
-          Text(date, style: GoogleFonts.inter(color: Colors.white24, fontSize: 11)),
+          Text(date, style: AppTypography.caption.copyWith(color: AppColors.textMuted, fontSize: 11)),
         ]),
       ),
     );
@@ -114,7 +141,7 @@ class _StatusPill extends StatelessWidget {
         border: Border.all(color: color.withValues(alpha: 0.4)),
       ),
       child: Text('${statusIcon(status)} ${statusLabel(status)}',
-          style: GoogleFonts.inter(color: color, fontSize: 11, fontWeight: FontWeight.w600)),
+          style: AppTypography.label.copyWith(color: color, fontSize: 11, fontWeight: FontWeight.w600)),
     );
   }
 }

@@ -5,6 +5,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import '../marketplace_constants.dart';
 import '../marketplace_models.dart';
 import '../marketplace_service.dart';
+import '../../core/motion/motion_stagger.dart';
+import '../../core/motion/motion_tappable.dart';
+import '../../core/motion/motion_counter.dart';
 
 // ── Vendor Orders Screen (Stitch Design) ─────────────────────────────────────
 class VendorOrdersScreen extends StatefulWidget {
@@ -36,16 +39,24 @@ class _VendorOrdersScreenState extends State<VendorOrdersScreen>
   }
 
   @override
-  void dispose() { _tab.dispose(); super.dispose(); }
+  void dispose() {
+    _tab.dispose();
+    super.dispose();
+  }
 
   Future<void> _load() async {
-    setState(() => _loading = true);
+    if (mounted) setState(() => _loading = true);
     final all = await MarketplaceService.fetchVendorOrders();
     final map = <String, List<Order>>{'all': all};
-    for (final status in ['pending','confirmed','preparing','ready','delivered']) {
+    for (final status in ['pending', 'confirmed', 'preparing', 'ready', 'delivered']) {
       map[status] = all.where((o) => o.status == status).toList();
     }
-    if (mounted) setState(() { _ordersByStatus = map; _loading = false; });
+    if (mounted) {
+      setState(() {
+        _ordersByStatus = map;
+        _loading = false;
+      });
+    }
   }
 
   @override
@@ -57,7 +68,7 @@ class _VendorOrdersScreenState extends State<VendorOrdersScreen>
         Container(
           padding: EdgeInsets.fromLTRB(
               20, MediaQuery.of(context).padding.top + 16, 20, 0),
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             color: kBg,
             border: Border(bottom: BorderSide(color: kBorder)),
           ),
@@ -73,8 +84,33 @@ class _VendorOrdersScreenState extends State<VendorOrdersScreen>
                     Text('Active Orders', style: kHeadline(22)),
                   ],
                 )),
-                kStatusPill(
-                  '${_ordersByStatus['all']?.length ?? 0} orders', kVendor),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: kVendor.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: kVendor.withValues(alpha: 0.4)),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      MotionCounter(
+                        value: _ordersByStatus['all']?.length ?? 0,
+                        style: GoogleFonts.inter(
+                          fontSize: 11,
+                          color: kVendor,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      Text('orders', style: GoogleFonts.inter(
+                        fontSize: 11,
+                        color: kVendor,
+                        fontWeight: FontWeight.w600,
+                      )),
+                    ],
+                  ),
+                ),
               ]),
               const SizedBox(height: 16),
               TabBar(
@@ -134,21 +170,28 @@ class _OrderList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (orders.isEmpty) return Center(
-      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Icon(Icons.receipt_long_outlined, size: 56, color: kBorder),
-        const SizedBox(height: 12),
-        Text('No orders in this status', style: kBody(13, color: kTextMuted)),
-      ]),
-    );
+    if (orders.isEmpty) {
+      return Center(
+        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          const Icon(Icons.receipt_long_outlined, size: 56, color: kBorder),
+          const SizedBox(height: 12),
+          Text('No orders in this status', style: kBody(13, color: kTextMuted)),
+        ]),
+      );
+    }
     return RefreshIndicator(
       color: kVendor, backgroundColor: kCard,
       onRefresh: () async => onStatusChange(),
       child: ListView.builder(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 100),
         itemCount: orders.length,
-        itemBuilder: (_, i) => _VendorOrderCard(
-          order: orders[i], onAction: onStatusChange),
+        itemBuilder: (context, i) => StaggeredEntrance(
+          index: i,
+          child: _VendorOrderCard(
+            order: orders[i],
+            onAction: onStatusChange,
+          ),
+        ),
       ),
     );
   }
@@ -185,7 +228,9 @@ class _VendorOrderCardState extends State<_VendorOrderCard> {
     if (next == null) return;
     setState(() => _updating = true);
     await MarketplaceService.updateOrderStatus(widget.order.id, next);
-    if (mounted) setState(() => _updating = false);
+    if (mounted) {
+      setState(() => _updating = false);
+    }
     widget.onAction();
   }
 
@@ -200,7 +245,7 @@ class _VendorOrderCardState extends State<_VendorOrderCard> {
       margin: const EdgeInsets.only(bottom: 12),
       decoration: kGlowDeco(accent, radius: 18),
       child: Column(children: [
-        GestureDetector(
+        TappableScale(
           onTap: () => setState(() => _expanded = !_expanded),
           child: Padding(
             padding: const EdgeInsets.all(16),
@@ -238,8 +283,17 @@ class _VendorOrderCardState extends State<_VendorOrderCard> {
                 _Chip(Icons.shopping_bag_rounded,
                   '${order.items.length} items', kTextMuted),
                 const SizedBox(width: 8),
-                _Chip(Icons.payments_rounded,
-                  'Rs ${order.totalAmount.toStringAsFixed(0)}', kVendor),
+                Row(
+                  children: [
+                    const Icon(Icons.payments_rounded, color: kVendor, size: 12),
+                    const SizedBox(width: 4),
+                    MotionCounter(
+                      value: order.totalAmount,
+                      prefix: 'Rs ',
+                      style: kBody(11, color: kVendor),
+                    ),
+                  ],
+                ),
                 const SizedBox(width: 8),
                 _Chip(Icons.receipt_rounded,
                   order.paymentMethod ?? 'COD', kCyan),
@@ -270,7 +324,7 @@ class _VendorOrderCardState extends State<_VendorOrderCard> {
                           ? ClipRRect(borderRadius: BorderRadius.circular(7),
                               child: CachedNetworkImage(imageUrl: item.productImage!,
                                 fit: BoxFit.cover,
-                                errorWidget: (_, __, ___) => const Icon(
+                                errorWidget: (_, _, _) => const Icon(
                                   Icons.inventory_2_rounded, color: kBorder, size: 16)))
                           : const Icon(Icons.inventory_2_rounded,
                               color: kBorder, size: 16),
@@ -281,8 +335,11 @@ class _VendorOrderCardState extends State<_VendorOrderCard> {
                       overflow: TextOverflow.ellipsis)),
                     Text('×${item.quantity}', style: kLabel(11)),
                     const SizedBox(width: 8),
-                    Text('Rs ${item.total.toStringAsFixed(0)}',
-                      style: kBody(12, color: kVendor, fw: FontWeight.w700)),
+                    MotionCounter(
+                      value: item.total,
+                      prefix: 'Rs ',
+                      style: kBody(12, color: kVendor, fw: FontWeight.w700),
+                    ),
                   ]),
                 )),
                 const SizedBox(height: 4),
@@ -302,26 +359,26 @@ class _VendorOrderCardState extends State<_VendorOrderCard> {
         // Action button
         if (nextLabel != null) Padding(
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
-          child: ElevatedButton(
-            onPressed: _updating ? null : _advance,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: accent,
-              foregroundColor: Colors.black,
-              minimumSize: const Size(double.infinity, 44),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
-              elevation: 0,
+          child: TappableScale(
+            onTap: _updating ? null : _advance,
+            child: Container(
+              height: 44,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: accent,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: _updating
+                  ? const SizedBox(width: 18, height: 18,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2, color: Colors.black))
+                  : Row(mainAxisSize: MainAxisSize.min, children: [
+                      const Icon(Icons.arrow_forward_rounded, size: 16, color: Colors.black),
+                      const SizedBox(width: 6),
+                      Text(nextLabel, style: GoogleFonts.inter(
+                        fontSize: 13, fontWeight: FontWeight.w700, color: Colors.black)),
+                    ]),
             ),
-            child: _updating
-                ? const SizedBox(width: 18, height: 18,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2, color: Colors.black))
-                : Row(mainAxisSize: MainAxisSize.min, children: [
-                    const Icon(Icons.arrow_forward_rounded, size: 16),
-                    const SizedBox(width: 6),
-                    Text(nextLabel, style: GoogleFonts.inter(
-                      fontSize: 13, fontWeight: FontWeight.w700)),
-                  ]),
           ),
         ),
       ]),

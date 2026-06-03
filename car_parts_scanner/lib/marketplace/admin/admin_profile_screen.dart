@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../marketplace_constants.dart';
 import '../marketplace_models.dart';
 import '../marketplace_service.dart';
+import '../../core/motion/motion_tappable.dart';
 
 class AdminProfileScreen extends StatefulWidget {
   const AdminProfileScreen({super.key});
@@ -22,9 +23,14 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> {
   }
 
   Future<void> _load() async {
-    setState(() => _loading = true);
+    if (mounted) setState(() => _loading = true);
     final user = await MarketplaceService.fetchCurrentUser();
-    if (mounted) setState(() { _user = user; _loading = false; });
+    if (mounted) {
+      setState(() {
+        _user = user;
+        _loading = false;
+      });
+    }
   }
 
   @override
@@ -68,7 +74,7 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> {
                   ]),
                 ),
                 const SizedBox(height: 40),
-                GestureDetector(
+                TappableScale(
                   onTap: () async => await Supabase.instance.client.auth.signOut(),
                   child: Container(
                     padding: const EdgeInsets.all(16),

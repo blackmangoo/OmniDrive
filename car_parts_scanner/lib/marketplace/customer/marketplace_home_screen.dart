@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shimmer/shimmer.dart';
 import '../marketplace_constants.dart';
 import '../marketplace_models.dart';
 import '../marketplace_service.dart';
 import 'product_detail_screen.dart';
 import 'cart_screen.dart';
 import 'category_products_screen.dart';
+import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_typography.dart';
+import '../../core/motion/motion_stagger.dart';
+import '../../core/motion/motion_tappable.dart';
+import '../../core/motion/motion_counter.dart';
 
 class MarketplaceHomeScreen extends StatefulWidget {
   const MarketplaceHomeScreen({super.key});
@@ -67,16 +73,18 @@ class _MarketplaceHomeScreenState extends State<MarketplaceHomeScreen> {
   }
 
   Future<void> _loadData() async {
-    setState(() => _loading = true);
+    if (mounted) setState(() => _loading = true);
     final cats = await MarketplaceService.fetchCategories();
     final prods = await MarketplaceService.fetchProducts(searchQuery: _searchQuery);
     final cart = await MarketplaceService.fetchCart();
-    if (mounted) setState(() {
-      _categories = cats;
-      _products = prods;
-      _cartCount = cart.length;
-      _loading = false;
-    });
+    if (mounted) {
+      setState(() {
+        _categories = cats;
+        _products = prods;
+        _cartCount = cart.length;
+        _loading = false;
+      });
+    }
   }
 
   @override
@@ -109,7 +117,7 @@ class _MarketplaceHomeScreenState extends State<MarketplaceHomeScreen> {
                           color: Colors.black, size: 18),
                     ),
                     const SizedBox(width: 10),
-                    Text('OmniDrive', style: GoogleFonts.inter(
+                    Text('OmniDrive', style: AppTypography.title.copyWith(
                       fontSize: 18, fontWeight: FontWeight.w800,
                       color: kTextPrimary, letterSpacing: -0.5)),
                   ],
@@ -131,7 +139,7 @@ class _MarketplaceHomeScreenState extends State<MarketplaceHomeScreen> {
                           decoration: const BoxDecoration(
                               color: kCyan, shape: BoxShape.circle),
                           child: Center(child: Text('$_cartCount',
-                            style: TextStyle(fontSize: 9, color: Colors.black,
+                            style: const TextStyle(fontSize: 9, color: Colors.black,
                                 fontWeight: FontWeight.w800))),
                         ),
                       ),
@@ -216,17 +224,20 @@ class _MarketplaceHomeScreenState extends State<MarketplaceHomeScreen> {
                                         Text(b.subtitle, style: GoogleFonts.inter(
                                           fontSize: 11, color: Colors.white70)),
                                         const SizedBox(height: 12),
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 14, vertical: 6),
-                                          decoration: BoxDecoration(
-                                            color: Colors.white.withValues(alpha: 0.2),
-                                            borderRadius: BorderRadius.circular(20),
+                                        TappableScale(
+                                          onTap: () {},
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 14, vertical: 6),
+                                            decoration: BoxDecoration(
+                                              color: Colors.white.withValues(alpha: 0.2),
+                                              borderRadius: BorderRadius.circular(20),
+                                            ),
+                                            child: Text('Shop Now',
+                                              style: GoogleFonts.inter(fontSize: 11,
+                                                fontWeight: FontWeight.w700,
+                                                color: Colors.white)),
                                           ),
-                                          child: Text('Shop Now',
-                                            style: GoogleFonts.inter(fontSize: 11,
-                                              fontWeight: FontWeight.w700,
-                                              color: Colors.white)),
                                         ),
                                       ],
                                     ),
@@ -267,7 +278,7 @@ class _MarketplaceHomeScreenState extends State<MarketplaceHomeScreen> {
                           trailing: TextButton(
                             onPressed: () {},
                             child: Text('See all',
-                              style: kBody(12, color: kCyan, fw: FontWeight.w600)),
+                                style: AppTypography.label.copyWith(color: kCyan, fontWeight: FontWeight.w600)),
                           )),
                     ),
                     SizedBox(
@@ -278,39 +289,42 @@ class _MarketplaceHomeScreenState extends State<MarketplaceHomeScreen> {
                         itemCount: _categoryList.length,
                         itemBuilder: (_, i) {
                           final cat = _categoryList[i];
-                          return GestureDetector(
-                            onTap: () {
-                              final dbCat = _categories.firstWhere(
-                                (c) => c.name.toLowerCase() == cat.label.toLowerCase(),
-                                orElse: () => Category(id: '', name: cat.label),
-                              );
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => CategoryProductsScreen(category: dbCat),
-                                ),
-                              ).then((_) => _loadData());
-                            },
-                            child: Container(
-                              width: 72,
-                              margin: const EdgeInsets.symmetric(horizontal: 4),
-                              child: Column(
-                                children: [
-                                  Container(
-                                    width: 52, height: 52,
-                                    decoration: BoxDecoration(
-                                      color: cat.color.withValues(alpha: 0.12),
-                                      borderRadius: BorderRadius.circular(16),
-                                      border: Border.all(
-                                          color: cat.color.withValues(alpha: 0.3)),
-                                    ),
-                                    child: Icon(cat.icon, color: cat.color, size: 24),
+                          return StaggeredEntrance(
+                            index: i,
+                            child: TappableScale(
+                              onTap: () {
+                                final dbCat = _categories.firstWhere(
+                                  (c) => c.name.toLowerCase() == cat.label.toLowerCase(),
+                                  orElse: () => Category(id: '', name: cat.label),
+                                );
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => CategoryProductsScreen(category: dbCat),
                                   ),
-                                  const SizedBox(height: 6),
-                                  Text(cat.label, style: kBody(10, color: kTextSecondary),
-                                    textAlign: TextAlign.center, maxLines: 1,
-                                    overflow: TextOverflow.ellipsis),
-                                ],
+                                ).then((_) => _loadData());
+                              },
+                              child: Container(
+                                width: 72,
+                                margin: const EdgeInsets.symmetric(horizontal: 4),
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      width: 52, height: 52,
+                                      decoration: BoxDecoration(
+                                        color: cat.color.withValues(alpha: 0.12),
+                                        borderRadius: BorderRadius.circular(16),
+                                        border: Border.all(
+                                            color: cat.color.withValues(alpha: 0.3)),
+                                      ),
+                                      child: Icon(cat.icon, color: cat.color, size: 24),
+                                    ),
+                                    const SizedBox(height: 6),
+                                    Text(cat.label, style: kBody(10, color: kTextSecondary),
+                                      textAlign: TextAlign.center, maxLines: 1,
+                                      overflow: TextOverflow.ellipsis),
+                                  ],
+                                ),
                               ),
                             ),
                           );
@@ -330,20 +344,45 @@ class _MarketplaceHomeScreenState extends State<MarketplaceHomeScreen> {
 
               // ── Products Grid ───────────────────────────────────────────────
               _loading
-                  ? const SliverFillRemaining(
-                      child: Center(child: CircularProgressIndicator(color: kCyan)))
+                  ? SliverPadding(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
+                      sliver: SliverGrid(
+                        delegate: SliverChildBuilderDelegate(
+                          (_, index) => Shimmer.fromColors(
+                            baseColor: AppColors.surface,
+                            highlightColor: AppColors.card,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: AppColors.surface,
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                            ),
+                          ),
+                          childCount: 4,
+                        ),
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 12,
+                          mainAxisSpacing: 12,
+                          childAspectRatio: 0.72,
+                        ),
+                      ),
+                    )
                   : _products.isEmpty
                       ? SliverFillRemaining(child: _EmptyState())
                       : SliverPadding(
                           padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
                           sliver: SliverGrid(
                             delegate: SliverChildBuilderDelegate(
-                              (_, i) => _ProductCard(
-                                product: _products[i],
-                                onTap: () => Navigator.push(context,
-                                  MaterialPageRoute(builder: (_) =>
-                                    ProductDetailScreen(product: _products[i])))
-                                  .then((_) => _loadData()),
+                              (_, i) => StaggeredEntrance(
+                                index: i,
+                                child: _ProductCard(
+                                  product: _products[i],
+                                  onTap: () => Navigator.push(context,
+                                    MaterialPageRoute(builder: (_) =>
+                                      ProductDetailScreen(product: _products[i])))
+                                    .then((_) => _loadData()),
+                                ),
                               ),
                               childCount: _products.length,
                             ),
@@ -401,22 +440,25 @@ class _ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return TappableScale(
       onTap: onTap,
       child: Container(
         decoration: kCardDeco(radius: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Image
-            ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
-              child: AspectRatio(
-                aspectRatio: 1.2,
-                child: product.primaryImage.isNotEmpty
-                    ? Image.network(product.primaryImage, fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => _PlaceholderImg())
-                    : _PlaceholderImg(),
+            // Image with Hero Transition
+            Hero(
+              tag: 'product_image_${product.id}',
+              child: ClipRRect(
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
+                child: AspectRatio(
+                  aspectRatio: 1.2,
+                  child: product.primaryImage.isNotEmpty
+                      ? Image.network(product.primaryImage, fit: BoxFit.cover,
+                          errorBuilder: (ctx, err, stack) => _PlaceholderImg())
+                      : _PlaceholderImg(),
+                ),
               ),
             ),
             Expanded(
@@ -425,7 +467,7 @@ class _ProductCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(product.name, style: GoogleFonts.inter(
+                    Text(product.name, style: AppTypography.title.copyWith(
                       fontSize: 12, fontWeight: FontWeight.w600,
                       color: kTextPrimary, height: 1.3),
                       maxLines: 2, overflow: TextOverflow.ellipsis),
@@ -440,9 +482,12 @@ class _ProductCard extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Rs ${product.price.toStringAsFixed(0)}',
+                              MotionCounter(
+                                value: product.price,
+                                prefix: 'Rs ',
                                 style: GoogleFonts.inter(fontSize: 13,
-                                  fontWeight: FontWeight.w800, color: kCyan)),
+                                  fontWeight: FontWeight.w800, color: kCyan),
+                              ),
                               if (product.hasDiscount)
                                 Text('Rs ${product.comparePrice!.toStringAsFixed(0)}',
                                   style: kBody(10, color: kTextMuted).copyWith(
@@ -523,7 +568,7 @@ class _PromoCard extends StatelessWidget {
     required this.label, required this.onTap});
 
   @override
-  Widget build(BuildContext context) => GestureDetector(
+  Widget build(BuildContext context) => TappableScale(
     onTap: onTap,
     child: Container(
       padding: const EdgeInsets.all(16),
@@ -543,7 +588,7 @@ class _PromoCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: GoogleFonts.inter(
+                Text(title, style: AppTypography.title.copyWith(
                   fontSize: 14, fontWeight: FontWeight.w700, color: kTextPrimary)),
                 const SizedBox(height: 3),
                 Text(subtitle, style: kBody(11), maxLines: 2,

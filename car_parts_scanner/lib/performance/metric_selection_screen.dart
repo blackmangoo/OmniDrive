@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
 import 'performance_models.dart';
-
-const _kBg     = Color(0xFF0A0A0F);
-const _kSurface = Color(0xFF12121A);
-const _kAccent  = Color(0xFF4FC3F7);
-const _kBorder  = Color(0xFF1E1E2E);
-const _kGreen   = Color(0xFF34D399);
-const _kAmber   = Color(0xFFF59E0B);
+import '../core/theme/app_colors.dart';
+import '../../core/motion/motion_tappable.dart';
 
 /// Screen where the user selects:
 ///  • Test type (ACCELERATION or BRAKING) — segmented toggle
@@ -63,13 +58,12 @@ class _MetricSelectionScreenState extends State<MetricSelectionScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _kBg,
+      backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: _kBg,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded,
-              color: Colors.white70, size: 20),
-          onPressed: () => Navigator.pop(context),
+        backgroundColor: AppColors.background,
+        leading: TappableScale(
+          onTap: () => Navigator.pop(context),
+          child: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white70, size: 20),
         ),
         title: const Text('Configure Test',
             style: TextStyle(
@@ -83,16 +77,16 @@ class _MetricSelectionScreenState extends State<MetricSelectionScreen>
             padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
             child: Container(
               decoration: BoxDecoration(
-                color: _kSurface,
+                color: AppColors.surface,
                 borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: _kBorder),
+                border: Border.all(color: AppColors.border),
               ),
               child: TabBar(
                 controller: _tabCtrl,
                 indicator: BoxDecoration(
-                  color: _kAccent.withOpacity(0.18),
+                  color: AppColors.cyan.withValues(alpha: 0.18),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: _kAccent.withOpacity(0.6)),
+                  border: Border.all(color: AppColors.cyan.withValues(alpha: 0.6)),
                 ),
                 indicatorSize: TabBarIndicatorSize.tab,
                 dividerColor: Colors.transparent,
@@ -120,7 +114,7 @@ class _MetricSelectionScreenState extends State<MetricSelectionScreen>
                     ),
                   ),
                 ],
-                labelColor: _kAccent,
+                labelColor: AppColors.cyan,
                 unselectedLabelColor: Colors.white38,
               ),
             ),
@@ -136,11 +130,15 @@ class _MetricSelectionScreenState extends State<MetricSelectionScreen>
                   metrics: _accelerationMetrics,
                   selected: _selected,
                   onToggle: (m, v) => setState(() {
-                    if (v) _selected.add(m); else _selected.remove(m);
+                    if (v) {
+                      _selected.add(m);
+                    } else {
+                      _selected.remove(m);
+                    }
                   }),
                   note: 'All selected metrics are measured in a single drive.',
                   noteIcon: Icons.info_outline_rounded,
-                  noteColor: _kAccent,
+                  noteColor: AppColors.cyan,
                 ),
 
                 // ── Braking tab ───────────────────────────────────────────
@@ -148,11 +146,15 @@ class _MetricSelectionScreenState extends State<MetricSelectionScreen>
                   metrics: const [MetricType.hundredToZero],
                   selected: _selected,
                   onToggle: (m, v) => setState(() {
-                    if (v) _selected.add(m); else _selected.remove(m);
+                    if (v) {
+                      _selected.add(m);
+                    } else {
+                      _selected.remove(m);
+                    }
                   }),
                   note: 'Accelerate past 100 km/h, then brake hard on command.',
                   noteIcon: Icons.warning_amber_rounded,
-                  noteColor: _kAmber,
+                  noteColor: AppColors.warning,
                 ),
               ],
             ),
@@ -179,12 +181,12 @@ class _MetricSelectionScreenState extends State<MetricSelectionScreen>
                     padding: EdgeInsets.only(top: 10),
                     child: Row(
                       children: [
-                        Icon(Icons.wifi_rounded, color: _kAmber, size: 14),
+                        Icon(Icons.wifi_rounded, color: AppColors.warning, size: 14),
                         SizedBox(width: 6),
                         Expanded(
                           child: Text(
                             'Make sure your phone is connected to the OBD-II WiFi network before proceeding.',
-                            style: TextStyle(color: _kAmber, fontSize: 12),
+                            style: TextStyle(color: AppColors.warning, fontSize: 12),
                           ),
                         ),
                       ],
@@ -200,25 +202,32 @@ class _MetricSelectionScreenState extends State<MetricSelectionScreen>
             child: SizedBox(
               width: double.infinity,
               height: 52,
-              child: ElevatedButton.icon(
-                onPressed: _canProceed
+              child: TappableScale(
+                onTap: _canProceed
                     ? () => Navigator.pop(context, {
                           'metrics': _selected.toList(),
                           'obdMode': _obdMode,
                         })
                     : null,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: _kAccent,
-                  foregroundColor: Colors.black,
-                  disabledBackgroundColor: Colors.white12,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14)),
-                  elevation: 0,
+                child: Container(
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: _canProceed ? AppColors.cyan : Colors.white12,
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.play_arrow_rounded, color: _canProceed ? Colors.black : Colors.white24),
+                      const SizedBox(width: 8),
+                      Text('Configure & Continue',
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: _canProceed ? Colors.black : Colors.white24)),
+                    ],
+                  ),
                 ),
-                icon: const Icon(Icons.play_arrow_rounded),
-                label: const Text('Configure & Continue',
-                    style:
-                        TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
               ),
             ),
           ),
@@ -258,9 +267,9 @@ class _MetricList extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: noteColor.withOpacity(0.08),
+              color: noteColor.withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: noteColor.withOpacity(0.25)),
+              border: Border.all(color: noteColor.withValues(alpha: 0.25)),
             ),
             child: Row(
               children: [
@@ -302,17 +311,17 @@ class _MetricTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return TappableScale(
       onTap: () => onToggle(!selected),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: selected ? _kAccent.withOpacity(0.1) : _kSurface,
+          color: selected ? AppColors.cyan.withValues(alpha: 0.1) : AppColors.surface,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: selected ? _kAccent.withOpacity(0.5) : _kBorder,
+            color: selected ? AppColors.cyan.withValues(alpha: 0.5) : AppColors.border,
             width: selected ? 1.5 : 1,
           ),
         ),
@@ -323,9 +332,9 @@ class _MetricTile extends StatelessWidget {
               width: 22, height: 22,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: selected ? _kAccent : Colors.transparent,
+                color: selected ? AppColors.cyan : Colors.transparent,
                 border: Border.all(
-                    color: selected ? _kAccent : Colors.white24, width: 1.5),
+                    color: selected ? AppColors.cyan : Colors.white24, width: 1.5),
               ),
               child: selected
                   ? const Icon(Icons.check_rounded,
@@ -409,22 +418,22 @@ class _ModeChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: GestureDetector(
+      child: TappableScale(
         onTap: onTap,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 180),
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: selected ? _kAccent.withOpacity(0.1) : _kSurface,
+            color: selected ? AppColors.cyan.withValues(alpha: 0.1) : AppColors.surface,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-                color: selected ? _kAccent.withOpacity(0.5) : _kBorder,
+                color: selected ? AppColors.cyan.withValues(alpha: 0.5) : AppColors.border,
                 width: selected ? 1.5 : 1),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(icon, color: selected ? _kAccent : Colors.white38, size: 20),
+              Icon(icon, color: selected ? AppColors.cyan : Colors.white38, size: 20),
               const SizedBox(height: 8),
               Text(label,
                   style: TextStyle(

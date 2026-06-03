@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../marketplace/marketplace_service.dart';
 import 'auth_gate.dart';
+import '../core/theme/app_colors.dart';
+import '../core/theme/app_spacing.dart';
+import '../core/theme/app_typography.dart';
+import '../core/theme/app_shadows.dart';
+import '../core/motion/motion_tappable.dart';
 
 class PendingApprovalScreen extends StatefulWidget {
   final String? role;
@@ -31,9 +36,7 @@ class _PendingApprovalScreenState extends State<PendingApprovalScreen> {
       if (!mounted) return;
 
       if (isApproved) {
-        // Trigger parent check if provided
         widget.onCheckStatus?.call();
-        // Redirect to AuthGate
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (_) => const AuthGate()),
           (route) => false,
@@ -43,9 +46,9 @@ class _PendingApprovalScreenState extends State<PendingApprovalScreen> {
           SnackBar(
             content: Text(
               'Your account is still under review.',
-              style: GoogleFonts.inter(color: Colors.white),
+              style: AppTypography.body.copyWith(color: Colors.white),
             ),
-            backgroundColor: const Color(0xFF1E1E2E),
+            backgroundColor: AppColors.surface,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             duration: const Duration(seconds: 3),
@@ -55,9 +58,9 @@ class _PendingApprovalScreenState extends State<PendingApprovalScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text('Failed to check status. Please try again.'),
-            backgroundColor: Colors.redAccent,
+            backgroundColor: AppColors.error,
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -82,9 +85,9 @@ class _PendingApprovalScreenState extends State<PendingApprovalScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text('Failed to sign out. Please try again.'),
-            backgroundColor: Colors.redAccent,
+            backgroundColor: AppColors.error,
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -101,42 +104,44 @@ class _PendingApprovalScreenState extends State<PendingApprovalScreen> {
         ? widget.role!.substring(0, 1).toUpperCase() + widget.role!.substring(1)
         : 'User';
 
-    // Premium dark-themed colors matching OmniDrive's design system
-    const kBg = Color(0xFF0A0A0F);
-    const kSurface = Color(0xFF12121A);
-    const kBorder = Color(0xFF1E1E2E);
     final accentColor = widget.role == 'vendor'
-        ? const Color(0xFFF59E0B) // Amber for vendor
-        : const Color(0xFF4FC3F7); // Light blue for rider / other roles
+        ? AppColors.vendorDark
+        : widget.role == 'rider'
+            ? AppColors.rider
+            : AppColors.cyan;
 
     return Scaffold(
-      backgroundColor: kBg,
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 28.0, vertical: 24.0),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.lg),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const Spacer(),
-              // Hourglass / review icon with a glowing container
+              
+              // Hourglass icon with pulsing neon glow
               Center(
                 child: Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    color: accentColor.withOpacity(0.1),
+                    color: accentColor.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: accentColor.withOpacity(0.2),
+                      color: accentColor.withValues(alpha: 0.25),
                       width: 2,
                     ),
+                    boxShadow: AppShadows.roleGlow(accentColor),
                   ),
                   child: Icon(
                     Icons.hourglass_empty_rounded,
                     color: accentColor,
                     size: 64,
                   ),
-                ),
+                )
+                    .animate(onPlay: (controller) => controller.repeat(reverse: true))
+                    .scale(begin: const Offset(0.92, 0.92), end: const Offset(1.08, 1.08), duration: 1500.ms, curve: Curves.easeInOutCubic),
               ),
               const SizedBox(height: 32),
 
@@ -144,12 +149,7 @@ class _PendingApprovalScreenState extends State<PendingApprovalScreen> {
               Text(
                 'Account Under Review',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.inter(
-                  color: Colors.white,
-                  fontSize: 26,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: -0.5,
-                ),
+                style: AppTypography.display.copyWith(fontSize: 26),
               ),
               const SizedBox(height: 12),
 
@@ -157,11 +157,7 @@ class _PendingApprovalScreenState extends State<PendingApprovalScreen> {
               Text(
                 'Your registration request has been submitted. Our administrative team will verify your details and activate your account shortly.',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.inter(
-                  color: Colors.white38,
-                  fontSize: 14,
-                  height: 1.5,
-                ),
+                style: AppTypography.body.copyWith(color: AppColors.textSecondary),
               ),
               const SizedBox(height: 40),
 
@@ -169,9 +165,9 @@ class _PendingApprovalScreenState extends State<PendingApprovalScreen> {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: kSurface,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: kBorder),
+                  color: AppColors.card,
+                  borderRadius: BorderRadius.circular(AppSpacing.rLg),
+                  border: Border.all(color: AppColors.border),
                 ),
                 child: Column(
                   children: [
@@ -181,7 +177,7 @@ class _PendingApprovalScreenState extends State<PendingApprovalScreen> {
                       icon: Icons.alternate_email_rounded,
                       accentColor: accentColor,
                     ),
-                    const Divider(color: kBorder, height: 28),
+                    const Divider(color: AppColors.border, height: 28),
                     _buildDetailRow(
                       label: 'Requested Role',
                       value: roleText,
@@ -197,63 +193,66 @@ class _PendingApprovalScreenState extends State<PendingApprovalScreen> {
               const Spacer(),
 
               // Check Status Button
-              ElevatedButton(
-                onPressed: _checkingStatus || _loggingOut ? null : _checkStatus,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: accentColor,
-                  foregroundColor: Colors.black,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
+              SizedBox(
+                height: 54,
+                width: double.infinity,
+                child: TappableScale(
+                  onTap: _checkingStatus || _loggingOut ? null : _checkStatus,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: accentColor,
+                      borderRadius: BorderRadius.circular(AppSpacing.rLg),
+                      boxShadow: AppShadows.roleGlow(accentColor),
+                    ),
+                    child: Center(
+                      child: _checkingStatus
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                color: Colors.black,
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : Text(
+                              'Check Status',
+                              style: AppTypography.label.copyWith(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
+                            ),
+                    ),
                   ),
-                  elevation: 0,
                 ),
-                child: _checkingStatus
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
-                          color: Colors.black,
-                          strokeWidth: 2,
-                        ),
-                      )
-                    : Text(
-                        'Check Status',
-                        style: GoogleFonts.inter(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
               ),
               const SizedBox(height: 14),
 
               // Log Out Button
-              TextButton(
-                onPressed: _checkingStatus || _loggingOut ? null : _logout,
-                style: TextButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
-                    side: const BorderSide(color: kBorder),
+              SizedBox(
+                height: 54,
+                width: double.infinity,
+                child: TappableScale(
+                  onTap: _checkingStatus || _loggingOut ? null : _logout,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.transparent,
+                      borderRadius: BorderRadius.circular(AppSpacing.rLg),
+                      border: Border.all(color: AppColors.border),
+                    ),
+                    child: Center(
+                      child: _loggingOut
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                color: AppColors.textPrimary,
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : Text(
+                              'Log Out',
+                              style: AppTypography.label.copyWith(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.textSecondary),
+                            ),
+                    ),
                   ),
                 ),
-                child: _loggingOut
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
-                          color: Colors.white70,
-                          strokeWidth: 2,
-                        ),
-                      )
-                    : Text(
-                        'Log Out',
-                        style: GoogleFonts.inter(
-                          color: Colors.white70,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
               ),
               const SizedBox(height: 12),
             ],
@@ -271,28 +270,19 @@ class _PendingApprovalScreenState extends State<PendingApprovalScreen> {
   }) {
     return Row(
       children: [
-        Icon(icon, color: accentColor.withOpacity(0.8), size: 20),
+        Icon(icon, color: accentColor.withValues(alpha: 0.8), size: 20),
         const SizedBox(width: 14),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               label,
-              style: GoogleFonts.inter(
-                color: Colors.white38,
-                fontSize: 11,
-                fontWeight: FontWeight.w500,
-                letterSpacing: 0.5,
-              ),
+              style: AppTypography.caption,
             ),
             const SizedBox(height: 3),
             Text(
               value,
-              style: GoogleFonts.inter(
-                color: Colors.white,
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-              ),
+              style: AppTypography.title.copyWith(fontSize: 15),
             ),
           ],
         ),

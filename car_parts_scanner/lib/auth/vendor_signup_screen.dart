@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../marketplace/marketplace_service.dart';
 import 'verify_email_screen.dart';
-
-const _kBg      = Color(0xFF0A0A0F);
-const _kSurface = Color(0xFF12121A);
-const _kAccent  = Color(0xFFF59E0B); // amber for vendor
-const _kBorder  = Color(0xFF1E1E2E);
+import '../core/theme/app_colors.dart';
+import '../core/theme/app_spacing.dart';
+import '../core/theme/app_typography.dart';
+import '../core/theme/app_shadows.dart';
+import '../core/motion/motion_tappable.dart';
 
 class VendorSignupScreen extends StatefulWidget {
   const VendorSignupScreen({super.key});
@@ -34,11 +32,13 @@ class _VendorSignupScreenState extends State<VendorSignupScreen> {
     super.dispose();
   }
 
+  Color get _accentColor => AppColors.vendorDark;
+
   Future<void> _signup() async {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _loading = true);
     try {
-      final res = await Supabase.instance.client.auth.signUp(
+      await Supabase.instance.client.auth.signUp(
         email: _emailCtrl.text.trim(),
         password: _passCtrl.text,
         data: {
@@ -65,8 +65,8 @@ class _VendorSignupScreenState extends State<VendorSignupScreen> {
 
   void _showError(String msg) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(msg),
-      backgroundColor: Colors.redAccent,
+      content: Text(msg, style: AppTypography.body.copyWith(color: Colors.white)),
+      backgroundColor: AppColors.error,
       behavior: SnackBarBehavior.floating,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
     ));
@@ -75,10 +75,10 @@ class _VendorSignupScreenState extends State<VendorSignupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _kBg,
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 24),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.lg),
           child: Form(
             key: _formKey,
             child: Column(
@@ -86,8 +86,9 @@ class _VendorSignupScreenState extends State<VendorSignupScreen> {
               children: [
                 IconButton(
                   onPressed: () => Navigator.pop(context),
-                  icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white70, size: 20),
+                  icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.textSecondary, size: 20),
                   padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
                 ),
                 const SizedBox(height: 16),
 
@@ -96,17 +97,18 @@ class _VendorSignupScreenState extends State<VendorSignupScreen> {
                     Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: _kAccent.withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(12),
+                        color: _accentColor.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(AppSpacing.rLg),
+                        boxShadow: AppShadows.roleGlow(_accentColor),
                       ),
-                      child: const Icon(Icons.storefront_rounded, color: _kAccent, size: 28),
+                      child: Icon(Icons.storefront_rounded, color: _accentColor, size: 28),
                     ),
                     const SizedBox(width: 14),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Vendor Account', style: GoogleFonts.inter(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
-                        Text('Set up your shop on OmniDrive', style: GoogleFonts.inter(color: Colors.white38, fontSize: 13)),
+                        Text('Vendor Account', style: AppTypography.h2),
+                        Text('Set up your shop on OmniDrive', style: AppTypography.caption),
                       ],
                     ),
                   ],
@@ -117,19 +119,19 @@ class _VendorSignupScreenState extends State<VendorSignupScreen> {
                 // ── Section: Personal Info ─────────────────────────────────
                 _sectionHeader('Personal Information'),
                 const SizedBox(height: 12),
-                _Field(ctrl: _nameCtrl, label: 'Full Name', hint: 'John Smith', accentColor: _kAccent,
+                _Field(ctrl: _nameCtrl, label: 'Full Name', hint: 'John Smith', accentColor: _accentColor,
                     validator: (v) => (v?.trim().isEmpty ?? true) ? 'Required' : null),
                 const SizedBox(height: 14),
-                _Field(ctrl: _emailCtrl, label: 'Email', hint: 'vendor@example.com', keyboardType: TextInputType.emailAddress, accentColor: _kAccent,
+                _Field(ctrl: _emailCtrl, label: 'Email', hint: 'vendor@example.com', keyboardType: TextInputType.emailAddress, accentColor: _accentColor,
                     validator: (v) => (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(v ?? '')) ? 'Enter a valid email' : null),
                 const SizedBox(height: 14),
-                _Field(ctrl: _phoneCtrl, label: 'Phone Number', hint: '+92 300 0000000', keyboardType: TextInputType.phone, accentColor: _kAccent,
+                _Field(ctrl: _phoneCtrl, label: 'Phone Number', hint: '+92 300 0000000', keyboardType: TextInputType.phone, accentColor: _accentColor,
                     validator: (v) => (v?.trim().isEmpty ?? true) ? 'Required' : null),
                 const SizedBox(height: 14),
                 _Field(
-                  ctrl: _passCtrl, label: 'Password', hint: 'Min. 8 characters', obscureText: _obscure, accentColor: _kAccent,
+                  ctrl: _passCtrl, label: 'Password', hint: 'Min. 8 characters', obscureText: _obscure, accentColor: _accentColor,
                   suffixIcon: IconButton(
-                    icon: Icon(_obscure ? Icons.visibility_off_outlined : Icons.visibility_outlined, color: Colors.white38, size: 20),
+                    icon: Icon(_obscure ? Icons.visibility_off_outlined : Icons.visibility_outlined, color: AppColors.textMuted, size: 20),
                     onPressed: () => setState(() => _obscure = !_obscure),
                   ),
                   validator: (v) => (v?.length ?? 0) < 8 ? 'Min. 8 characters' : null,
@@ -140,10 +142,10 @@ class _VendorSignupScreenState extends State<VendorSignupScreen> {
                 // ── Section: Shop Info ─────────────────────────────────────
                 _sectionHeader('Shop Information'),
                 const SizedBox(height: 12),
-                _Field(ctrl: _shopCtrl, label: 'Shop Name', hint: 'Ali Auto Parts', accentColor: _kAccent,
+                _Field(ctrl: _shopCtrl, label: 'Shop Name', hint: 'Ali Auto Parts', accentColor: _accentColor,
                     validator: (v) => (v?.trim().isEmpty ?? true) ? 'Required' : null),
                 const SizedBox(height: 14),
-                _Field(ctrl: _locCtrl, label: 'Shop Location / Area', hint: 'Model Town, Lahore', accentColor: _kAccent,
+                _Field(ctrl: _locCtrl, label: 'Shop Location / Area', hint: 'Model Town, Lahore', accentColor: _accentColor,
                     validator: (v) => (v?.trim().isEmpty ?? true) ? 'Required' : null),
 
                 const SizedBox(height: 36),
@@ -152,17 +154,20 @@ class _VendorSignupScreenState extends State<VendorSignupScreen> {
                 SizedBox(
                   width: double.infinity,
                   height: 54,
-                  child: ElevatedButton(
-                    onPressed: _loading ? null : _signup,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: _kAccent,
-                      foregroundColor: Colors.black,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                      elevation: 0,
+                  child: TappableScale(
+                    onTap: _loading ? null : _signup,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: _accentColor,
+                        borderRadius: BorderRadius.circular(AppSpacing.rLg),
+                        boxShadow: AppShadows.roleGlow(_accentColor),
+                      ),
+                      child: Center(
+                        child: _loading
+                            ? const SizedBox(width: 22, height: 22, child: CircularProgressIndicator(color: Colors.black, strokeWidth: 2.5))
+                            : Text('Create Vendor Account', style: AppTypography.label.copyWith(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black)),
+                      ),
                     ),
-                    child: _loading
-                        ? const SizedBox(width: 22, height: 22, child: CircularProgressIndicator(color: Colors.black, strokeWidth: 2.5))
-                        : Text('Create Vendor Account', style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.bold)),
                   ),
                 ),
 
@@ -171,7 +176,7 @@ class _VendorSignupScreenState extends State<VendorSignupScreen> {
                   child: GestureDetector(
                     onTap: () => Navigator.pop(context),
                     child: Text('Already have an account? Log In',
-                        style: GoogleFonts.inter(color: _kAccent, fontSize: 14, fontWeight: FontWeight.w600)),
+                        style: AppTypography.body.copyWith(color: _accentColor, fontWeight: FontWeight.w600)),
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -185,9 +190,9 @@ class _VendorSignupScreenState extends State<VendorSignupScreen> {
 
   Widget _sectionHeader(String title) => Row(
     children: [
-      Container(width: 3, height: 18, decoration: BoxDecoration(color: _kAccent, borderRadius: BorderRadius.circular(2))),
+      Container(width: 3, height: 18, decoration: BoxDecoration(color: _accentColor, borderRadius: BorderRadius.circular(2))),
       const SizedBox(width: 10),
-      Text(title, style: GoogleFonts.inter(color: Colors.white70, fontSize: 13, fontWeight: FontWeight.w700, letterSpacing: 0.5)),
+      Text(title, style: AppTypography.label.copyWith(color: AppColors.textPrimary, letterSpacing: 0.5)),
     ],
   );
 }
@@ -216,26 +221,26 @@ class _Field extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(label, style: GoogleFonts.inter(color: Colors.white70, fontSize: 13, fontWeight: FontWeight.w600)),
+      Text(label, style: AppTypography.label.copyWith(color: AppColors.textSecondary)),
       const SizedBox(height: 8),
       TextFormField(
         controller: ctrl,
         obscureText: obscureText,
         keyboardType: keyboardType,
         validator: validator,
-        style: GoogleFonts.inter(color: Colors.white, fontSize: 15),
+        style: AppTypography.body.copyWith(color: AppColors.textPrimary),
         decoration: InputDecoration(
           hintText: hint,
-          hintStyle: GoogleFonts.inter(color: Colors.white24),
+          hintStyle: AppTypography.body.copyWith(color: AppColors.textMuted),
           suffixIcon: suffixIcon,
           filled: true,
-          fillColor: _kSurface,
+          fillColor: AppColors.surface,
           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: _kBorder)),
-          enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: _kBorder)),
-          focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: accentColor, width: 1.5)),
-          errorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.redAccent)),
-          focusedErrorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.redAccent)),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.rLg), borderSide: const BorderSide(color: AppColors.border)),
+          enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.rLg), borderSide: const BorderSide(color: AppColors.border)),
+          focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.rLg), borderSide: BorderSide(color: accentColor, width: 1.5)),
+          errorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.rLg), borderSide: const BorderSide(color: AppColors.error)),
+          focusedErrorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.rLg), borderSide: const BorderSide(color: AppColors.error)),
         ),
       ),
     ]);

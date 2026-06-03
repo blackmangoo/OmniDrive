@@ -1,21 +1,19 @@
 import 'dart:async';
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'performance_models.dart';
 import 'performance_run_service.dart';
 import 'sensor_fusion_service.dart';
 import 'obd_wifi_service.dart';
 import 'results_screen.dart';
-
-const _kBg      = Color(0xFF0A0A0F);
-const _kAccent  = Color(0xFF4FC3F7);
-const _kRed     = Color(0xFFEF4444);
-const _kGreen   = Color(0xFF34D399);
-const _kAmber   = Colors.amber;
+import '../core/theme/app_colors.dart';
+import '../../core/motion/motion_tappable.dart';
 
 /// Live dashboard during a performance run.
-/// - Large digital speedometer
+/// - Redesigned speedometer with custom gauge CustomPainter
 /// - Real-time scrolling speed-time graph  
 /// - Live elapsed timer
 /// - Status pill (Armed / Recording / Finished)
@@ -50,22 +48,19 @@ class _LiveTestScreenState extends State<LiveTestScreen> {
   double   _elapsedS     = 0.0;
   RunState _state        = RunState.idle;
 
-  // FIX A3: Track braking arm via its own stream, not _completedMetrics
   bool _brakingArmed     = false;
   bool _brakingStarted   = false;
 
-  // FIX B1: dynamic maxY for chart
   double _chartMaxY = 60.0;
 
   final Set<MetricType> _completedMetrics = {};
   final Map<MetricType, double> _milestoneTimes = {};
 
-  // FIX A1: All 4 subscriptions are now properly tracked and cancelled
   StreamSubscription? _speedSub;
   StreamSubscription? _stateSub;
   StreamSubscription? _milestoneSub;
-  StreamSubscription? _elapsedSub;     // Was never cancelled before — fixed
-  StreamSubscription? _brakingArmSub;  // New: listens to braking arm event
+  StreamSubscription? _elapsedSub;     
+  StreamSubscription? _brakingArmSub;  
 
   @override
   void initState() {
@@ -77,20 +72,18 @@ class _LiveTestScreenState extends State<LiveTestScreen> {
       if (!mounted) return;
       setState(() {
         _currentSpeed = speed;
-        // FIX B1: Grow the Y ceiling dynamically
         if (speed > _chartMaxY * 0.85) {
           _chartMaxY = (speed * 1.25).ceilToDouble().clamp(60, 350);
         }
       });
     });
 
-    // FIX A1: Store elapsed subscription so we can cancel it
+    // Store elapsed subscription so we can cancel it
     _elapsedSub = widget.runService.elapsedStream.listen((timeS) {
       if (!mounted) return;
       setState(() {
         _elapsedS = timeS;
         _chartData.add(FlSpot(timeS, _currentSpeed));
-        // Extend x-axis window as time progresses
         if (timeS > _maxX * 0.85) {
           _maxX += 10.0;
         }
@@ -115,7 +108,7 @@ class _LiveTestScreenState extends State<LiveTestScreen> {
       });
     });
 
-    // FIX A3: Listen to braking ARM (separate from completion)
+    // Listen to braking ARM
     _brakingArmSub = widget.runService.brakingArmStream.listen((armed) {
       if (!mounted) return;
       setState(() => _brakingArmed = armed);
@@ -124,12 +117,11 @@ class _LiveTestScreenState extends State<LiveTestScreen> {
 
   @override
   void dispose() {
-    // FIX A1: Cancel all subscriptions properly
     _speedSub?.cancel();
     _stateSub?.cancel();
     _milestoneSub?.cancel();
-    _elapsedSub?.cancel();       // Was missing before
-    _brakingArmSub?.cancel();    // New
+    _elapsedSub?.cancel();       
+    _brakingArmSub?.cancel();    
     super.dispose();
   }
 
@@ -154,7 +146,6 @@ class _LiveTestScreenState extends State<LiveTestScreen> {
     }
 
     if (!mounted) return;
-    // FIX B7: Navigate back to the garage root, not just pop to pre-test
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
@@ -167,7 +158,6 @@ class _LiveTestScreenState extends State<LiveTestScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // FIX A3: Show BRAKE NOW button based on arm stream, not completedMetrics
     final bool isBrakingTest = widget.runService.selectedMetrics.contains(MetricType.hundredToZero);
     final bool showBrakeButton = isBrakingTest
         && _brakingArmed
@@ -178,7 +168,7 @@ class _LiveTestScreenState extends State<LiveTestScreen> {
     return PopScope(
       canPop: false, // Prevent accidental back
       child: Scaffold(
-        backgroundColor: _kBg,
+        backgroundColor: AppColors.background,
         body: SafeArea(
           child: Column(
             children: [
@@ -200,9 +190,12 @@ class _LiveTestScreenState extends State<LiveTestScreen> {
                           fontFamily: 'monospace',
                         ),
                       ),
-                    IconButton(
-                      icon: const Icon(Icons.close_rounded, color: Colors.white38),
-                      onPressed: _cancelTest,
+                    TappableScale(
+                      onTap: _cancelTest,
+                      child: const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Icon(Icons.close_rounded, color: Colors.white38),
+                      ),
                     ),
                   ],
                 ),
@@ -210,26 +203,18 @@ class _LiveTestScreenState extends State<LiveTestScreen> {
 
               const Spacer(flex: 1),
 
-              // ── Speedometer ───────────────────────────────────────────
-              Text(
-                _currentSpeed.toStringAsFixed(0),
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontFamily: 'monospace',
-                  fontSize: 110,
-                  fontWeight: FontWeight.bold,
-                  height: 1.0,
-                  letterSpacing: -4,
-                ),
+              // ── Custom Speedometer Gauge ────────────────────────────────
+              SpeedometerGauge(
+                speed: _currentSpeed,
+                maxSpeed: _chartMaxY,
+                runState: _state,
               ),
-              const Text('km/h',
-                style: TextStyle(color: _kAccent, fontSize: 22, fontWeight: FontWeight.w600)),
 
               const Spacer(flex: 1),
 
               // ── BRAKE NOW button ──────────────────────────────────────
               if (showBrakeButton) ...[
-                GestureDetector(
+                TappableScale(
                   onTap: () {
                     if (_currentSpeed >= 98) {
                       widget.runService.triggerBrakeStart();
@@ -243,16 +228,16 @@ class _LiveTestScreenState extends State<LiveTestScreen> {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: _currentSpeed >= 98
-                          ? _kRed.withValues(alpha: 0.2)
+                          ? AppColors.error.withValues(alpha: 0.2)
                           : Colors.white.withValues(alpha: 0.04),
                       border: Border.all(
-                        color: _currentSpeed >= 98 ? _kRed : Colors.white24,
+                        color: _currentSpeed >= 98 ? AppColors.error : Colors.white24,
                         width: 3,
                       ),
                       boxShadow: [
                         if (_currentSpeed >= 98)
                           BoxShadow(
-                            color: _kRed.withValues(alpha: 0.35),
+                            color: AppColors.error.withValues(alpha: 0.35),
                             blurRadius: 50,
                             spreadRadius: 8,
                           ),
@@ -263,7 +248,7 @@ class _LiveTestScreenState extends State<LiveTestScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(Icons.block_rounded,
-                          color: _currentSpeed >= 98 ? _kRed : Colors.white38,
+                          color: _currentSpeed >= 98 ? AppColors.error : Colors.white38,
                           size: 36),
                         const SizedBox(height: 8),
                         Text(
@@ -292,7 +277,7 @@ class _LiveTestScreenState extends State<LiveTestScreen> {
                       minX: 0,
                       maxX: _maxX,
                       minY: 0,
-                      maxY: _chartMaxY,  // FIX B1: dynamic Y ceiling
+                      maxY: _chartMaxY,  
                       clipData: const FlClipData.all(),
                       gridData: FlGridData(
                         show: true,
@@ -334,7 +319,7 @@ class _LiveTestScreenState extends State<LiveTestScreen> {
                               ? [const FlSpot(0, 0)]
                               : _chartData,
                           isCurved: true,
-                          color: _kAccent,
+                          color: AppColors.cyan,
                           barWidth: 2.5,
                           isStrokeCapRound: true,
                           dotData: const FlDotData(show: false),
@@ -342,7 +327,7 @@ class _LiveTestScreenState extends State<LiveTestScreen> {
                             show: true,
                             gradient: LinearGradient(
                               colors: [
-                                _kAccent.withValues(alpha: 0.25),
+                                AppColors.cyan.withValues(alpha: 0.25),
                                 Colors.transparent,
                               ],
                               begin: Alignment.topCenter,
@@ -352,7 +337,7 @@ class _LiveTestScreenState extends State<LiveTestScreen> {
                         ),
                       ],
                     ),
-                    duration: const Duration(milliseconds: 0), // No chart animation for live
+                    duration: const Duration(milliseconds: 0), 
                   ),
                 ),
 
@@ -370,7 +355,7 @@ class _LiveTestScreenState extends State<LiveTestScreen> {
                         children: [
                           Icon(
                             done ? Icons.check_circle_rounded : Icons.radio_button_unchecked_rounded,
-                            color: done ? _kGreen : Colors.white24,
+                            color: done ? AppColors.success : Colors.white24,
                             size: 18,
                           ),
                           const SizedBox(width: 10),
@@ -388,7 +373,7 @@ class _LiveTestScreenState extends State<LiveTestScreen> {
                             Text(
                               '${_resultTime(m)!.toStringAsFixed(2)}s',
                               style: const TextStyle(
-                                color: _kGreen,
+                                color: AppColors.success,
                                 fontSize: 15,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -425,15 +410,15 @@ class _LiveTestScreenState extends State<LiveTestScreen> {
       case RunState.idle:
       case RunState.armed:
         text = 'ARMED';
-        color = _kAmber;
+        color = AppColors.warning;
         break;
       case RunState.running:
         text = 'RECORDING';
-        color = _kRed;
+        color = AppColors.error;
         break;
       case RunState.done:
         text = 'FINISHED';
-        color = _kGreen;
+        color = AppColors.success;
         break;
     }
 
@@ -462,5 +447,158 @@ class _LiveTestScreenState extends State<LiveTestScreen> {
         ],
       ),
     );
+  }
+}
+
+// ── Redesigned high-tech custom speedometer gauge ──────────────────────────
+class SpeedometerGauge extends StatelessWidget {
+  final double speed;
+  final double maxSpeed;
+  final RunState runState;
+
+  const SpeedometerGauge({
+    super.key,
+    required this.speed,
+    required this.maxSpeed,
+    required this.runState,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    // Pulse and intensify glow near milestones (60 and 100)
+    final isPulsing = (speed >= 50 && speed <= 65) || (speed >= 90 && speed <= 105);
+    
+    return TweenAnimationBuilder<double>(
+      tween: Tween<double>(begin: speed, end: speed),
+      duration: const Duration(milliseconds: 100),
+      builder: (context, animSpeed, child) {
+        return CustomPaint(
+          size: const Size(220, 220),
+          painter: _GaugePainter(
+            speed: animSpeed,
+            maxSpeed: maxSpeed,
+            isPulsing: isPulsing && !MediaQuery.of(context).disableAnimations,
+          ),
+          child: child,
+        );
+      },
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              speed.toStringAsFixed(0),
+              style: GoogleFonts.inter(
+                color: Colors.white,
+                fontSize: 64,
+                fontWeight: FontWeight.w900,
+                height: 1.0,
+                letterSpacing: -2,
+              ),
+            ),
+            Text(
+              'km/h',
+              style: GoogleFonts.inter(
+                color: AppColors.cyan,
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 1.5,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _GaugePainter extends CustomPainter {
+  final double speed;
+  final double maxSpeed;
+  final bool isPulsing;
+
+  _GaugePainter({
+    required this.speed,
+    required this.maxSpeed,
+    required this.isPulsing,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = size.width / 2 - 10;
+    
+    // Draw background track
+    final trackPaint = Paint()
+      ..color = Colors.white.withValues(alpha: 0.05)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 8
+      ..strokeCap = StrokeCap.round;
+      
+    const startAngle = 130 * math.pi / 180;
+    const sweepAngle = 280 * math.pi / 180;
+    canvas.drawArc(Rect.fromCircle(center: center, radius: radius), startAngle, sweepAngle, false, trackPaint);
+    
+    // Draw Speed Arc
+    final speedRatio = (speed / maxSpeed).clamp(0.0, 1.0);
+    final activeSweep = speedRatio * sweepAngle;
+    
+    final speedPaint = Paint()
+      ..shader = const LinearGradient(
+        colors: [AppColors.cyan, AppColors.warning],
+      ).createShader(Rect.fromCircle(center: center, radius: radius))
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 10
+      ..strokeCap = StrokeCap.round;
+      
+    if (activeSweep > 0) {
+      canvas.drawArc(Rect.fromCircle(center: center, radius: radius), startAngle, activeSweep, false, speedPaint);
+    }
+    
+    // Draw Tick Marks
+    final tickPaint = Paint()
+      ..color = Colors.white.withValues(alpha: 0.15)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.5;
+      
+    const totalTicks = 20;
+    for (int i = 0; i <= totalTicks; i++) {
+      final angle = startAngle + (i / totalTicks) * sweepAngle;
+      final isMajor = i % 5 == 0;
+      final tickLength = isMajor ? 12.0 : 6.0;
+      
+      final tickInnerRadius = radius - 12 - (isMajor ? 4 : 0);
+      final tickOuterRadius = tickInnerRadius - tickLength;
+      
+      final startOffset = Offset(
+        center.dx + tickInnerRadius * math.cos(angle),
+        center.dy + tickInnerRadius * math.sin(angle),
+      );
+      final endOffset = Offset(
+        center.dx + tickOuterRadius * math.cos(angle),
+        center.dy + tickOuterRadius * math.sin(angle),
+      );
+      
+      tickPaint.color = isMajor 
+          ? Colors.white.withValues(alpha: 0.3) 
+          : Colors.white.withValues(alpha: 0.12);
+      canvas.drawLine(startOffset, endOffset, tickPaint);
+    }
+
+    // Outer glow pulse
+    if (isPulsing) {
+      final glowPaint = Paint()
+        ..color = AppColors.cyan.withValues(alpha: 0.15)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 4
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8);
+        
+      canvas.drawCircle(center, radius + 8, glowPaint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _GaugePainter oldDelegate) {
+    return oldDelegate.speed != speed || oldDelegate.isPulsing != isPulsing;
   }
 }

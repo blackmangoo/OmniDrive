@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'performance_models.dart';
-
-const _kBg      = Color(0xFF0A0A0F);
-const _kSurface = Color(0xFF1C1C2E);
-const _kAccent  = Color(0xFF4FC3F7);
-const _kGreen   = Color(0xFF34D399);
-const _kAmber   = Color(0xFFFBBF24);
+import '../core/theme/app_colors.dart';
+import '../../core/motion/motion_stagger.dart';
+import '../../core/motion/motion_tappable.dart';
+import '../../core/motion/motion_counter.dart';
 
 class ResultsScreen extends StatelessWidget {
   final PerformanceRunData result;
@@ -22,7 +21,7 @@ class ResultsScreen extends StatelessWidget {
     final double chartMaxY = (maxSpeed * 1.15).clamp(60.0, 350.0);
 
     return Scaffold(
-      backgroundColor: _kBg,
+      backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -30,13 +29,20 @@ class ResultsScreen extends StatelessWidget {
         title: const Text('Test Results',
           style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
         actions: [
-          TextButton.icon(
-            onPressed: () {
-              // FIX B7: Pop all the way back to the Garage (root of performance stack)
+          TappableScale(
+            onTap: () {
               Navigator.of(context).popUntil((route) => route.isFirst);
             },
-            icon: const Icon(Icons.home_rounded, color: _kAccent, size: 18),
-            label: const Text('Garage', style: TextStyle(color: _kAccent, fontWeight: FontWeight.bold)),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Row(
+                children: [
+                  const Icon(Icons.home_rounded, color: AppColors.cyan, size: 18),
+                  const SizedBox(width: 6),
+                  Text('Garage', style: GoogleFonts.inter(color: AppColors.cyan, fontWeight: FontWeight.bold)),
+                ],
+              ),
+            ),
           ),
         ],
       ),
@@ -49,11 +55,9 @@ class ResultsScreen extends StatelessWidget {
               // ── Summary header ────────────────────────────────────────
               Row(
                 children: [
-                  Icon(
-                    result.sensorMode == 'obd2'
-                        ? Icons.settings_input_component_rounded
-                        : Icons.satellite_alt_rounded,
-                    color: _kAccent, size: 16,
+                  const Icon(
+                    Icons.satellite_alt_rounded,
+                    color: AppColors.cyan, size: 16,
                   ),
                   const SizedBox(width: 6),
                   Text(
@@ -64,19 +68,19 @@ class ResultsScreen extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
-                      color: _kAmber.withValues(alpha: 0.12),
+                      color: AppColors.warning.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: _kAmber.withValues(alpha: 0.3)),
+                      border: Border.all(color: AppColors.warning.withValues(alpha: 0.3)),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.speed_rounded, color: _kAmber, size: 14),
+                        const Icon(Icons.speed_rounded, color: AppColors.warning, size: 14),
                         const SizedBox(width: 4),
                         Text(
                           'Top: ${result.topSpeedKmh.toStringAsFixed(1)} km/h',
                           style: const TextStyle(
-                              color: _kAmber, fontSize: 12, fontWeight: FontWeight.bold),
+                              color: AppColors.warning, fontSize: 12, fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
@@ -101,10 +105,13 @@ class ResultsScreen extends StatelessWidget {
                   final metric = result.metrics[i];
                   final time   = result.resultTimesS[metric];
 
-                  return _ResultCard(
-                    metric: metric,
-                    timeS: time,
-                    trapSpeed: metric == MetricType.quarterMile ? result.resultSpeeds[metric] : null,
+                  return StaggeredEntrance(
+                    index: i,
+                    child: _ResultCard(
+                      metric: metric,
+                      timeS: time,
+                      trapSpeed: metric == MetricType.quarterMile ? result.resultSpeeds[metric] : null,
+                    ),
                   );
                 },
               ),
@@ -129,7 +136,7 @@ class ResultsScreen extends StatelessWidget {
                   height: 150,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: _kSurface,
+                    color: AppColors.surface,
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: const Text('No telemetry data recorded.',
@@ -139,7 +146,7 @@ class ResultsScreen extends StatelessWidget {
                 Container(
                   height: 240,
                   decoration: BoxDecoration(
-                    color: _kSurface,
+                    color: AppColors.surface,
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
                   ),
@@ -157,14 +164,14 @@ class ResultsScreen extends StatelessWidget {
                               .map((p) => FlSpot(p.timeS, p.speedKmh))
                               .toList(),
                           isCurved: true,
-                          color: _kAccent,
+                          color: AppColors.cyan,
                           barWidth: 2.5,
                           dotData: const FlDotData(show: false),
                           belowBarData: BarAreaData(
                             show: true,
                             gradient: LinearGradient(
                               colors: [
-                                _kAccent.withValues(alpha: 0.25),
+                                AppColors.cyan.withValues(alpha: 0.25),
                                 Colors.transparent,
                               ],
                               begin: Alignment.topCenter,
@@ -241,11 +248,11 @@ class _ResultCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: _kSurface,
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: timeS != null
-              ? _kGreen.withValues(alpha: 0.3)
+              ? AppColors.success.withValues(alpha: 0.3)
               : Colors.white.withValues(alpha: 0.07),
         ),
       ),
@@ -256,24 +263,22 @@ class _ResultCard extends StatelessWidget {
             style: const TextStyle(color: Colors.white54, fontSize: 13, fontWeight: FontWeight.w600)),
           const Spacer(),
           if (timeS != null)
-            RichText(
-              text: TextSpan(
-                children: [
-                  TextSpan(
-                    text: timeS!.toStringAsFixed(2),
-                    style: const TextStyle(
-                      color: _kGreen,
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                      height: 1,
-                    ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.baseline,
+              textBaseline: TextBaseline.alphabetic,
+              children: [
+                MotionCounter(
+                  value: timeS!,
+                  decimals: 2,
+                  style: const TextStyle(
+                    color: AppColors.success,
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                    height: 1,
                   ),
-                  const TextSpan(
-                    text: ' s',
-                    style: TextStyle(color: Colors.white38, fontSize: 14),
-                  ),
-                ],
-              ),
+                ),
+                const Text(' s', style: TextStyle(color: Colors.white38, fontSize: 14)),
+              ],
             )
           else
             const Text('--', style: TextStyle(color: Colors.white24, fontSize: 30)),
@@ -283,7 +288,7 @@ class _ResultCard extends StatelessWidget {
               padding: const EdgeInsets.only(top: 4),
               child: Text(
                 '@ ${trapSpeed!.toStringAsFixed(1)} km/h',
-                style: const TextStyle(color: _kAccent, fontSize: 11),
+                style: const TextStyle(color: AppColors.cyan, fontSize: 11),
               ),
             ),
         ],

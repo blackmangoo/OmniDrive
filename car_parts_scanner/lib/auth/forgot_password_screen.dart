@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
-const _kBg      = Color(0xFF0A0A0F);
-const _kSurface = Color(0xFF12121A);
-const _kAccent  = Color(0xFF4FC3F7);
-const _kBorder  = Color(0xFF1E1E2E);
+import '../core/theme/app_colors.dart';
+import '../core/theme/app_spacing.dart';
+import '../core/theme/app_typography.dart';
+import '../core/theme/app_shadows.dart';
+import '../core/motion/motion_tappable.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -45,8 +44,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
   void _showError(String msg) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(msg, style: GoogleFonts.inter()),
-      backgroundColor: Colors.redAccent,
+      content: Text(msg, style: AppTypography.body.copyWith(color: Colors.white)),
+      backgroundColor: AppColors.error,
       behavior: SnackBarBehavior.floating,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
     ));
@@ -62,51 +61,47 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
     return Scaffold(
-      backgroundColor: _kBg,
+      backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: _kBg,
+        backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.textPrimary, size: 20),
           onPressed: () => Navigator.pop(context),
         ),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 20),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.md),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Reset Password', style: GoogleFonts.inter(
-                fontSize: 32, fontWeight: FontWeight.w800, color: Colors.white, letterSpacing: -1)),
+              Text('Reset Password', style: AppTypography.display.copyWith(fontSize: 32)),
               const SizedBox(height: 12),
               Text(
                 _emailSent 
                   ? 'Check your email for a password reset link. Once you click the link, you will be redirected back here.'
                   : 'Enter your email address and we will send you a link to reset your password.', 
-                style: GoogleFonts.inter(color: Colors.white54, fontSize: 15, height: 1.5)
+                style: AppTypography.body.copyWith(color: AppColors.textSecondary)
               ),
               const SizedBox(height: 40),
               
               if (!_emailSent) ...[
-                Text('Email', style: GoogleFonts.inter(color: Colors.white70, fontSize: 13, fontWeight: FontWeight.w600)),
+                Text('Email', style: AppTypography.label.copyWith(color: AppColors.textSecondary)),
                 const SizedBox(height: 8),
-                Container(
-                  decoration: BoxDecoration(
-                    color: _kSurface,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: _kBorder),
-                  ),
-                  child: TextField(
-                    controller: _emailCtrl,
-                    style: GoogleFonts.inter(color: Colors.white, fontSize: 15),
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: InputDecoration(
-                      hintText: 'you@example.com',
-                      hintStyle: GoogleFonts.inter(color: Colors.white24, fontSize: 15),
-                      border: InputBorder.none,
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                    ),
+                TextFormField(
+                  controller: _emailCtrl,
+                  style: AppTypography.body.copyWith(color: AppColors.textPrimary),
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: InputDecoration(
+                    hintText: 'you@example.com',
+                    hintStyle: AppTypography.body.copyWith(color: AppColors.textMuted),
+                    filled: true,
+                    fillColor: AppColors.surface,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.rLg), borderSide: const BorderSide(color: AppColors.border)),
+                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.rLg), borderSide: const BorderSide(color: AppColors.border)),
+                    focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.rLg), borderSide: const BorderSide(color: AppColors.cyan, width: 1.5)),
                   ),
                 ),
                 const SizedBox(height: 36),
@@ -114,17 +109,20 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 SizedBox(
                   width: double.infinity,
                   height: 54,
-                  child: ElevatedButton(
-                    onPressed: _loading ? null : _resetPassword,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: _kAccent,
-                      foregroundColor: Colors.black,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                      elevation: 0,
+                  child: TappableScale(
+                    onTap: _loading ? null : _resetPassword,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: AppColors.cyan,
+                        borderRadius: BorderRadius.circular(AppSpacing.rLg),
+                        boxShadow: AppShadows.cyanGlow,
+                      ),
+                      child: Center(
+                        child: _loading
+                            ? const SizedBox(width: 22, height: 22, child: CircularProgressIndicator(color: Colors.black, strokeWidth: 2.5))
+                            : Text('Send Reset Link', style: AppTypography.label.copyWith(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black)),
+                      ),
                     ),
-                    child: _loading
-                        ? const SizedBox(width: 22, height: 22, child: CircularProgressIndicator(color: Colors.black, strokeWidth: 2.5))
-                        : Text('Send Reset Link', style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.bold)),
                   ),
                 ),
               ],

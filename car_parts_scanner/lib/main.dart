@@ -6,7 +6,13 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'auth/auth_gate.dart';
+import 'core/theme/app_theme.dart';
+import 'core/theme/app_colors.dart';
+import 'core/theme/app_typography.dart';
+import 'core/theme/app_gradients.dart';
+import 'core/theme/app_shadows.dart';
 
 List<CameraDescription> cameras = [];
 
@@ -114,25 +120,49 @@ class OmniDriveSplashScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
+      theme: AppTheme.darkTheme,
       home: Scaffold(
-        backgroundColor: Color(0xFF0A0A0F),
         body: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              CircularProgressIndicator(color: Color(0xFF4FC3F7)),
-              SizedBox(height: 24),
+              Container(
+                width: 96,
+                height: 96,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: AppGradients.primary,
+                  boxShadow: AppShadows.cyanGlow,
+                ),
+                child: const Icon(
+                  Icons.directions_car_rounded,
+                  color: Colors.black,
+                  size: 48,
+                ),
+              )
+                  .animate(onPlay: (controller) => controller.repeat(reverse: true))
+                  .scale(
+                    begin: const Offset(0.92, 0.92),
+                    end: const Offset(1.08, 1.08),
+                    duration: 1200.ms,
+                    curve: Curves.easeInOutCubic,
+                  ),
+              const SizedBox(height: 32),
               Text(
                 'Starting Engine...',
-                style: TextStyle(
-                  color: Colors.white54,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  letterSpacing: 1.2,
+                style: AppTypography.title.copyWith(
+                  color: AppColors.textSecondary,
+                  letterSpacing: 1.5,
                 ),
-              ),
+              )
+                  .animate()
+                  .fadeIn(duration: 800.ms, curve: Curves.easeOutCubic)
+                  .shimmer(
+                    duration: 2000.ms,
+                    color: AppColors.cyan.withValues(alpha: 0.25),
+                  ),
             ],
           ),
         ),
@@ -152,15 +182,7 @@ class OmniDriveApp extends StatelessWidget {
       scaffoldMessengerKey: scaffoldMessengerKey,
       debugShowCheckedModeBanner: false,
       title: 'OmniDrive AI',
-      theme: ThemeData.dark().copyWith(
-        scaffoldBackgroundColor: const Color(0xFF0A0A0F),
-        navigationBarTheme: const NavigationBarThemeData(
-          backgroundColor: Color(0xFF0E0E18),
-          labelTextStyle: WidgetStatePropertyAll(
-            TextStyle(fontSize: 11, fontWeight: FontWeight.w500),
-          ),
-        ),
-      ),
+      theme: AppTheme.darkTheme,
       home: const AuthGate(),
     );
   }

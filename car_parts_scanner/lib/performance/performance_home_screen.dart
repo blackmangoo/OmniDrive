@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'metric_selection_screen.dart';
 import 'pre_test_screen.dart';
 import 'run_history_screen.dart';
 import 'results_screen.dart';
 import 'performance_models.dart';
-
-const _kBg = Color(0xFF0A0A0F);
-const _kSurface = Color(0xFF12121A);
-const _kAccent = Color(0xFF4FC3F7);
-const _kBorder = Color(0xFF1E1E2E);
+import '../core/theme/app_colors.dart';
+import '../../core/motion/motion_stagger.dart';
+import '../../core/motion/motion_tappable.dart';
+import '../../core/motion/motion_counter.dart';
 
 /// Entry screen for the Performance Metrics module.
 /// Shows the user's cars, lets them start a new test, and shows recent runs.
@@ -91,7 +91,6 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
 
   Future<void> _signOut() async {
     await Supabase.instance.client.auth.signOut();
-    // AuthGate stream handles redirect
   }
 
   Future<void> _startNewTest() async {
@@ -127,13 +126,13 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
     final user = Supabase.instance.client.auth.currentUser;
 
     return Scaffold(
-      backgroundColor: _kBg,
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
             // ── App Bar ──────────────────────────────────────────────────────
             SliverAppBar(
-              backgroundColor: _kBg,
+              backgroundColor: AppColors.background,
               pinned: true,
               title: const Text('Performance',
                   style: TextStyle(
@@ -141,11 +140,12 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
                       fontWeight: FontWeight.bold,
                       fontSize: 22)),
               actions: [
-                IconButton(
-                  onPressed: _signOut,
-                  icon: const Icon(Icons.logout_rounded,
-                      color: Colors.white54, size: 22),
-                  tooltip: 'Sign Out',
+                TappableScale(
+                  onTap: _signOut,
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    child: Icon(Icons.logout_rounded, color: Colors.white54, size: 22),
+                  ),
                 ),
               ],
             ),
@@ -174,12 +174,16 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
                             color: Colors.white,
                             fontSize: 18,
                             fontWeight: FontWeight.w700)),
-                    TextButton.icon(
-                      onPressed: () => _showAddCarDialog(context),
-                      icon: const Icon(Icons.add, color: _kAccent, size: 18),
-                      label: const Text('Add Car',
-                          style: TextStyle(color: _kAccent, fontSize: 13)),
-                      style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                    TappableScale(
+                      onTap: () => _showAddCarDialog(context),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.add, color: AppColors.cyan, size: 18),
+                          const SizedBox(width: 4),
+                          const Text('Add Car',
+                              style: TextStyle(color: AppColors.cyan, fontSize: 13, fontWeight: FontWeight.bold)),
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -192,7 +196,7 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
                     child: Center(
                         child: Padding(
                     padding: EdgeInsets.all(32),
-                    child: CircularProgressIndicator(color: _kAccent),
+                    child: CircularProgressIndicator(color: AppColors.cyan),
                   )))
                 : _cars.isEmpty
                     ? SliverToBoxAdapter(
@@ -200,14 +204,17 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
                             onAdd: () => _showAddCarDialog(context)))
                     : SliverList(
                         delegate: SliverChildBuilderDelegate(
-                          (ctx, i) => GestureDetector(
-                            onTap: () {
-                              setState(() => _selectedCarIndex = i);
-                              _loadRecentRuns();
-                            },
-                            child: _CarCard(
-                              car: _cars[i],
-                              isSelected: i == _selectedCarIndex,
+                          (ctx, i) => StaggeredEntrance(
+                            index: i,
+                            child: GestureDetector(
+                              onTap: () {
+                                setState(() => _selectedCarIndex = i);
+                                _loadRecentRuns();
+                              },
+                              child: _CarCard(
+                                car: _cars[i],
+                                isSelected: i == _selectedCarIndex,
+                              ),
                             ),
                           ),
                           childCount: _cars.length,
@@ -227,8 +234,8 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
                             fontSize: 18,
                             fontWeight: FontWeight.w700)),
                     if (_cars.isNotEmpty && _recentRuns.isNotEmpty)
-                      TextButton(
-                        onPressed: () {
+                      TappableScale(
+                        onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -237,7 +244,7 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
                           ).then((_) => _loadRecentRuns());
                         },
                         child: const Text('See All',
-                            style: TextStyle(color: _kAccent, fontSize: 13, fontWeight: FontWeight.bold)),
+                            style: TextStyle(color: AppColors.cyan, fontSize: 13, fontWeight: FontWeight.bold)),
                       ),
                   ],
                 ),
@@ -249,7 +256,7 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
                     child: Center(
                         child: Padding(
                       padding: EdgeInsets.all(24),
-                      child: CircularProgressIndicator(color: _kAccent),
+                      child: CircularProgressIndicator(color: AppColors.cyan),
                     )))
                 : _recentRuns.isEmpty
                     ? SliverToBoxAdapter(
@@ -257,9 +264,9 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
                           margin: const EdgeInsets.symmetric(horizontal: 20),
                           padding: const EdgeInsets.all(24),
                           decoration: BoxDecoration(
-                            color: _kSurface,
+                            color: AppColors.surface,
                             borderRadius: BorderRadius.circular(16),
-                            border: Border.all(color: _kBorder),
+                            border: Border.all(color: AppColors.border),
                           ),
                           child: const Column(
                             children: [
@@ -282,80 +289,95 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
                             final dateStr = '${d.day}/${d.month}/${d.year}';
 
                             String topMetric = 'Run';
-                            String topValue  = '--';
+                            double topValue  = 0.0;
+                            String topValueStr = '--';
 
                             if (run['result_0_to_100'] != null) {
                               topMetric = '0-100';
-                              topValue  = '${(run['result_0_to_100'] as num).toStringAsFixed(2)}s';
+                              topValue  = (run['result_0_to_100'] as num).toDouble();
+                              topValueStr = '${topValue.toStringAsFixed(2)}s';
                             } else if (run['result_0_to_60'] != null) {
                               topMetric = '0-60';
-                              topValue  = '${(run['result_0_to_60'] as num).toStringAsFixed(2)}s';
+                              topValue  = (run['result_0_to_60'] as num).toDouble();
+                              topValueStr = '${topValue.toStringAsFixed(2)}s';
                             } else if (run['result_quarter_mi'] != null) {
                               topMetric = '¼ Mile';
-                              topValue  = '${(run['result_quarter_mi'] as num).toStringAsFixed(2)}s';
+                              topValue  = (run['result_quarter_mi'] as num).toDouble();
+                              topValueStr = '${topValue.toStringAsFixed(2)}s';
                             } else if (run['result_100_to_0'] != null) {
                               topMetric = '100-0';
-                              topValue  = '${(run['result_100_to_0'] as num).toStringAsFixed(2)}s';
+                              topValue  = (run['result_100_to_0'] as num).toDouble();
+                              topValueStr = '${topValue.toStringAsFixed(2)}s';
                             }
 
                             final isObd = run['sensor_mode'] == 'obd2';
 
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                              child: GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => ResultsScreen(result: PerformanceRunData.fromJson(run)),
+                            return StaggeredEntrance(
+                              index: i,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                                child: TappableScale(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => ResultsScreen(result: PerformanceRunData.fromJson(run)),
+                                      ),
+                                    );
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.surface,
+                                      borderRadius: BorderRadius.circular(14),
+                                      border: Border.all(color: AppColors.border),
                                     ),
-                                  );
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                                  decoration: BoxDecoration(
-                                    color: _kSurface,
-                                    borderRadius: BorderRadius.circular(14),
-                                    border: Border.all(color: _kBorder),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Container(
-                                        padding: const EdgeInsets.all(12),
-                                        decoration: BoxDecoration(
-                                          color: _kAccent.withOpacity(0.1),
-                                          shape: BoxShape.circle,
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          padding: const EdgeInsets.all(12),
+                                          decoration: BoxDecoration(
+                                            color: AppColors.cyan.withValues(alpha: 0.1),
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: const Icon(Icons.speed_rounded, color: AppColors.cyan, size: 22),
                                         ),
-                                        child: const Icon(Icons.speed_rounded, color: _kAccent, size: 22),
-                                      ),
-                                      const SizedBox(width: 14),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(topMetric,
-                                                style: const TextStyle(
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16,
-                                                )),
-                                            const SizedBox(height: 3),
-                                            Text(
-                                              '$dateStr  •  ${isObd ? 'OBD-II' : 'GPS'}',
-                                              style: const TextStyle(color: Colors.white38, fontSize: 12),
+                                        const SizedBox(width: 14),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(topMetric,
+                                                  style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 16,
+                                                  )),
+                                              const SizedBox(height: 3),
+                                              Text(
+                                                '$dateStr  •  ${isObd ? 'OBD-II' : 'GPS'}',
+                                                style: const TextStyle(color: Colors.white38, fontSize: 12),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        if (topValueStr != '--')
+                                          MotionCounter(
+                                            value: topValue,
+                                            decimals: 2,
+                                            suffix: 's',
+                                            style: const TextStyle(
+                                              color: AppColors.cyan,
+                                              fontWeight: FontWeight.w900,
+                                              fontSize: 18,
                                             ),
-                                          ],
-                                        ),
-                                      ),
-                                      Text(topValue,
-                                          style: const TextStyle(
-                                            color: _kAccent,
-                                            fontWeight: FontWeight.w900,
-                                            fontSize: 18,
-                                          )),
-                                      const SizedBox(width: 6),
-                                      const Icon(Icons.chevron_right_rounded, color: Colors.white24),
-                                    ],
+                                          )
+                                        else
+                                          Text('--', style: const TextStyle(color: AppColors.cyan, fontWeight: FontWeight.w900, fontSize: 18)),
+                                        const SizedBox(width: 6),
+                                        const Icon(Icons.chevron_right_rounded, color: Colors.white24),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
@@ -372,13 +394,34 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
 
       // ── New Test FAB ──────────────────────────────────────────────────────
       floatingActionButton: _cars.isNotEmpty
-          ? FloatingActionButton.extended(
-              onPressed: _startNewTest,
-              backgroundColor: _kAccent,
-              foregroundColor: Colors.black,
-              icon: const Icon(Icons.play_arrow_rounded),
-              label: const Text('New Test',
-                  style: TextStyle(fontWeight: FontWeight.bold)),
+          ? TappableScale(
+              onTap: _startNewTest,
+              child: Container(
+                height: 48,
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                decoration: BoxDecoration(
+                  color: AppColors.cyan,
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.cyan.withValues(alpha: 0.3),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    )
+                  ],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.play_arrow_rounded, color: Colors.black),
+                    const SizedBox(width: 8),
+                    Text('New Test', style: GoogleFonts.inter(
+                      fontWeight: FontWeight.w700,
+                      color: Colors.black,
+                    )),
+                  ],
+                ),
+              ),
             )
           : null,
     );
@@ -395,7 +438,7 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
     await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: _kSurface,
+      backgroundColor: AppColors.surface,
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
       builder: (ctx) => Padding(
@@ -435,19 +478,19 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
               // Fuel type dropdown
               DropdownButtonFormField<String>(
                 initialValue: fuel,
-                dropdownColor: _kSurface,
+                dropdownColor: AppColors.surface,
                 style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
                   labelText: 'Fuel Type',
                   labelStyle: const TextStyle(color: Colors.white38),
                   filled: true,
-                  fillColor: const Color(0xFF1A1A28),
+                  fillColor: const Color(0xFF16161F),
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: _kBorder)),
+                      borderSide: const BorderSide(color: AppColors.border)),
                   enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: _kBorder)),
+                      borderSide: const BorderSide(color: AppColors.border)),
                 ),
                 items: ['petrol', 'diesel', 'hybrid', 'electric']
                     .map((f) => DropdownMenuItem(
@@ -465,8 +508,8 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
               SizedBox(
                 width: double.infinity,
                 height: 48,
-                child: ElevatedButton(
-                  onPressed: () async {
+                child: TappableScale(
+                  onTap: () async {
                     if (makeCtrl.text.isEmpty || modelCtrl.text.isEmpty) return;
                     final userId =
                         Supabase.instance.client.auth.currentUser!.id;
@@ -484,14 +527,15 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
                     if (ctx.mounted) Navigator.pop(ctx);
                     _loadCars();
                   },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: _kAccent,
-                    foregroundColor: Colors.black,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
+                  child: Container(
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: AppColors.cyan,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Text('Save Car',
+                        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black)),
                   ),
-                  child: const Text('Save Car',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
                 ),
               ),
             ],
@@ -515,20 +559,20 @@ class _CarCard extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: _kSurface,
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: isSelected ? _kAccent : _kBorder, width: isSelected ? 2 : 1),
+        border: Border.all(color: isSelected ? AppColors.cyan : AppColors.border, width: isSelected ? 2 : 1),
       ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: _kAccent.withOpacity(0.1),
+              color: AppColors.cyan.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: const Icon(Icons.directions_car_rounded,
-                color: _kAccent, size: 28),
+                color: AppColors.cyan, size: 28),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -557,7 +601,7 @@ class _CarCard extends StatelessWidget {
                     padding: const EdgeInsets.only(top: 4),
                     child: Text(car['mods'],
                         style: const TextStyle(
-                            color: _kAccent, fontSize: 11),
+                            color: AppColors.cyan, fontSize: 11),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis),
                   ),
@@ -580,21 +624,21 @@ class _EmptyCarPrompt extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(20),
-      child: GestureDetector(
+      child: TappableScale(
         onTap: onAdd,
         child: Container(
           padding: const EdgeInsets.all(28),
           decoration: BoxDecoration(
-            color: _kSurface,
+            color: AppColors.surface,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-                color: _kAccent.withOpacity(0.25),
+                color: AppColors.cyan.withValues(alpha: 0.25),
                 style: BorderStyle.solid),
           ),
           child: const Column(
             children: [
               Icon(Icons.add_circle_outline_rounded,
-                  color: _kAccent, size: 44),
+                  color: AppColors.cyan, size: 44),
               SizedBox(height: 12),
               Text('Add your first car',
                   style: TextStyle(
@@ -637,18 +681,18 @@ class _DialogField extends StatelessWidget {
         hintText: hint,
         hintStyle: const TextStyle(color: Colors.white24, fontSize: 13),
         filled: true,
-        fillColor: const Color(0xFF1A1A28),
+        fillColor: const Color(0xFF16161F),
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: _kBorder)),
+            borderSide: const BorderSide(color: AppColors.border)),
         enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: _kBorder)),
+            borderSide: const BorderSide(color: AppColors.border)),
         focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: _kAccent, width: 1.5)),
+            borderSide: const BorderSide(color: AppColors.cyan, width: 1.5)),
       ),
     );
   }

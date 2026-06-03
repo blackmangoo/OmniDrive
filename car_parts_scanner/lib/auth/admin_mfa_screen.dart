@@ -3,7 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'auth_gate.dart';
-import '../marketplace/marketplace_constants.dart';
+import '../core/theme/app_colors.dart';
+import '../core/theme/app_spacing.dart';
+import '../core/theme/app_typography.dart';
+import '../core/motion/motion_tappable.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class AdminMfaScreen extends StatefulWidget {
   const AdminMfaScreen({super.key});
@@ -155,7 +159,7 @@ class _AdminMfaScreenState extends State<AdminMfaScreen> {
           message,
           style: GoogleFonts.inter(color: Colors.white, fontWeight: FontWeight.w500),
         ),
-        backgroundColor: isError ? kError : kSuccess,
+        backgroundColor: isError ? AppColors.error : AppColors.success,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         duration: const Duration(seconds: 3),
@@ -172,13 +176,22 @@ class _AdminMfaScreenState extends State<AdminMfaScreen> {
         _signOut();
       },
       child: Scaffold(
-        backgroundColor: kBg,
+        backgroundColor: AppColors.background,
         body: Container(
-          decoration: const BoxDecoration(gradient: kBgGradient),
+          decoration: BoxDecoration(
+            gradient: RadialGradient(
+              center: const Alignment(0.0, -0.3),
+              radius: 1.2,
+              colors: [
+                AppColors.admin.withValues(alpha: 0.12),
+                Colors.transparent,
+              ],
+            ),
+          ),
           child: SafeArea(
             child: Center(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.md),
                 child: AnimatedSwitcher(
                   duration: const Duration(milliseconds: 400),
                   child: _buildStateContent(),
@@ -214,12 +227,12 @@ class _AdminMfaScreenState extends State<AdminMfaScreen> {
         const SizedBox(
           width: 50,
           height: 50,
-          child: CircularProgressIndicator(color: kAdmin, strokeWidth: 3.5),
+          child: CircularProgressIndicator(color: AppColors.admin, strokeWidth: 3.5),
         ),
         const SizedBox(height: 24),
         Text(
           message,
-          style: kBody(15, color: kTextSecondary),
+          style: AppTypography.body.copyWith(color: AppColors.textSecondary),
         ),
       ],
     );
@@ -230,36 +243,61 @@ class _AdminMfaScreenState extends State<AdminMfaScreen> {
       key: const ValueKey('error'),
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Icon(Icons.error_outline_rounded, color: kError, size: 64),
+        const Icon(Icons.error_outline_rounded, color: AppColors.error, size: 64),
         const SizedBox(height: 24),
         Text(
           'Authentication Error',
-          style: kHeadline(22, color: Colors.white),
+          style: AppTypography.h2.copyWith(color: AppColors.textPrimary),
         ),
         const SizedBox(height: 12),
         Text(
           _errorMessage ?? 'Something went wrong',
           textAlign: TextAlign.center,
-          style: kBody(14, color: kTextSecondary),
+          style: AppTypography.body.copyWith(color: AppColors.textSecondary),
         ),
         const SizedBox(height: 32),
-        ElevatedButton.icon(
-          onPressed: _initMfa,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: kAdmin,
-            foregroundColor: Colors.white,
+        TappableScale(
+          onTap: _initMfa,
+          child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            decoration: BoxDecoration(
+              color: AppColors.admin,
+              borderRadius: BorderRadius.circular(AppSpacing.rMd),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.admin.withValues(alpha: 0.3),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                )
+              ],
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.refresh_rounded, color: Colors.white),
+                const SizedBox(width: 8),
+                Text(
+                  'Retry Setup',
+                  style: AppTypography.title.copyWith(fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
           ),
-          icon: const Icon(Icons.refresh_rounded),
-          label: Text('Retry Setup', style: kHeadline(14, color: Colors.white)),
         ),
-        const SizedBox(height: 16),
-        TextButton(
-          onPressed: _submitting ? null : _signOut,
-          child: Text(
-            'Back to Login',
-            style: kBody(14, color: kTextSecondary, fw: FontWeight.w600),
+        const SizedBox(height: 24),
+        TappableScale(
+          onTap: _submitting ? null : _signOut,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              'Back to Login',
+              style: AppTypography.body.copyWith(
+                color: AppColors.textSecondary,
+                fontWeight: FontWeight.w600,
+                decoration: TextDecoration.underline,
+                decorationColor: AppColors.textSecondary,
+              ),
+            ),
           ),
         ),
       ],
@@ -276,16 +314,16 @@ class _AdminMfaScreenState extends State<AdminMfaScreen> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: kAdmin.withValues(alpha: 0.1),
+              color: AppColors.admin.withValues(alpha: 0.1),
               shape: BoxShape.circle,
-              border: Border.all(color: kAdmin.withValues(alpha: 0.3), width: 1.5),
+              border: Border.all(color: AppColors.admin.withValues(alpha: 0.3), width: 1.5),
             ),
-            child: const Icon(Icons.security_rounded, color: kAdmin, size: 40),
+            child: const Icon(Icons.security_rounded, color: AppColors.admin, size: 40),
           ),
           const SizedBox(height: 20),
           Text(
             'Setup Authenticator MFA',
-            style: kHeadline(24, color: Colors.white),
+            style: AppTypography.h1.copyWith(color: AppColors.textPrimary),
           ),
           const SizedBox(height: 8),
           Padding(
@@ -293,7 +331,7 @@ class _AdminMfaScreenState extends State<AdminMfaScreen> {
             child: Text(
               'Scan this QR code with Google Authenticator or copy the Secret Key to set up.',
               textAlign: TextAlign.center,
-              style: kBody(14, color: kTextSecondary),
+              style: AppTypography.body.copyWith(color: AppColors.textSecondary),
             ),
           ),
           const SizedBox(height: 28),
@@ -325,11 +363,11 @@ class _AdminMfaScreenState extends State<AdminMfaScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.broken_image_rounded, color: kError, size: 40),
+                        const Icon(Icons.broken_image_rounded, color: AppColors.error, size: 40),
                         const SizedBox(height: 8),
                         Text(
                           'Failed to load QR code',
-                          style: kBody(12, color: Colors.black54),
+                          style: AppTypography.body.copyWith(color: Colors.black54, fontSize: 12),
                         ),
                       ],
                     ),
@@ -346,7 +384,7 @@ class _AdminMfaScreenState extends State<AdminMfaScreen> {
                             ? loadingProgress.cumulativeBytesLoaded /
                                 loadingProgress.expectedTotalBytes!
                             : null,
-                        color: kAdmin,
+                        color: AppColors.admin,
                       ),
                     ),
                   );
@@ -358,9 +396,9 @@ class _AdminMfaScreenState extends State<AdminMfaScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
-                color: kSurface,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: kBorder2),
+                color: AppColors.surface,
+                borderRadius: BorderRadius.circular(AppSpacing.rMd),
+                border: Border.all(color: AppColors.border),
               ),
               child: Row(
                 children: [
@@ -370,13 +408,13 @@ class _AdminMfaScreenState extends State<AdminMfaScreen> {
                       children: [
                         Text(
                           'Secret Key',
-                          style: kLabel(11, color: kTextMuted),
+                          style: AppTypography.caption.copyWith(color: AppColors.textMuted),
                         ),
                         const SizedBox(height: 4),
                         Text(
                           _secretKey!,
                           style: GoogleFonts.robotoMono(
-                            color: kTextSecondary,
+                            color: AppColors.textSecondary,
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
                           ),
@@ -391,7 +429,7 @@ class _AdminMfaScreenState extends State<AdminMfaScreen> {
                       Clipboard.setData(ClipboardData(text: _secretKey!));
                       _showSnackBar('Secret key copied to clipboard!', isError: false);
                     },
-                    icon: const Icon(Icons.copy_rounded, color: kAdmin),
+                    icon: const Icon(Icons.copy_rounded, color: AppColors.admin),
                     tooltip: 'Copy Secret Key',
                   ),
                 ],
@@ -402,7 +440,7 @@ class _AdminMfaScreenState extends State<AdminMfaScreen> {
             alignment: Alignment.centerLeft,
             child: Text(
               'Enter 6-digit code',
-              style: kLabel(13, color: kTextSecondary),
+              style: AppTypography.body.copyWith(fontSize: 13, color: AppColors.textSecondary),
             ),
           ),
           const SizedBox(height: 8),
@@ -410,7 +448,7 @@ class _AdminMfaScreenState extends State<AdminMfaScreen> {
           const SizedBox(height: 28),
           _buildActionButtons(),
         ],
-      ),
+      ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.05, end: 0, duration: 400.ms),
     );
   }
 
@@ -424,16 +462,16 @@ class _AdminMfaScreenState extends State<AdminMfaScreen> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: kAdmin.withValues(alpha: 0.1),
+              color: AppColors.admin.withValues(alpha: 0.1),
               shape: BoxShape.circle,
-              border: Border.all(color: kAdmin.withValues(alpha: 0.3), width: 1.5),
+              border: Border.all(color: AppColors.admin.withValues(alpha: 0.3), width: 1.5),
             ),
-            child: const Icon(Icons.lock_person_rounded, color: kAdmin, size: 40),
+            child: const Icon(Icons.lock_person_rounded, color: AppColors.admin, size: 40),
           ),
           const SizedBox(height: 20),
           Text(
             'Admin MFA Verification',
-            style: kHeadline(24, color: Colors.white),
+            style: AppTypography.h1.copyWith(color: AppColors.textPrimary),
           ),
           const SizedBox(height: 8),
           Padding(
@@ -441,7 +479,7 @@ class _AdminMfaScreenState extends State<AdminMfaScreen> {
             child: Text(
               'Enter the 6-digit verification code from your Google Authenticator app to log in.',
               textAlign: TextAlign.center,
-              style: kBody(14, color: kTextSecondary),
+              style: AppTypography.body.copyWith(color: AppColors.textSecondary),
             ),
           ),
           const SizedBox(height: 36),
@@ -449,7 +487,7 @@ class _AdminMfaScreenState extends State<AdminMfaScreen> {
             alignment: Alignment.centerLeft,
             child: Text(
               'Enter 6-digit code',
-              style: kLabel(13, color: kTextSecondary),
+              style: AppTypography.body.copyWith(fontSize: 13, color: AppColors.textSecondary),
             ),
           ),
           const SizedBox(height: 8),
@@ -457,7 +495,7 @@ class _AdminMfaScreenState extends State<AdminMfaScreen> {
           const SizedBox(height: 36),
           _buildActionButtons(),
         ],
-      ),
+      ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.05, end: 0, duration: 400.ms),
     );
   }
 
@@ -474,29 +512,29 @@ class _AdminMfaScreenState extends State<AdminMfaScreen> {
         fontSize: 24,
         letterSpacing: 8,
         fontWeight: FontWeight.bold,
-        color: kTextPrimary,
+        color: AppColors.textPrimary,
       ),
       decoration: InputDecoration(
         hintText: '000000',
         hintStyle: GoogleFonts.robotoMono(
           fontSize: 24,
           letterSpacing: 8,
-          color: kTextMuted.withValues(alpha: 0.3),
+          color: AppColors.textMuted.withValues(alpha: 0.3),
         ),
         filled: true,
-        fillColor: kSurface,
+        fillColor: AppColors.surface,
         contentPadding: const EdgeInsets.symmetric(vertical: 16),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: kBorder2),
+          borderRadius: BorderRadius.circular(AppSpacing.rMd),
+          borderSide: const BorderSide(color: AppColors.border),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: kBorder2),
+          borderRadius: BorderRadius.circular(AppSpacing.rMd),
+          borderSide: const BorderSide(color: AppColors.border),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: kAdmin, width: 1.5),
+          borderRadius: BorderRadius.circular(AppSpacing.rMd),
+          borderSide: const BorderSide(color: AppColors.admin, width: 1.5),
         ),
       ),
       validator: (v) {
@@ -513,34 +551,48 @@ class _AdminMfaScreenState extends State<AdminMfaScreen> {
         SizedBox(
           width: double.infinity,
           height: 52,
-          child: ElevatedButton(
-            onPressed: _submitting ? null : _verifyCode,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: kAdmin,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(14),
-              ),
-              elevation: 0,
-            ),
-            child: _submitting
-                ? const SizedBox(
-                    width: 22,
-                    height: 22,
-                    child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2.5),
+          child: TappableScale(
+            onTap: _submitting ? null : _verifyCode,
+            child: Container(
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: AppColors.admin,
+                borderRadius: BorderRadius.circular(AppSpacing.rMd),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.admin.withValues(alpha: 0.3),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
                   )
-                : Text(
-                    'Verify Code',
-                    style: kHeadline(16, color: Colors.white, fw: FontWeight.bold),
-                  ),
+                ],
+              ),
+              child: _submitting
+                  ? const SizedBox(
+                      width: 22,
+                      height: 22,
+                      child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2.5),
+                    )
+                  : Text(
+                      'Verify Code',
+                      style: AppTypography.title.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
+                    ),
+            ),
           ),
         ),
         const SizedBox(height: 16),
-        TextButton(
-          onPressed: _submitting ? null : _signOut,
-          child: Text(
-            'Back to Login',
-            style: kBody(14, color: kTextSecondary, fw: FontWeight.w600),
+        TappableScale(
+          onTap: _submitting ? null : _signOut,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+            child: Text(
+              'Back to Login',
+              style: AppTypography.body.copyWith(
+                color: AppColors.textSecondary,
+                fontWeight: FontWeight.w600,
+                decoration: TextDecoration.underline,
+                decorationColor: AppColors.textSecondary,
+              ),
+            ),
           ),
         ),
       ],
@@ -582,6 +634,37 @@ class _SuccessCheckAnimationState extends State<_SuccessCheckAnimation>
 
   @override
   Widget build(BuildContext context) {
+    if (MediaQuery.of(context).disableAnimations) {
+      return Column(
+        key: const ValueKey('success'),
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(24),
+            decoration: const BoxDecoration(
+              color: AppColors.success,
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.check_rounded,
+              color: Colors.white,
+              size: 64,
+            ),
+          ),
+          const SizedBox(height: 28),
+          Text(
+            'MFA Verified',
+            style: AppTypography.h2.copyWith(color: Colors.white),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Redirecting to Admin dashboard...',
+            style: AppTypography.body.copyWith(color: AppColors.textSecondary),
+          ),
+        ],
+      );
+    }
+
     return Column(
       key: const ValueKey('success'),
       mainAxisAlignment: MainAxisAlignment.center,
@@ -591,11 +674,11 @@ class _SuccessCheckAnimationState extends State<_SuccessCheckAnimation>
           child: Container(
             padding: const EdgeInsets.all(24),
             decoration: const BoxDecoration(
-              color: kSuccess,
+              color: AppColors.success,
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: kSuccess,
+                  color: AppColors.success,
                   blurRadius: 20,
                   spreadRadius: 2,
                 )
@@ -611,12 +694,12 @@ class _SuccessCheckAnimationState extends State<_SuccessCheckAnimation>
         const SizedBox(height: 28),
         Text(
           'MFA Verified',
-          style: kHeadline(22, color: Colors.white),
+          style: AppTypography.h2.copyWith(color: Colors.white),
         ),
         const SizedBox(height: 8),
         Text(
           'Redirecting to Admin dashboard...',
-          style: kBody(14, color: kTextSecondary),
+          style: AppTypography.body.copyWith(color: AppColors.textSecondary),
         ),
       ],
     );

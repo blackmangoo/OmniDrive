@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import '../marketplace_constants.dart';
 import '../marketplace_models.dart';
 import '../marketplace_service.dart';
+import '../../core/motion/motion_stagger.dart';
+import '../../core/motion/motion_tappable.dart';
+import '../../core/motion/motion_counter.dart';
 
 class AdminOrdersScreen extends StatefulWidget {
   const AdminOrdersScreen({super.key});
@@ -23,10 +27,16 @@ class _AdminOrdersScreenState extends State<AdminOrdersScreen> {
   }
 
   Future<void> _load() async {
-    setState(() => _loading = true);
+    if (mounted) setState(() => _loading = true);
     final orders = await MarketplaceService.fetchAllOrders();
     final riders = await MarketplaceService.fetchRiders();
-    if (mounted) setState(() { _orders = orders; _riders = riders; _loading = false; });
+    if (mounted) {
+      setState(() {
+        _orders = orders;
+        _riders = riders;
+        _loading = false;
+      });
+    }
   }
 
   /// Show a dialog to assign a rider to the order
@@ -44,11 +54,17 @@ class _AdminOrdersScreenState extends State<AdminOrdersScreen> {
         title: Text('Assign Rider', style: GoogleFonts.inter(color: Colors.white, fontWeight: FontWeight.bold)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
-          children: _riders.map((r) => ListTile(
-            leading: const Icon(Icons.delivery_dining_rounded, color: kRider),
-            title: Text(r.fullName, style: GoogleFonts.inter(color: Colors.white)),
-            subtitle: Text(r.phone ?? r.email, style: GoogleFonts.inter(color: Colors.white38, fontSize: 12)),
+          children: _riders.map((r) => TappableScale(
             onTap: () => Navigator.pop(context, r),
+            child: Container(
+              margin: const EdgeInsets.only(bottom: 8),
+              decoration: kCardDeco(radius: 12),
+              child: ListTile(
+                leading: const Icon(Icons.delivery_dining_rounded, color: kRider),
+                title: Text(r.fullName, style: GoogleFonts.inter(color: Colors.white)),
+                subtitle: Text(r.phone ?? r.email, style: GoogleFonts.inter(color: Colors.white38, fontSize: 12)),
+              ),
+            ),
           )).toList(),
         ),
         actions: [
@@ -74,32 +90,71 @@ class _AdminOrdersScreenState extends State<AdminOrdersScreen> {
       backgroundColor: kBg,
       appBar: AppBar(
         backgroundColor: kBg, automaticallyImplyLeading: false,
-        title: Text('All Orders (${_orders.length})',
-            style: GoogleFonts.inter(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+        title: Row(
+          children: [
+            Text('All Orders', style: GoogleFonts.inter(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+            const SizedBox(width: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: BoxDecoration(color: kAdmin.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(12)),
+              child: MotionCounter(
+                value: _orders.length,
+                style: GoogleFonts.inter(color: kAdmin, fontSize: 13, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
+        ),
         actions: [
-          IconButton(icon: const Icon(Icons.refresh_rounded, color: kError), onPressed: _load),
+          TappableScale(
+            onTap: _load,
+            child: const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: Icon(Icons.refresh_rounded, color: kAdmin),
+            ),
+          ),
         ],
       ),
       body: _loading
-          ? const Center(child: CircularProgressIndicator(color: kError))
+          ? const Center(child: CircularProgressIndicator(color: kAdmin))
           : _orders.isEmpty
-              ? Center(child: Text('No orders', style: GoogleFonts.inter(color: Colors.white38)))
+              ? _empty()
               : RefreshIndicator(
-                  onRefresh: _load, color: kError, backgroundColor: kSurface,
+                  onRefresh: _load, color: kAdmin, backgroundColor: kSurface,
                   child: ListView.separated(
                     padding: const EdgeInsets.all(16),
                     itemCount: _orders.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 10),
-                    itemBuilder: (_, i) => _AdminOrderTile(
-                      order: _orders[i],
-                      onAssignRider: _orders[i].status == 'ready' && _orders[i].riderId == null
-                          ? () => _assignRider(_orders[i])
-                          : null,
+                    separatorBuilder: (context, i) => const SizedBox(height: 10),
+                    itemBuilder: (context, i) => StaggeredEntrance(
+                      index: i,
+                      child: _AdminOrderTile(
+                        order: _orders[i],
+                        onAssignRider: _orders[i].status == 'ready' && _orders[i].riderId == null
+                            ? () => _assignRider(_orders[i])
+                            : null,
+                      ),
                     ),
                   ),
                 ),
     );
   }
+
+  Widget _empty() => Center(
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Image.asset(
+          'assets/nano_banana_empty.png',
+          width: 120,
+          height: 120,
+        )
+        .animate()
+        .scaleXY(begin: 0.8, end: 1.0, duration: 600.ms, curve: Curves.easeOutBack)
+        .fadeIn(duration: 500.ms),
+        const SizedBox(height: 16),
+        Text('No orders yet', style: GoogleFonts.inter(color: Colors.white38, fontSize: 16)),
+      ],
+    ),
+  );
 }
 
 class _AdminOrderTile extends StatelessWidget {
@@ -132,8 +187,11 @@ class _AdminOrderTile extends StatelessWidget {
         ]),
         const SizedBox(height: 8),
         Row(children: [
-          Text('Rs ${order.totalAmount.toStringAsFixed(0)}',
-              style: GoogleFonts.inter(color: kAccent, fontSize: 13, fontWeight: FontWeight.bold)),
+          MotionCounter(
+            value: order.totalAmount,
+            prefix: 'Rs ',
+            style: GoogleFonts.inter(color: kCyan, fontSize: 13, fontWeight: FontWeight.bold),
+          ),
           const SizedBox(width: 12),
           Text(date, style: GoogleFonts.inter(color: Colors.white24, fontSize: 11)),
         ]),
@@ -146,13 +204,19 @@ class _AdminOrderTile extends StatelessWidget {
           const SizedBox(height: 10),
           SizedBox(
             width: double.infinity, height: 38,
-            child: ElevatedButton.icon(
-              onPressed: onAssignRider,
-              icon: const Icon(Icons.delivery_dining_rounded, size: 16),
-              label: Text('Assign Rider', style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.bold)),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: kRider, foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)), elevation: 0,
+            child: TappableScale(
+              onTap: onAssignRider,
+              child: Container(
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: kRider,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                  const Icon(Icons.delivery_dining_rounded, size: 16, color: Colors.white),
+                  const SizedBox(width: 6),
+                  Text('Assign Rider', style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white)),
+                ]),
               ),
             ),
           ),

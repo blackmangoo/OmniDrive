@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import '../marketplace_constants.dart';
 import '../marketplace_models.dart';
 import '../marketplace_service.dart';
+import '../../core/motion/motion_stagger.dart';
+import '../../core/motion/motion_tappable.dart';
+import '../../core/motion/motion_counter.dart';
 
 class RiderOrdersScreen extends StatefulWidget {
   const RiderOrdersScreen({super.key});
@@ -22,9 +26,14 @@ class _RiderOrdersScreenState extends State<RiderOrdersScreen> {
   }
 
   Future<void> _load() async {
-    setState(() => _loading = true);
+    if (mounted) setState(() => _loading = true);
     final orders = await MarketplaceService.fetchRiderOrders();
-    if (mounted) setState(() { _orders = orders; _loading = false; });
+    if (mounted) {
+      setState(() {
+        _orders = orders;
+        _loading = false;
+      });
+    }
   }
 
   Future<void> _markDelivered(Order order) async {
@@ -46,7 +55,13 @@ class _RiderOrdersScreenState extends State<RiderOrdersScreen> {
         automaticallyImplyLeading: false,
         title: Text('My Deliveries', style: GoogleFonts.inter(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
         actions: [
-          IconButton(icon: const Icon(Icons.refresh_rounded, color: kRider), onPressed: _load),
+          TappableScale(
+            onTap: _load,
+            child: const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: Icon(Icons.refresh_rounded, color: kRider),
+            ),
+          ),
         ],
       ),
       body: _loading
@@ -59,12 +74,15 @@ class _RiderOrdersScreenState extends State<RiderOrdersScreen> {
                   child: ListView.separated(
                     padding: const EdgeInsets.all(16),
                     itemCount: _orders.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 12),
-                    itemBuilder: (_, i) => _RiderOrderCard(
-                      order: _orders[i],
-                      onMarkDelivered: _orders[i].status == 'dispatched'
-                          ? () => _markDelivered(_orders[i])
-                          : null,
+                    separatorBuilder: (context, i) => const SizedBox(height: 12),
+                    itemBuilder: (context, i) => StaggeredEntrance(
+                      index: i,
+                      child: _RiderOrderCard(
+                        order: _orders[i],
+                        onMarkDelivered: _orders[i].status == 'dispatched'
+                            ? () => _markDelivered(_orders[i])
+                            : null,
+                      ),
                     ),
                   ),
                 ),
@@ -72,13 +90,23 @@ class _RiderOrdersScreenState extends State<RiderOrdersScreen> {
   }
 
   Widget _empty() => Center(
-    child: Column(mainAxisSize: MainAxisSize.min, children: [
-      Icon(Icons.delivery_dining_outlined, size: 80, color: Colors.white12),
-      const SizedBox(height: 16),
-      Text('No deliveries assigned yet', style: GoogleFonts.inter(color: Colors.white38, fontSize: 16)),
-      const SizedBox(height: 8),
-      Text('Check back later', style: GoogleFonts.inter(color: Colors.white24, fontSize: 13)),
-    ]),
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Image.asset(
+          'assets/nano_banana_empty.png',
+          width: 120,
+          height: 120,
+        )
+        .animate()
+        .scaleXY(begin: 0.8, end: 1.0, duration: 600.ms, curve: Curves.easeOutBack)
+        .fadeIn(duration: 500.ms),
+        const SizedBox(height: 16),
+        Text('No deliveries assigned yet', style: GoogleFonts.inter(color: Colors.white38, fontSize: 16)),
+        const SizedBox(height: 8),
+        Text('Check back later', style: GoogleFonts.inter(color: Colors.white24, fontSize: 13)),
+      ],
+    ),
   );
 }
 
@@ -106,7 +134,7 @@ class _RiderOrderCardState extends State<_RiderOrderCard> {
       child: Column(
         children: [
           // ── Header ──────────────────────────────────────────────────────
-          GestureDetector(
+          TappableScale(
             onTap: () => setState(() => _expanded = !_expanded),
             child: Padding(
               padding: const EdgeInsets.all(16),
@@ -174,15 +202,21 @@ class _RiderOrderCardState extends State<_RiderOrderCard> {
                     child: Row(children: [
                       Expanded(child: Text('${item.productName} × ${item.quantity}',
                           style: GoogleFonts.inter(color: Colors.white60, fontSize: 12))),
-                      Text('Rs ${item.total.toStringAsFixed(0)}',
-                          style: GoogleFonts.inter(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600)),
+                      MotionCounter(
+                        value: item.total,
+                        prefix: 'Rs ',
+                        style: GoogleFonts.inter(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
+                      ),
                     ]),
                   )),
                   const SizedBox(height: 4),
                   Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                     Text('Total', style: GoogleFonts.inter(color: Colors.white38, fontSize: 13)),
-                    Text('Rs ${o.totalAmount.toStringAsFixed(0)}',
-                        style: GoogleFonts.inter(color: kRider, fontSize: 14, fontWeight: FontWeight.bold)),
+                    MotionCounter(
+                      value: o.totalAmount,
+                      prefix: 'Rs ',
+                      style: GoogleFonts.inter(color: kRider, fontSize: 14, fontWeight: FontWeight.bold),
+                    ),
                   ]),
                 ]),
 
@@ -191,13 +225,22 @@ class _RiderOrderCardState extends State<_RiderOrderCard> {
                   const SizedBox(height: 16),
                   SizedBox(
                     width: double.infinity, height: 48,
-                    child: ElevatedButton.icon(
-                      onPressed: widget.onMarkDelivered,
-                      icon: const Icon(Icons.check_circle_rounded, size: 20),
-                      label: Text('Mark as Delivered', style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.bold)),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: kSuccess, foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)), elevation: 0,
+                    child: TappableScale(
+                      onTap: widget.onMarkDelivered,
+                      child: Container(
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: kSuccess,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.check_circle_rounded, size: 20, color: Colors.white),
+                            const SizedBox(width: 8),
+                            Text('Mark as Delivered', style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white)),
+                          ],
+                        ),
                       ),
                     ),
                   ),

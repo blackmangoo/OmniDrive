@@ -3,10 +3,9 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'part_detection_service.dart';
-
-// Shares the same color palette as the home screen
-const _kAccent = Color(0xFF4FC3F7);
-const _kBg = Color(0xFF0A0A0F);
+import 'core/theme/app_colors.dart';
+import 'core/theme/app_spacing.dart';
+import 'core/theme/app_typography.dart';
 
 class CameraPreviewScreen extends StatefulWidget {
   final List<CameraDescription> cameras;
@@ -69,8 +68,10 @@ class _CameraPreviewScreenState extends State<CameraPreviewScreen>
     if (!_isCameraInitialized || _isCapturing) return;
 
     HapticFeedback.heavyImpact();
-    await _captureAnim.forward();
-    await _captureAnim.reverse();
+    if (!MediaQuery.of(context).disableAnimations) {
+      await _captureAnim.forward();
+      await _captureAnim.reverse();
+    }
 
     setState(() => _isCapturing = true);
 
@@ -92,13 +93,13 @@ class _CameraPreviewScreenState extends State<CameraPreviewScreen>
   Widget build(BuildContext context) {
     if (!_isCameraInitialized) {
       return const Scaffold(
-        backgroundColor: _kBg,
+        backgroundColor: AppColors.background,
         body: Center(
           child: Column(mainAxisSize: MainAxisSize.min, children: [
-            CircularProgressIndicator(color: _kAccent, strokeWidth: 2),
+            CircularProgressIndicator(color: AppColors.cyan, strokeWidth: 2),
             SizedBox(height: 16),
             Text('Starting camera…',
-                style: TextStyle(color: _kAccent, fontSize: 13)),
+                style: TextStyle(color: AppColors.cyan, fontSize: 13)),
           ]),
         ),
       );
@@ -116,7 +117,7 @@ class _CameraPreviewScreenState extends State<CameraPreviewScreen>
           Container(
             decoration: BoxDecoration(
               gradient: RadialGradient(
-                colors: [Colors.transparent, Colors.black.withOpacity(0.55)],
+                colors: [Colors.transparent, Colors.black.withValues(alpha: 0.55)],
                 radius: 1.0,
               ),
             ),
@@ -129,11 +130,11 @@ class _CameraPreviewScreenState extends State<CameraPreviewScreen>
                 // Top bar
                 Padding(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 16, vertical: 12),
+                      horizontal: AppSpacing.md, vertical: AppSpacing.sm),
                   child: Row(children: [
                     // Back button
                     Material(
-                      color: Colors.black38,
+                      color: Colors.black.withValues(alpha: 0.38),
                       borderRadius: BorderRadius.circular(50),
                       child: InkWell(
                         borderRadius: BorderRadius.circular(50),
@@ -151,15 +152,15 @@ class _CameraPreviewScreenState extends State<CameraPreviewScreen>
                       padding: const EdgeInsets.symmetric(
                           horizontal: 14, vertical: 6),
                       decoration: BoxDecoration(
-                        color: Colors.black45,
+                        color: Colors.black.withValues(alpha: 0.45),
                         borderRadius: BorderRadius.circular(30),
                         border: Border.all(
-                            color: _kAccent.withOpacity(0.5)),
+                            color: AppColors.cyan.withValues(alpha: 0.5)),
                       ),
-                      child: const Text(
+                      child: Text(
                         'SCAN MODE',
-                        style: TextStyle(
-                            color: _kAccent,
+                        style: AppTypography.label.copyWith(
+                            color: AppColors.cyan,
                             letterSpacing: 2,
                             fontSize: 12,
                             fontWeight: FontWeight.bold),
@@ -178,14 +179,14 @@ class _CameraPreviewScreenState extends State<CameraPreviewScreen>
                 // Framing tips — shown while not capturing
                 if (!_isCapturing)
                   Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 32),
+                    margin: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 12),
+                        horizontal: AppSpacing.md, vertical: AppSpacing.md),
                     decoration: BoxDecoration(
-                      color: Colors.black54,
-                      borderRadius: BorderRadius.circular(14),
+                      color: Colors.black.withValues(alpha: 0.54),
+                      borderRadius: BorderRadius.circular(AppSpacing.rMd),
                       border: Border.all(
-                          color: _kAccent.withOpacity(0.25)),
+                          color: AppColors.cyan.withValues(alpha: 0.25)),
                     ),
                     child: const Column(
                       mainAxisSize: MainAxisSize.min,
@@ -214,13 +215,13 @@ class _CameraPreviewScreenState extends State<CameraPreviewScreen>
                 Padding(
                   padding: const EdgeInsets.only(bottom: 36),
                   child: _isCapturing
-                      ? const Column(mainAxisSize: MainAxisSize.min, children: [
-                          CircularProgressIndicator(
-                              color: _kAccent, strokeWidth: 2.5),
-                          SizedBox(height: 12),
+                      ? Column(mainAxisSize: MainAxisSize.min, children: [
+                          const CircularProgressIndicator(
+                              color: AppColors.cyan, strokeWidth: 2.5),
+                          const SizedBox(height: 12),
                           Text('ANALYSING…',
-                              style: TextStyle(
-                                  color: _kAccent,
+                              style: AppTypography.label.copyWith(
+                                  color: AppColors.cyan,
                                   letterSpacing: 2,
                                   fontSize: 12,
                                   fontWeight: FontWeight.w600)),
@@ -235,11 +236,11 @@ class _CameraPreviewScreenState extends State<CameraPreviewScreen>
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 border: Border.all(
-                                    color: _kAccent, width: 3.5),
-                                color: Colors.black26,
+                                    color: AppColors.cyan, width: 3.5),
+                                color: Colors.black.withValues(alpha: 0.26),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: _kAccent.withOpacity(0.35),
+                                    color: AppColors.cyan.withValues(alpha: 0.35),
                                     blurRadius: 20,
                                     spreadRadius: 4,
                                   ),
@@ -251,7 +252,7 @@ class _CameraPreviewScreenState extends State<CameraPreviewScreen>
                                   height: 58,
                                   decoration: const BoxDecoration(
                                     shape: BoxShape.circle,
-                                    color: _kAccent,
+                                    color: AppColors.cyan,
                                   ),
                                   child: const Icon(
                                       Icons.camera_alt_rounded,
@@ -283,11 +284,11 @@ class _TipRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(icon, color: _kAccent, size: 16),
+        Icon(icon, color: AppColors.cyan, size: 16),
         const SizedBox(width: 10),
         Expanded(
           child: Text(text,
-              style: const TextStyle(color: Colors.white70, fontSize: 12)),
+              style: AppTypography.caption.copyWith(color: AppColors.textSecondary, fontSize: 12)),
         ),
       ],
     );
@@ -313,10 +314,17 @@ class _ScanReticleState extends State<_ScanReticle>
   void initState() {
     super.initState();
     _ctrl = AnimationController(
-        vsync: this, duration: const Duration(seconds: 1))
-      ..repeat(reverse: true);
+        vsync: this, duration: const Duration(seconds: 1));
     _fade = Tween<double>(begin: 0.4, end: 1.0)
         .animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeInOut));
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && !MediaQuery.of(context).disableAnimations) {
+        _ctrl.repeat(reverse: true);
+      } else {
+        _ctrl.value = 1.0;
+      }
+    });
   }
 
   @override
@@ -327,6 +335,18 @@ class _ScanReticleState extends State<_ScanReticle>
 
   @override
   Widget build(BuildContext context) {
+    if (MediaQuery.of(context).disableAnimations) {
+      return SizedBox(
+        width: 240,
+        height: 240,
+        child: CustomPaint(
+          painter: _ReticlePainter(
+            color: widget.scanning ? Colors.white : AppColors.cyan,
+          ),
+        ),
+      );
+    }
+
     return AnimatedBuilder(
       animation: _fade,
       builder: (_, _) => Opacity(
@@ -336,7 +356,7 @@ class _ScanReticleState extends State<_ScanReticle>
           height: 240,
           child: CustomPaint(
             painter: _ReticlePainter(
-              color: widget.scanning ? Colors.white : _kAccent,
+              color: widget.scanning ? Colors.white : AppColors.cyan,
             ),
           ),
         ),

@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../marketplace_constants.dart';
 import '../marketplace_models.dart';
 import '../marketplace_service.dart';
+import '../../core/motion/motion_tappable.dart';
 
 class RiderProfileScreen extends StatefulWidget {
   const RiderProfileScreen({super.key});
@@ -22,9 +23,14 @@ class _RiderProfileScreenState extends State<RiderProfileScreen> {
   }
 
   Future<void> _load() async {
-    setState(() => _loading = true);
+    if (mounted) setState(() => _loading = true);
     final user = await MarketplaceService.fetchCurrentUser();
-    if (mounted) setState(() { _user = user; _loading = false; });
+    if (mounted) {
+      setState(() {
+        _user = user;
+        _loading = false;
+      });
+    }
   }
 
   @override
@@ -78,7 +84,7 @@ class _RiderProfileScreenState extends State<RiderProfileScreen> {
                 const SizedBox(height: 32),
 
                 // ── Logout ─────────────────────────────────────────────────
-                GestureDetector(
+                TappableScale(
                   onTap: () async => await Supabase.instance.client.auth.signOut(),
                   child: Container(
                     padding: const EdgeInsets.all(16),
@@ -107,11 +113,13 @@ class _RiderProfileScreenState extends State<RiderProfileScreen> {
         child: Row(children: [
           Icon(icon, color: kRider, size: 22),
           const SizedBox(width: 14),
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(label, style: GoogleFonts.inter(color: Colors.white38, fontSize: 11)),
-            const SizedBox(height: 2),
-            Text(value, style: GoogleFonts.inter(color: Colors.white, fontSize: 14)),
-          ]),
+          Expanded(
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(label, style: GoogleFonts.inter(color: Colors.white38, fontSize: 11)),
+              const SizedBox(height: 2),
+              Text(value, style: GoogleFonts.inter(color: Colors.white, fontSize: 14), overflow: TextOverflow.ellipsis, maxLines: 3),
+            ]),
+          ),
         ]),
       );
 }

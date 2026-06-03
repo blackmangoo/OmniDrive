@@ -1,32 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../core/theme/app_colors.dart';
+import '../core/theme/app_gradients.dart';
 
 // ── Color Tokens ──────────────────────────────────────────────────────────────
-const Color kBg      = Color(0xFF090910);
-const Color kSurface = Color(0xFF12121C);
-const Color kCard    = Color(0xFF1A1A28);
-const Color kBorder  = Color(0xFF2A2A3D);
-const Color kBorder2 = Color(0xFF1E1E2E);
+const Color kBg      = AppColors.background;
+const Color kSurface = AppColors.surface;
+const Color kCard    = AppColors.card;
+const Color kBorder  = AppColors.border;
+const Color kBorder2 = AppColors.border;
 
 // Role accents
-const Color kCyan    = Color(0xFF4FC3F7);   // Customer / General
-const Color kVendor  = Color(0xFFF59E0B);   // Vendor (Amber)
-const Color kRider   = Color(0xFFA78BFA);   // Rider (Purple)
-const Color kAdmin   = Color(0xFFEF4444);   // Admin (Red)
+const Color kCyan    = AppColors.cyan;
+const Color kVendor  = AppColors.vendor;
+const Color kRider   = AppColors.rider;
+const Color kAdmin   = AppColors.admin;
 
 // Legacy alias (used by pre-refactor screens)
 const Color kAccent  = kCyan;
 
 // Status colours
-const Color kSuccess = Color(0xFF10B981);
-const Color kError   = Color(0xFFEF4444);
-const Color kWarning = Color(0xFFF59E0B);
-const Color kInfo    = Color(0xFF4FC3F7);
+const Color kSuccess = AppColors.success;
+const Color kError   = AppColors.error;
+const Color kWarning = AppColors.warning;
+const Color kInfo    = AppColors.info;
 
 // Text shades
-const Color kTextPrimary   = Color(0xFFFFFFFF);
-const Color kTextSecondary = Color(0xFFB0B0C8);
-const Color kTextMuted     = Color(0xFF6B6B8A);
+const Color kTextPrimary   = AppColors.textPrimary;
+const Color kTextSecondary = AppColors.textSecondary;
+const Color kTextMuted     = AppColors.textMuted;
 
 // ── Typography ────────────────────────────────────────────────────────────────
 TextStyle kHeadline(double size, {Color color = kTextPrimary, FontWeight fw = FontWeight.bold}) =>
@@ -39,23 +41,11 @@ TextStyle kLabel(double size, {Color color = kTextMuted, FontWeight fw = FontWei
     GoogleFonts.inter(fontSize: size, fontWeight: fw, color: color, letterSpacing: 0.3);
 
 // ── Gradients ─────────────────────────────────────────────────────────────────
-const LinearGradient kCyanGradient = LinearGradient(
-  colors: [Color(0xFF4FC3F7), Color(0xFF0288D1)],
-  begin: Alignment.topLeft, end: Alignment.bottomRight,
-);
-
-const LinearGradient kVendorGradient = LinearGradient(
-  colors: [Color(0xFFF59E0B), Color(0xFFD97706)],
-  begin: Alignment.topLeft, end: Alignment.bottomRight,
-);
-
-const LinearGradient kRiderGradient = LinearGradient(
-  colors: [Color(0xFFA78BFA), Color(0xFF7C3AED)],
-  begin: Alignment.topLeft, end: Alignment.bottomRight,
-);
-
+const LinearGradient kCyanGradient = AppGradients.customer;
+const LinearGradient kVendorGradient = AppGradients.vendor;
+const LinearGradient kRiderGradient = AppGradients.rider;
 const LinearGradient kBgGradient = LinearGradient(
-  colors: [Color(0xFF0F0F1A), Color(0xFF090910)],
+  colors: [AppColors.surface, AppColors.background],
   begin: Alignment.topCenter, end: Alignment.bottomCenter,
 );
 
@@ -103,7 +93,7 @@ Widget kSectionHeader(String title, {Widget? trailing}) => Row(
     const SizedBox(width: 10),
     Expanded(child: Text(title, style: GoogleFonts.inter(
       fontSize: 15, fontWeight: FontWeight.w700, color: kTextPrimary))),
-    if (trailing != null) trailing,
+    trailing ?? const SizedBox.shrink(),
   ],
 );
 

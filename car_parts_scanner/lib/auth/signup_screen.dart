@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'verify_email_screen.dart';
-
-const _kBg = Color(0xFF0A0A0F);
-const _kSurface = Color(0xFF12121A);
-const _kAccent = Color(0xFF4FC3F7);
-const _kBorder = Color(0xFF1E1E2E);
+import '../core/theme/app_colors.dart';
+import '../core/theme/app_spacing.dart';
+import '../core/theme/app_typography.dart';
+import '../core/theme/app_shadows.dart';
+import '../core/motion/motion_tappable.dart';
 
 class SignupScreen extends StatefulWidget {
   final String role;
@@ -34,6 +34,8 @@ class _SignupScreenState extends State<SignupScreen> {
     super.dispose();
   }
 
+  Color get _accentColor => widget.role == 'rider' ? AppColors.rider : AppColors.cyan;
+
   Future<void> _signup() async {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _loading = true);
@@ -46,13 +48,11 @@ class _SignupScreenState extends State<SignupScreen> {
           'full_name': _nameCtrl.text.trim(),
           'role': widget.role,
         },
-        emailRedirectTo: 'omnidrive://login-callback/', // Deep link back to app
+        emailRedirectTo: 'omnidrive://login-callback/',
       );
 
-      // user_profiles row is auto-created by the DB trigger (handle_new_user)
       if (!mounted) return;
 
-      // Navigate to verify email screen
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -75,8 +75,8 @@ class _SignupScreenState extends State<SignupScreen> {
 
   void _showError(String msg) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(msg),
-      backgroundColor: Colors.redAccent,
+      content: Text(msg, style: AppTypography.body.copyWith(color: Colors.white)),
+      backgroundColor: AppColors.error,
       behavior: SnackBarBehavior.floating,
     ));
   }
@@ -84,42 +84,40 @@ class _SignupScreenState extends State<SignupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _kBg,
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 40),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.xl),
           child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Back button
                 IconButton(
                   onPressed: () => Navigator.pop(context),
                   icon: const Icon(Icons.arrow_back_ios_new_rounded,
-                      color: Colors.white70, size: 20),
+                      color: AppColors.textSecondary, size: 20),
                   padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
                 ),
                 const SizedBox(height: 24),
 
                 Text(widget.role == 'rider' ? 'Rider Sign Up' : 'Create Account',
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold)),
+                    style: AppTypography.display.copyWith(fontSize: 28)),
                 const SizedBox(height: 6),
-                const Text("You'll receive a verification email",
-                    style: TextStyle(color: Colors.white38, fontSize: 13)),
+                Text("You'll receive a verification email",
+                    style: AppTypography.body.copyWith(color: AppColors.textMuted)),
 
                 const SizedBox(height: 40),
 
                 // Full Name
-                _FieldLabel('Full Name'),
+                const _FieldLabel('Full Name'),
                 const SizedBox(height: 8),
                 _Field(
                   controller: _nameCtrl,
                   hint: 'Ammar Akbar',
                   textCapitalization: TextCapitalization.words,
+                  accentColor: _accentColor,
                   validator: (v) {
                     if (v == null || v.trim().isEmpty) return 'Name is required';
                     if (v.trim().length < 2) return 'Name is too short';
@@ -130,12 +128,13 @@ class _SignupScreenState extends State<SignupScreen> {
                 const SizedBox(height: 20),
 
                 // Email
-                _FieldLabel('Email'),
+                const _FieldLabel('Email'),
                 const SizedBox(height: 8),
                 _Field(
                   controller: _emailCtrl,
                   hint: 'you@example.com',
                   keyboardType: TextInputType.emailAddress,
+                  accentColor: _accentColor,
                   validator: (v) {
                     if (v == null || v.isEmpty) return 'Email is required';
                     if (!v.contains('@') || !v.contains('.')) {
@@ -148,18 +147,19 @@ class _SignupScreenState extends State<SignupScreen> {
                 const SizedBox(height: 20),
 
                 // Password
-                _FieldLabel('Password'),
+                const _FieldLabel('Password'),
                 const SizedBox(height: 8),
                 _Field(
                   controller: _passCtrl,
                   hint: 'Minimum 8 characters',
                   obscureText: _obscurePass,
+                  accentColor: _accentColor,
                   suffixIcon: IconButton(
                     icon: Icon(
                         _obscurePass
                             ? Icons.visibility_off_outlined
                             : Icons.visibility_outlined,
-                        color: Colors.white38, size: 20),
+                        color: AppColors.textMuted, size: 20),
                     onPressed: () => setState(() => _obscurePass = !_obscurePass),
                   ),
                   validator: (v) {
@@ -172,18 +172,19 @@ class _SignupScreenState extends State<SignupScreen> {
                 const SizedBox(height: 20),
 
                 // Confirm Password
-                _FieldLabel('Confirm Password'),
+                const _FieldLabel('Confirm Password'),
                 const SizedBox(height: 8),
                 _Field(
                   controller: _confirmCtrl,
                   hint: 'Repeat your password',
                   obscureText: _obscureConfirm,
+                  accentColor: _accentColor,
                   suffixIcon: IconButton(
                     icon: Icon(
                         _obscureConfirm
                             ? Icons.visibility_off_outlined
                             : Icons.visibility_outlined,
-                        color: Colors.white38, size: 20),
+                        color: AppColors.textMuted, size: 20),
                     onPressed: () => setState(() => _obscureConfirm = !_obscureConfirm),
                   ),
                   validator: (v) {
@@ -198,23 +199,25 @@ class _SignupScreenState extends State<SignupScreen> {
                 SizedBox(
                   width: double.infinity,
                   height: 52,
-                  child: ElevatedButton(
-                    onPressed: _loading ? null : _signup,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: _kAccent,
-                      foregroundColor: Colors.black,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14)),
-                      elevation: 0,
+                  child: TappableScale(
+                    onTap: _loading ? null : _signup,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: _accentColor,
+                        borderRadius: BorderRadius.circular(AppSpacing.rLg),
+                        boxShadow: AppShadows.roleGlow(_accentColor),
+                      ),
+                      child: Center(
+                        child: _loading
+                            ? const SizedBox(
+                                width: 22, height: 22,
+                                child: CircularProgressIndicator(
+                                    color: Colors.black, strokeWidth: 2.5))
+                            : Text('Create Account',
+                                style: AppTypography.label.copyWith(
+                                    fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black)),
+                      ),
                     ),
-                    child: _loading
-                        ? const SizedBox(
-                            width: 22, height: 22,
-                            child: CircularProgressIndicator(
-                                color: Colors.black, strokeWidth: 2.5))
-                        : const Text('Create Account',
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold)),
                   ),
                 ),
 
@@ -222,8 +225,8 @@ class _SignupScreenState extends State<SignupScreen> {
                 Center(
                   child: GestureDetector(
                     onTap: () => Navigator.pop(context),
-                    child: const Text('Already have an account? Log In',
-                        style: TextStyle(color: _kAccent, fontSize: 14)),
+                    child: Text('Already have an account? Log In',
+                        style: AppTypography.body.copyWith(color: _accentColor, fontWeight: FontWeight.w600)),
                   ),
                 ),
               ],
@@ -235,15 +238,12 @@ class _SignupScreenState extends State<SignupScreen> {
   }
 }
 
-// ── Shared widgets ────────────────────────────────────────────────────────────
-
 class _FieldLabel extends StatelessWidget {
   final String text;
   const _FieldLabel(this.text);
   @override
   Widget build(BuildContext context) => Text(text,
-      style: const TextStyle(
-          color: Colors.white70, fontSize: 13, fontWeight: FontWeight.w600));
+      style: AppTypography.label.copyWith(color: AppColors.textSecondary));
 }
 
 class _Field extends StatelessWidget {
@@ -254,10 +254,12 @@ class _Field extends StatelessWidget {
   final TextCapitalization textCapitalization;
   final Widget? suffixIcon;
   final String? Function(String?)? validator;
+  final Color accentColor;
 
   const _Field({
     required this.controller,
     required this.hint,
+    required this.accentColor,
     this.obscureText = false,
     this.keyboardType,
     this.textCapitalization = TextCapitalization.none,
@@ -273,25 +275,24 @@ class _Field extends StatelessWidget {
       keyboardType: keyboardType,
       textCapitalization: textCapitalization,
       validator: validator,
-      style: const TextStyle(color: Colors.white, fontSize: 15),
+      style: AppTypography.body.copyWith(color: AppColors.textPrimary),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: const TextStyle(color: Colors.white24),
+        hintStyle: AppTypography.body.copyWith(color: AppColors.textMuted),
         suffixIcon: suffixIcon,
         filled: true,
-        fillColor: _kSurface,
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: _kBorder)),
-        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: _kBorder)),
-        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: _kAccent, width: 1.5)),
-        errorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: Colors.redAccent)),
-        focusedErrorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: Colors.redAccent)),
+        fillColor: AppColors.surface,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.rLg),
+            borderSide: const BorderSide(color: AppColors.border)),
+        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.rLg),
+            borderSide: const BorderSide(color: AppColors.border)),
+        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.rLg),
+            borderSide: BorderSide(color: accentColor, width: 1.5)),
+        errorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.rLg),
+            borderSide: const BorderSide(color: AppColors.error)),
+        focusedErrorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.rLg),
+            borderSide: const BorderSide(color: AppColors.error)),
       ),
     );
   }

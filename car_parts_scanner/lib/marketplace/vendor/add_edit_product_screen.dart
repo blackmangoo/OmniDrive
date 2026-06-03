@@ -6,6 +6,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import '../marketplace_constants.dart';
 import '../marketplace_models.dart';
 import '../marketplace_service.dart';
+import '../../core/motion/motion_tappable.dart';
 
 class AddEditProductScreen extends StatefulWidget {
   final Product? product; // null = add new
@@ -25,7 +26,7 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
   bool _loading = false;
   bool _isActive = true;
   List<String> _existingImages = [];
-  List<File> _newImages = [];
+  final List<File> _newImages = [];
   List<Category> _categories = [];
   String? _selectedCategoryId;
 
@@ -51,7 +52,9 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
 
   @override
   void dispose() {
-    for (final c in [_nameCtrl, _priceCtrl, _cmpCtrl, _stockCtrl, _descCtrl, _skuCtrl]) c.dispose();
+    for (final c in [_nameCtrl, _priceCtrl, _cmpCtrl, _stockCtrl, _descCtrl, _skuCtrl]) {
+      c.dispose();
+    }
     super.dispose();
   }
 
@@ -67,13 +70,11 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
 
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
-    // Capture context-sensitive objects before any awaits
     final nav = Navigator.of(context);
-    final mesenger = ScaffoldMessenger.of(context);
+    final messenger = ScaffoldMessenger.of(context);
     setState(() => _loading = true);
 
     try {
-      // Upload new images
       final List<String> uploadedUrls = [];
       for (final file in _newImages) {
         final url = await MarketplaceService.uploadProductImage(file);
@@ -100,16 +101,14 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
         await MarketplaceService.createProduct(data);
       }
 
-      if (!mounted) return;
       nav.pop();
-      mesenger.showSnackBar(SnackBar(
+      messenger.showSnackBar(SnackBar(
         content: Text(isEditing ? 'Product updated!' : 'Product added!',
             style: GoogleFonts.inter()),
         backgroundColor: kSuccess, behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))));
     } catch (e) {
-      if (!mounted) return;
-      mesenger.showSnackBar(SnackBar(
+      messenger.showSnackBar(SnackBar(
         content: Text('Failed: $e'), backgroundColor: kError, behavior: SnackBarBehavior.floating));
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -122,17 +121,17 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
       backgroundColor: kBg,
       appBar: AppBar(
         backgroundColor: kBg, elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white70, size: 20),
-          onPressed: () => Navigator.pop(context),
+        leading: TappableScale(
+          onTap: () => Navigator.pop(context),
+          child: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white70, size: 20),
         ),
         title: Text(isEditing ? 'Edit Product' : 'Add Product',
             style: GoogleFonts.inter(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
         actions: [
           if (isEditing)
-            IconButton(
-              icon: const Icon(Icons.delete_outline_rounded, color: kError),
-              onPressed: () async {
+            TappableScale(
+              onTap: () async {
+                final nav = Navigator.of(context);
                 final confirm = await showDialog<bool>(
                   context: context,
                   builder: (_) => AlertDialog(
@@ -147,10 +146,13 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                 );
                 if (confirm == true) {
                   await MarketplaceService.deleteProduct(widget.product!.id);
-                  if (!mounted) return;
-                  Navigator.pop(context);
+                  nav.pop();
                 }
               },
+              child: const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: Icon(Icons.delete_outline_rounded, color: kError),
+              ),
             ),
         ],
       ),
@@ -177,11 +179,11 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                               width: 100, height: 100, margin: const EdgeInsets.only(right: 8),
                               decoration: BoxDecoration(borderRadius: BorderRadius.circular(12), border: Border.all(color: kBorder)),
                               child: ClipRRect(borderRadius: BorderRadius.circular(12),
-                                  child: CachedNetworkImage(imageUrl: url, fit: BoxFit.cover, errorWidget: (_, __, ___) => const Icon(Icons.broken_image, color: Colors.white24))),
+                                  child: CachedNetworkImage(imageUrl: url, fit: BoxFit.cover, errorWidget: (_, _, _) => const Icon(Icons.broken_image, color: Colors.white24))),
                             ),
-                            Positioned(top: 4, right: 12, child: GestureDetector(
+                            Positioned(top: 4, right: 12, child: TappableScale(
                               onTap: () => setState(() => _existingImages.remove(url)),
-                              child: Container(width: 22, height: 22, decoration: BoxDecoration(color: kError, shape: BoxShape.circle),
+                              child: Container(width: 22, height: 22, decoration: const BoxDecoration(color: kError, shape: BoxShape.circle),
                                   child: const Icon(Icons.close, color: Colors.white, size: 14)),
                             )),
                           ],
@@ -194,15 +196,15 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                               decoration: BoxDecoration(borderRadius: BorderRadius.circular(12), border: Border.all(color: kVendor.withValues(alpha: 0.5))),
                               child: ClipRRect(borderRadius: BorderRadius.circular(12), child: Image.file(file, fit: BoxFit.cover)),
                             ),
-                            Positioned(top: 4, right: 12, child: GestureDetector(
+                            Positioned(top: 4, right: 12, child: TappableScale(
                               onTap: () => setState(() => _newImages.remove(file)),
-                              child: Container(width: 22, height: 22, decoration: BoxDecoration(color: kError, shape: BoxShape.circle),
+                              child: Container(width: 22, height: 22, decoration: const BoxDecoration(color: kError, shape: BoxShape.circle),
                                   child: const Icon(Icons.close, color: Colors.white, size: 14)),
                             )),
                           ],
                         )),
                         // Add button
-                        GestureDetector(
+                        TappableScale(
                           onTap: _pickImages,
                           child: Container(
                             width: 100, height: 100,
@@ -279,7 +281,7 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                         const Icon(Icons.visibility_rounded, color: Colors.white54, size: 20),
                         const SizedBox(width: 12),
                         Expanded(child: Text('Product is Active', style: GoogleFonts.inter(color: Colors.white, fontSize: 14))),
-                        Switch(value: _isActive, activeThumbColor: kVendor, onChanged: (v) => setState(() => _isActive = v)),
+                        Switch(value: _isActive, activeThumbColor: kVendor, activeTrackColor: kVendor.withValues(alpha: 0.3), onChanged: (v) => setState(() => _isActive = v)),
                       ]),
                     ),
 
@@ -295,16 +297,19 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
               decoration: BoxDecoration(color: kSurface, border: Border(top: BorderSide(color: kBorder))),
               child: SizedBox(
                 width: double.infinity, height: 52,
-                child: ElevatedButton(
-                  onPressed: _loading ? null : _save,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: kVendor, foregroundColor: Colors.black,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)), elevation: 0,
+                child: TappableScale(
+                  onTap: _loading ? null : _save,
+                  child: Container(
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      gradient: kVendorGradient,
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: _loading
+                        ? const SizedBox(width: 22, height: 22, child: CircularProgressIndicator(color: Colors.black, strokeWidth: 2.5))
+                        : Text(isEditing ? 'Save Changes' : 'Add to Catalogue',
+                            style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black)),
                   ),
-                  child: _loading
-                      ? const SizedBox(width: 22, height: 22, child: CircularProgressIndicator(color: Colors.black, strokeWidth: 2.5))
-                      : Text(isEditing ? 'Save Changes' : 'Add to Catalogue',
-                          style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.bold)),
                 ),
               ),
             ),
