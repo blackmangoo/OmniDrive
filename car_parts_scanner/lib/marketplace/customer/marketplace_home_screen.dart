@@ -6,8 +6,7 @@ import '../marketplace_models.dart';
 import '../marketplace_service.dart';
 import 'product_detail_screen.dart';
 import 'cart_screen.dart';
-import 'customer_orders_screen.dart';
-import 'customer_profile_screen.dart';
+import 'category_products_screen.dart';
 
 class MarketplaceHomeScreen extends StatefulWidget {
   const MarketplaceHomeScreen({super.key});
@@ -280,7 +279,18 @@ class _MarketplaceHomeScreenState extends State<MarketplaceHomeScreen> {
                         itemBuilder: (_, i) {
                           final cat = _categoryList[i];
                           return GestureDetector(
-                            onTap: () {},
+                            onTap: () {
+                              final dbCat = _categories.firstWhere(
+                                (c) => c.name.toLowerCase() == cat.label.toLowerCase(),
+                                orElse: () => Category(id: '', name: cat.label),
+                              );
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => CategoryProductsScreen(category: dbCat),
+                                ),
+                              ).then((_) => _loadData());
+                            },
                             child: Container(
                               width: 72,
                               margin: const EdgeInsets.symmetric(horizontal: 4),

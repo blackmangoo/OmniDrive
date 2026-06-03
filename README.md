@@ -84,30 +84,30 @@ OmniDrive/
 ├── car_parts_scanner/                  # Flutter Mobile Application
 │   ├── lib/
 │   │   ├── main.dart                   # Entry point — Firebase, Supabase, Camera init
-│   │   ├── main_shell.dart             # Customer main navigation shell
 │   │   ├── car_part.dart               # CarPart data model
 │   │   ├── part_detection_service.dart # YOLO API integration + scan history
 │   │   ├── image_search_screen.dart    # AI Vision search UI
 │   │   ├── camera_preview_screen.dart  # Full-screen camera with animated reticle
 │   │   │
-│   │   ├── auth/                       # 🔐 Authentication (8 screens)
+│   │   ├── auth/                       # 🔐 Authentication & RBAC (9 screens)
 │   │   │   ├── auth_gate.dart          #   RBAC routing (session → role → shell)
 │   │   │   ├── login_screen.dart       #   Premium animated login
 │   │   │   ├── signup_screen.dart      #   Customer registration
 │   │   │   ├── vendor_signup_screen.dart  # Vendor registration with business info
-│   │   │   ├── role_selection_screen.dart  # Role picker (Customer/Vendor/Rider)
+│   │   │   ├── pending_approval_screen.dart # Pending review screen (Rider / Vendor)
+│   │   │   ├── admin_mfa_screen.dart   #   Admin Multi-Factor Auth (TOTP)
 │   │   │   ├── verify_email_screen.dart   # Email verification waiting screen
 │   │   │   ├── forgot_password_screen.dart # Password reset request
 │   │   │   └── update_password_screen.dart # Deep-linked password update
 │   │   │
-│   │   ├── marketplace/                # 🛒 Marketplace (25 screens across 4 roles)
+│   │   ├── marketplace/                # 🛒 Marketplace (22 screens across 4 roles)
 │   │   │   ├── marketplace_service.dart   # Unified Supabase CRUD layer
 │   │   │   ├── marketplace_models.dart    # Data models (Product, Order, CartItem, etc.)
 │   │   │   ├── marketplace_constants.dart # Theme, categories, status enums
-│   │   │   ├── customer/               #   Customer: Home, Cart, Checkout, Orders (10 scr)
-│   │   │   ├── vendor/                 #   Vendor: Dashboard, Catalogue, Stock (8 screens)
-│   │   │   ├── rider/                  #   Rider: Deliveries, Orders (4 screens)
-│   │   │   └── admin/                  #   Admin: Orders, Profile (3 screens)
+│   │   │   ├── customer/               #   Customer: Home, Cart, Checkout, Orders, Category Filter (9 scr)
+│   │   │   ├── vendor/                 #   Vendor: Dashboard, Catalogue, Orders (6 screens)
+│   │   │   ├── rider/                  #   Rider: Orders (3 screens)
+│   │   │   └── admin/                  #   Admin: Shell, Orders, Approvals, Profile (4 screens)
 │   │   │
 │   │   └── performance/               # ⚡ Performance Testing (10 files)
 │   │       ├── sensor_fusion_service.dart  # 1-D Kalman filter (GPS + IMU)
@@ -138,7 +138,7 @@ OmniDrive/
 └── README.md                           # ← You are here
 ```
 
-**File count:** 52 Dart source files · 109 `main.py` lines · 13 database tables
+**File count:** 49 Dart source files · 109 `main.py` lines · 13 database tables
 
 ---
 
@@ -230,10 +230,10 @@ A full-featured e-commerce module with **4 distinct role-based experiences**, po
 
 | Role | Screens | Key Features |
 |------|---------|-------------|
-| 🛍️ **Customer** | 10 | Browse products, category filters, cart, checkout, order tracking, profile |
-| 🏪 **Vendor** | 8 | Revenue dashboard, product catalogue CRUD, stock management, order processing |
-| 🚚 **Rider** | 4 | Delivery queue, accept/reject orders, status updates |
-| 🔑 **Admin** | 3 | Platform-wide order oversight, management controls |
+| 🛍️ **Customer** | 9 | Browse products, category filters, cart, checkout, order tracking, profile |
+| 🏪 **Vendor** | 6 | Revenue dashboard, product catalogue CRUD, order processing |
+| 🚚 **Rider** | 3 | Accept/reject orders, delivery queue, status updates |
+| 🔑 **Admin** | 4 | Vendor/Rider approvals panel, platform-wide order oversight |
 
 ### Order Lifecycle
 
@@ -261,22 +261,23 @@ A full-featured e-commerce module with **4 distinct role-based experiences**, po
 
 ## 🔐 Module 4 — Authentication & RBAC
 
-Fully implemented multi-role authentication system using **Supabase Auth**.
+Fully implemented multi-role authentication system using **Supabase Auth** with Multi-Factor Authentication (MFA) and admin approval gating.
 
-| Feature | Status |
-|---------|--------|
-| Email/Password signup & login | ✅ |
-| Role selection (Customer / Vendor / Rider) | ✅ |
-| Vendor-specific signup (business info) | ✅ |
-| Email verification flow | ✅ |
-| Forgot password (email reset) | ✅ |
-| Deep-link password recovery | ✅ |
-| RBAC AuthGate routing to role shells | ✅ |
-| FCM token registration per user | ✅ |
-| Row Level Security on all 13 tables | ✅ |
+| Feature | Status | Description |
+|---------|--------|-------------|
+| Email/Password signup & login | ✅ | Standard credentials auth |
+| Inline Role selection (Customer / Vendor / Rider) | ✅ | Premium tabbed selector on Login/Signup |
+| Vendor-specific signup (business info) | ✅ | Business details field capture |
+| Email verification flow | ✅ | Blocks logins until verified |
+| Forgot & update password | ✅ | Deep-link recovery workflow |
+| RBAC AuthGate routing to shells | ✅ | Automatically loads correct app dashboard |
+| Admin MFA (TOTP / Google Authenticator) | ✅ | Compulsory 2FA for Admin console security |
+| Admin Approval Gate (Rider / Vendor) | ✅ | New Rider/Vendor signups are locked until Admin approval |
+| FCM token registration per user | ✅ | Dynamic push notification routing |
+| Row Level Security on all 13 tables | ✅ | Database-enforced isolation |
 
 **Auth Flow:**  
-`App Launch → Splash → AuthGate → [No Session? → LoginScreen] → [Session? → Fetch Role → Route to Shell]`
+`App Launch → Splash → AuthGate → [No Session? → LoginScreen] → [Session? → Check Role → [If Admin? → Check MFA → Authenticate] → [If Rider/Vendor? → Check Approval Gate] → Route to Shell]`
 
 ---
 
@@ -287,7 +288,7 @@ Fully implemented multi-role authentication system using **Supabase Auth**.
 
 | Table | Purpose | Key Columns |
 |-------|---------|-------------|
-| `user_profiles` | User identity & role | `id`, `full_name`, `email`, `role`, `phone`, `avatar_url` |
+| `user_profiles` | User identity & role | `id`, `full_name`, `email`, `role`, `phone`, `avatar_url`, `is_approved` |
 | `vendor_profiles` | Vendor business details | `user_id`, `business_name`, `business_address` |
 | `user_cars` | User's registered vehicles | `user_id`, `make`, `model`, `year` |
 | `car_parts` | 50 YOLO class metadata | `class_name`, `description`, `average_price`, `compatibility_notes` |
@@ -305,8 +306,12 @@ Fully implemented multi-role authentication system using **Supabase Auth**.
 
 | Name | Type | Purpose |
 |------|------|---------|
-| `handle_new_user()` | Trigger | Auto-creates `user_profiles` row on signup |
+| `handle_new_user()` | Trigger | Auto-creates `user_profiles` row on signup & formats new rider/vendor records to unapproved |
+| `protect_user_profile_fields` | Trigger | RLS helper to prevent unauthorized column changes |
 | `decrement_stock()` | RPC | Atomic stock decrement (prevents overselling) |
+| `approve_user()` | RPC | Admin approval workflow helper |
+| `reject_user()` | RPC | Admin rejection / deletion helper |
+| `get_pending_approvals()` | RPC | Fetch details of users awaiting approval |
 
 ---
 

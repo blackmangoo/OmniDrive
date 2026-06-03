@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'metric_selection_screen.dart';
 import 'pre_test_screen.dart';
+import 'run_history_screen.dart';
+import 'results_screen.dart';
+import 'performance_models.dart';
 
 const _kBg = Color(0xFF0A0A0F);
 const _kSurface = Color(0xFF12121A);
@@ -21,6 +24,8 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
   List<Map<String, dynamic>> _cars = [];
   bool _loadingCars = true;
   int _selectedCarIndex = 0; // The currently active car
+  List<Map<String, dynamic>> _recentRuns = [];
+  bool _loadingRuns = false;
 
   @override
   void initState() {
@@ -44,11 +49,43 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
             _selectedCarIndex = 0;
           }
         });
+        _loadRecentRuns();
       }
     } catch (e) {
       debugPrint('Error loading cars: $e');
     } finally {
       if (mounted) setState(() => _loadingCars = false);
+    }
+  }
+
+  Future<void> _loadRecentRuns() async {
+    if (_cars.isEmpty) {
+      if (mounted) {
+        setState(() {
+          _recentRuns = [];
+          _loadingRuns = false;
+        });
+      }
+      return;
+    }
+    setState(() => _loadingRuns = true);
+    try {
+      final carId = _cars[_selectedCarIndex]['id'];
+      final data = await Supabase.instance.client
+          .from('performance_runs')
+          .select()
+          .eq('car_id', carId)
+          .order('created_at', ascending: false)
+          .limit(3);
+      if (mounted) {
+        setState(() {
+          _recentRuns = List<Map<String, dynamic>>.from(data);
+        });
+      }
+    } catch (e) {
+      debugPrint('Error loading runs: $e');
+    } finally {
+      if (mounted) setState(() => _loadingRuns = false);
     }
   }
 
@@ -82,7 +119,7 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
           obdMode: obdMode,
         ),
       ),
-    );
+    ).then((_) => _loadRecentRuns());
   }
 
   @override
@@ -164,7 +201,10 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
                     : SliverList(
                         delegate: SliverChildBuilderDelegate(
                           (ctx, i) => GestureDetector(
-                            onTap: () => setState(() => _selectedCarIndex = i),
+                            onTap: () {
+                              setState(() => _selectedCarIndex = i);
+                              _loadRecentRuns();
+                            },
                             child: _CarCard(
                               car: _cars[i],
                               isSelected: i == _selectedCarIndex,
@@ -174,40 +214,156 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
                         ),
                       ),
 
-            // ── Coming Soon placeholder for runs ──────────────────────────────
-            const SliverToBoxAdapter(
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(20, 32, 20, 12),
-                child: Text('Recent Runs',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700)),
-              ),
-            ),
-
+            // ── Recent Runs section ──────────────────────────────────────────
             SliverToBoxAdapter(
-              child: Container(
-                margin: const EdgeInsets.symmetric(horizontal: 20),
-                padding: const EdgeInsets.all(24),
-                decoration: BoxDecoration(
-                  color: _kSurface,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: _kBorder),
-                ),
-                child: const Column(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 32, 20, 12),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Icon(Icons.speed_rounded, color: Colors.white24, size: 48),
-                    SizedBox(height: 12),
-                    Text('No runs yet',
-                        style: TextStyle(color: Colors.white38, fontSize: 15)),
-                    SizedBox(height: 6),
-                    Text('Choose a car, then start your first test!',
-                        style: TextStyle(color: Colors.white24, fontSize: 12)),
+                    const Text('Recent Runs',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700)),
+                    if (_cars.isNotEmpty && _recentRuns.isNotEmpty)
+                      TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => RunHistoryScreen(car: _cars[_selectedCarIndex]),
+                            ),
+                          ).then((_) => _loadRecentRuns());
+                        },
+                        child: const Text('See All',
+                            style: TextStyle(color: _kAccent, fontSize: 13, fontWeight: FontWeight.bold)),
+                      ),
                   ],
                 ),
               ),
             ),
+
+            _loadingRuns
+                ? const SliverToBoxAdapter(
+                    child: Center(
+                        child: Padding(
+                      padding: EdgeInsets.all(24),
+                      child: CircularProgressIndicator(color: _kAccent),
+                    )))
+                : _recentRuns.isEmpty
+                    ? SliverToBoxAdapter(
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 20),
+                          padding: const EdgeInsets.all(24),
+                          decoration: BoxDecoration(
+                            color: _kSurface,
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(color: _kBorder),
+                          ),
+                          child: const Column(
+                            children: [
+                              Icon(Icons.speed_rounded, color: Colors.white24, size: 48),
+                              SizedBox(height: 12),
+                              Text('No runs yet',
+                                  style: TextStyle(color: Colors.white38, fontSize: 15)),
+                              SizedBox(height: 6),
+                              Text('Choose a car, then start your first test!',
+                                  style: TextStyle(color: Colors.white24, fontSize: 12)),
+                            ],
+                          ),
+                        ),
+                      )
+                    : SliverList(
+                        delegate: SliverChildBuilderDelegate(
+                          (ctx, i) {
+                            final run = _recentRuns[i];
+                            final d = DateTime.parse(run['created_at'] as String).toLocal();
+                            final dateStr = '${d.day}/${d.month}/${d.year}';
+
+                            String topMetric = 'Run';
+                            String topValue  = '--';
+
+                            if (run['result_0_to_100'] != null) {
+                              topMetric = '0-100';
+                              topValue  = '${(run['result_0_to_100'] as num).toStringAsFixed(2)}s';
+                            } else if (run['result_0_to_60'] != null) {
+                              topMetric = '0-60';
+                              topValue  = '${(run['result_0_to_60'] as num).toStringAsFixed(2)}s';
+                            } else if (run['result_quarter_mi'] != null) {
+                              topMetric = '¼ Mile';
+                              topValue  = '${(run['result_quarter_mi'] as num).toStringAsFixed(2)}s';
+                            } else if (run['result_100_to_0'] != null) {
+                              topMetric = '100-0';
+                              topValue  = '${(run['result_100_to_0'] as num).toStringAsFixed(2)}s';
+                            }
+
+                            final isObd = run['sensor_mode'] == 'obd2';
+
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                              child: GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => ResultsScreen(result: PerformanceRunData.fromJson(run)),
+                                    ),
+                                  );
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                                  decoration: BoxDecoration(
+                                    color: _kSurface,
+                                    borderRadius: BorderRadius.circular(14),
+                                    border: Border.all(color: _kBorder),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.all(12),
+                                        decoration: BoxDecoration(
+                                          color: _kAccent.withOpacity(0.1),
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: const Icon(Icons.speed_rounded, color: _kAccent, size: 22),
+                                      ),
+                                      const SizedBox(width: 14),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(topMetric,
+                                                style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16,
+                                                )),
+                                            const SizedBox(height: 3),
+                                            Text(
+                                              '$dateStr  •  ${isObd ? 'OBD-II' : 'GPS'}',
+                                              style: const TextStyle(color: Colors.white38, fontSize: 12),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Text(topValue,
+                                          style: const TextStyle(
+                                            color: _kAccent,
+                                            fontWeight: FontWeight.w900,
+                                            fontSize: 18,
+                                          )),
+                                      const SizedBox(width: 6),
+                                      const Icon(Icons.chevron_right_rounded, color: Colors.white24),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                          childCount: _recentRuns.length,
+                        ),
+                      ),
 
             const SliverPadding(padding: EdgeInsets.only(bottom: 32)),
           ],
