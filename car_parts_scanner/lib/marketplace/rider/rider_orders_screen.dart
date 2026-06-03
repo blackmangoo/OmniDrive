@@ -93,10 +93,18 @@ class _RiderOrdersScreenState extends State<RiderOrdersScreen> {
     child: Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Image.asset(
-          'assets/nano_banana_empty.png',
-          width: 120,
-          height: 120,
+        Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: kSurface,
+            border: Border.all(color: kBorder),
+          ),
+          child: const Icon(
+            Icons.local_shipping_rounded,
+            color: kRider,
+            size: 64,
+          ),
         )
         .animate()
         .scaleXY(begin: 0.8, end: 1.0, duration: 600.ms, curve: Curves.easeOutBack)

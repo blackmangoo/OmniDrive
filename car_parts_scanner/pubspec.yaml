@@ -94,9 +94,6 @@ flutter:
 
   assets:
     - assets/icon/app_icon.png
-    - assets/nano_banana_logo.png
-    - assets/nano_banana_empty.png
-    - assets/nano_banana_error.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

@@ -206,10 +206,18 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset(
-                'assets/nano_banana_empty.png',
-                width: 120,
-                height: 120,
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: kSurface,
+                  border: Border.all(color: kBorder),
+                ),
+                child: const Icon(
+                  Icons.check_circle_outline_rounded,
+                  color: kCyan,
+                  size: 64,
+                ),
               )
               .animate()
               .scaleXY(begin: 0.8, end: 1.0, duration: 600.ms, curve: Curves.easeOutBack)

@@ -222,10 +222,18 @@ class _VendorCatalogueScreenState extends State<VendorCatalogueScreen> {
     child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Image.asset(
-          'assets/nano_banana_empty.png',
-          width: 120,
-          height: 120,
+        Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: kSurface,
+            border: Border.all(color: kBorder),
+          ),
+          child: const Icon(
+            Icons.inventory_2_rounded,
+            color: kVendor,
+            size: 64,
+          ),
         )
         .animate()
         .scaleXY(begin: 0.8, end: 1.0, duration: 600.ms, curve: Curves.easeOutBack)
