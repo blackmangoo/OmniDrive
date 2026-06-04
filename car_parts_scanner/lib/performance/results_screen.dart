@@ -3,9 +3,9 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'performance_models.dart';
 import '../core/theme/app_colors.dart';
-import '../../core/motion/motion_stagger.dart';
-import '../../core/motion/motion_tappable.dart';
-import '../../core/motion/motion_counter.dart';
+import '../core/motion/motion_stagger.dart';
+import '../core/motion/motion_tappable.dart';
+import '../core/motion/motion_counter.dart';
 
 class ResultsScreen extends StatelessWidget {
   final PerformanceRunData result;

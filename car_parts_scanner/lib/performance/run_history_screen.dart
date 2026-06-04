@@ -3,9 +3,9 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'performance_models.dart';
 import 'results_screen.dart';
 import '../core/theme/app_colors.dart';
-import '../../core/motion/motion_stagger.dart';
-import '../../core/motion/motion_tappable.dart';
-import '../../core/motion/motion_counter.dart';
+import '../core/motion/motion_stagger.dart';
+import '../core/motion/motion_tappable.dart';
+import '../core/motion/motion_counter.dart';
 
 class RunHistoryScreen extends StatefulWidget {
   final Map<String, dynamic> car;

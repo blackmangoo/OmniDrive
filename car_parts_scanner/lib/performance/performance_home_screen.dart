@@ -7,9 +7,9 @@ import 'run_history_screen.dart';
 import 'results_screen.dart';
 import 'performance_models.dart';
 import '../core/theme/app_colors.dart';
-import '../../core/motion/motion_stagger.dart';
-import '../../core/motion/motion_tappable.dart';
-import '../../core/motion/motion_counter.dart';
+import '../core/motion/motion_stagger.dart';
+import '../core/motion/motion_tappable.dart';
+import '../core/motion/motion_counter.dart';
 
 /// Entry screen for the Performance Metrics module.
 /// Shows the user's cars, lets them start a new test, and shows recent runs.
@@ -484,7 +484,7 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
                   labelText: 'Fuel Type',
                   labelStyle: const TextStyle(color: Colors.white38),
                   filled: true,
-                  fillColor: const Color(0xFF16161F),
+                  fillColor: AppColors.card,
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                       borderSide: const BorderSide(color: AppColors.border)),
@@ -681,7 +681,7 @@ class _DialogField extends StatelessWidget {
         hintText: hint,
         hintStyle: const TextStyle(color: Colors.white24, fontSize: 13),
         filled: true,
-        fillColor: const Color(0xFF16161F),
+        fillColor: AppColors.card,
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         border: OutlineInputBorder(

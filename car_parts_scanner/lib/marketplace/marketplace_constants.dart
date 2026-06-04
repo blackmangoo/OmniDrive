@@ -101,7 +101,7 @@ Color statusColor(String status) {
   switch (status.toLowerCase()) {
     case 'pending':    return kWarning;
     case 'confirmed':  return kCyan;
-    case 'preparing':  return const Color(0xFF60A5FA);
+    case 'preparing':  return kInfo;
     case 'ready':      return kSuccess;
     case 'dispatched': return kRider;
     case 'delivered':  return kSuccess;

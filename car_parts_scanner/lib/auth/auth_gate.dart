@@ -13,13 +13,22 @@ import '../marketplace/customer/customer_shell.dart';
 import '../marketplace/vendor/vendor_shell.dart';
 import '../marketplace/rider/rider_shell.dart';
 import '../marketplace/admin/admin_shell.dart';
-
-const _kBg     = Color(0xFF0A0A0F);
-const _kAccent = Color(0xFF4FC3F7);
+import '../core/theme/app_colors.dart';
 
 /// Role-aware auth gate.  Routes to the correct shell based on user role.
 class AuthGate extends StatefulWidget {
   const AuthGate({super.key});
+
+  /// Static flag: set true before calling signUp() to suppress the
+  /// automatic signedIn event from immediately routing to home.
+  static bool _suppressNextSignIn = false;
+
+  /// Call this from SignupScreen before calling supabase.auth.signUp()
+  /// to prevent the AuthGate from reacting to the automatic signedIn event.
+  static void suppressNextSignIn() {
+    _suppressNextSignIn = true;
+  }
+
   @override
   State<AuthGate> createState() => _AuthGateState();
 }
@@ -72,6 +81,7 @@ class _AuthGateState extends State<AuthGate> {
     }
   }
 
+
   @override
   void initState() {
     super.initState();
@@ -86,6 +96,14 @@ class _AuthGateState extends State<AuthGate> {
         _handleRecovery();
         return;
       }
+
+      // If we're suppressing the next signedIn (e.g. right after signup),
+      // consume it and don't reset state.
+      if (data.event == AuthChangeEvent.signedIn && AuthGate._suppressNextSignIn) {
+        AuthGate._suppressNextSignIn = false;
+        return;
+      }
+
       // Only reset role and MFA on meaningful auth transitions
       if (data.event == AuthChangeEvent.signedIn ||
           data.event == AuthChangeEvent.signedOut) {
@@ -160,6 +178,8 @@ class _AuthGateState extends State<AuthGate> {
           return const LoginScreen();
         }
 
+        // If email is not confirmed, always show verify screen.
+        // This is the primary guard against the signup bypass.
         if (session.user.emailConfirmedAt == null) {
           return VerifyEmailScreen(email: session.user.email ?? '');
         }
@@ -205,7 +225,7 @@ class _Splash extends StatelessWidget {
   const _Splash();
   @override
   Widget build(BuildContext context) => const Scaffold(
-    backgroundColor: _kBg,
-    body: Center(child: CircularProgressIndicator(color: _kAccent)),
+    backgroundColor: AppColors.background,
+    body: Center(child: CircularProgressIndicator(color: AppColors.cyan)),
   );
 }

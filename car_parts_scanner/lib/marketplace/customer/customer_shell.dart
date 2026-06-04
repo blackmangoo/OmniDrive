@@ -45,7 +45,7 @@ class _CustomerShellState extends State<CustomerShell> {
       body: IndexedStack(index: _idx, children: _screens),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: const Color(0xFF0E0E18),
+          color: kSurface,
           border: Border(top: BorderSide(color: Colors.white.withValues(alpha: 0.06))),
         ),
         child: NavigationBar(

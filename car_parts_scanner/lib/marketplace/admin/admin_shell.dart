@@ -26,12 +26,12 @@ class _AdminShellState extends State<AdminShell> {
       body: IndexedStack(index: _idx, children: _screens),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: const Color(0xFF0E0E18),
+          color: kSurface,
           border: Border(top: BorderSide(color: Colors.white.withValues(alpha: 0.06))),
         ),
         child: NavigationBar(
           backgroundColor: Colors.transparent,
-          indicatorColor: const Color(0xFFEF4444).withValues(alpha: 0.15),
+          indicatorColor: kError.withValues(alpha: 0.15),
           selectedIndex: _idx,
           onDestinationSelected: (i) => setState(() => _idx = i),
           labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,

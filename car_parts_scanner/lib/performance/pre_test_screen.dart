@@ -9,7 +9,7 @@ import 'performance_run_service.dart';
 import 'sensor_fusion_service.dart';
 import 'obd_wifi_service.dart';
 import '../core/theme/app_colors.dart';
-import '../../core/motion/motion_tappable.dart';
+import '../core/motion/motion_tappable.dart';
 
 /// Pre-test check:
 /// 1. Phone placement warning

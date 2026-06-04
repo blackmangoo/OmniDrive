@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'auth_gate.dart';
 import 'verify_email_screen.dart';
 import '../core/theme/app_colors.dart';
 import '../core/theme/app_spacing.dart';
@@ -38,6 +39,9 @@ class _VendorSignupScreenState extends State<VendorSignupScreen> {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _loading = true);
     try {
+      // Prevent AuthGate from reacting to the automatic signedIn event
+      AuthGate.suppressNextSignIn();
+
       await Supabase.instance.client.auth.signUp(
         email: _emailCtrl.text.trim(),
         password: _passCtrl.text,

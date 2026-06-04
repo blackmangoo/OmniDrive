@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'performance_models.dart';
 import '../core/theme/app_colors.dart';
-import '../../core/motion/motion_tappable.dart';
+import '../core/motion/motion_tappable.dart';
 
 /// Screen where the user selects:
 ///  • Test type (ACCELERATION or BRAKING) — segmented toggle

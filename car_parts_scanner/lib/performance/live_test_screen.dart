@@ -10,7 +10,7 @@ import 'sensor_fusion_service.dart';
 import 'obd_wifi_service.dart';
 import 'results_screen.dart';
 import '../core/theme/app_colors.dart';
-import '../../core/motion/motion_tappable.dart';
+import '../core/motion/motion_tappable.dart';
 
 /// Live dashboard during a performance run.
 /// - Redesigned speedometer with custom gauge CustomPainter

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'auth_gate.dart';
 import 'verify_email_screen.dart';
 import '../core/theme/app_colors.dart';
 import '../core/theme/app_spacing.dart';
@@ -41,6 +42,11 @@ class _SignupScreenState extends State<SignupScreen> {
     setState(() => _loading = true);
 
     try {
+      // Prevent AuthGate from reacting to the automatic signedIn event
+      // that Supabase fires immediately after signUp(). Without this,
+      // the user would bypass the email verification screen.
+      AuthGate.suppressNextSignIn();
+
       await Supabase.instance.client.auth.signUp(
         email: _emailCtrl.text.trim(),
         password: _passCtrl.text,
