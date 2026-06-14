@@ -5,6 +5,7 @@ import '../marketplace_constants.dart';
 import '../marketplace_models.dart';
 import '../marketplace_service.dart';
 import 'add_edit_product_screen.dart';
+import 'vendor_shell.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/motion/motion_stagger.dart';
 import '../../core/motion/motion_tappable.dart';
@@ -186,14 +187,24 @@ class _VendorDashboardScreenState extends State<VendorDashboardScreen> {
                           icon: Icons.inventory_2_rounded,
                           label: 'Stock Manager',
                           accent: kCyan,
-                          onTap: () {},
+                          onTap: () {
+                            context.findAncestorStateOfType<VendorShellState>()?.setIndex(1);
+                          },
                         ),
                         const SizedBox(width: 12),
                         _QuickAction(
                           icon: Icons.bar_chart_rounded,
                           label: 'Analytics',
                           accent: kRider,
-                          onTap: () {},
+                          onTap: () {
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text('Analytics coming soon!',
+                                style: GoogleFonts.inter(fontWeight: FontWeight.w600, color: Colors.black)),
+                              backgroundColor: kCyan,
+                              behavior: SnackBarBehavior.floating,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            ));
+                          },
                         ),
                       ]),
                     ),
@@ -262,7 +273,9 @@ class _VendorDashboardScreenState extends State<VendorDashboardScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: kSectionHeader('Pending Orders Preview',
                         trailing: TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            context.findAncestorStateOfType<VendorShellState>()?.setIndex(2);
+                          },
                           child: Text('See all', style: kBody(12, color: kVendor,
                             fw: FontWeight.w600)),
                         )),

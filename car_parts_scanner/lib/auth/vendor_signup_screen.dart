@@ -57,7 +57,11 @@ class _VendorSignupScreenState extends State<VendorSignupScreen> {
 
       if (!mounted) return;
       Navigator.pushReplacement(context,
-          MaterialPageRoute(builder: (_) => VerifyEmailScreen(email: _emailCtrl.text.trim())));
+        MaterialPageRoute(builder: (_) => VerifyEmailScreen(
+          email: _emailCtrl.text.trim(),
+          password: _passCtrl.text,
+        )),
+      );
     } on AuthException catch (e) {
       _showError(e.message.contains('already') ? 'This email is already registered.' : e.message);
     } catch (e) {

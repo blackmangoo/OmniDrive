@@ -26,23 +26,27 @@ class PartDetectionResult {
 class PartDetectionService {
   // ─── API Configuration ───────────────────────────────────────────────────
   // Update this to your PC's local WiFi IP (run `ipconfig` to find it)
-  static const String _baseUrl = 'http://172.20.10.13:8000';
+  static const String _baseUrl = 'https://blackmangoo-omni-drive-api.hf.space';
   static const String _predictUrl = '$_baseUrl/predict';
   static const String _storageBucket = 'scan_images';
   // ─────────────────────────────────────────────────────────────────────────
 
-  /// Quick health check — returns true if API is reachable and model is loaded.
   Future<bool> checkApiHealth() async {
     try {
+      print('[API Health Check] Querying $_baseUrl ...');
       final resp = await http
           .get(Uri.parse(_baseUrl))
-          .timeout(const Duration(seconds: 4));
+          .timeout(const Duration(seconds: 12));
+      print('[API Health Check] Response code: ${resp.statusCode}');
       if (resp.statusCode == 200) {
         final json = jsonDecode(resp.body);
-        return json['model_loaded'] == true;
+        final isLoaded = json['model_loaded'] == true;
+        print('[API Health Check] Model loaded status: $isLoaded');
+        return isLoaded;
       }
       return false;
-    } catch (_) {
+    } catch (e) {
+      print('[API Health Check] Exception encountered: $e');
       return false;
     }
   }

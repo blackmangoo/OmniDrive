@@ -235,19 +235,25 @@ A full-featured e-commerce module with **4 distinct role-based experiences**, po
 | 🚚 **Rider** | 3 | Accept/reject orders, delivery queue, status updates |
 | 🔑 **Admin** | 4 | Vendor/Rider approvals panel, platform-wide order oversight |
 
-### Order Lifecycle
+### Order Lifecycle (Decoupled Rider Claim Flow)
 
 ```
-📦 Customer places order
+📦 Customer places order (via COD / Prepaid)
      │
      ▼
 🏪 Vendor receives notification (FCM) → Confirms & prepares
      │
      ▼
-🚚 Rider assigned → Picks up → Delivers
+📦 Vendor marks order "Ready" → Realtime DB update triggers
      │
      ▼
-✅ Customer receives — Order marked "Delivered"
+🔔 Active Riders receive instant foreground alert (Supabase Realtime)
+     │
+     ▼
+🏍️ Rider claims unclaimed order in "Available" tab → Status becomes "Dispatched"
+     │
+     ▼
+✅ Rider delivers order to Customer → Marks "Delivered"
 ```
 
 ### Key Technical Features
@@ -288,8 +294,8 @@ Fully implemented multi-role authentication system using **Supabase Auth** with 
 
 | Table | Purpose | Key Columns |
 |-------|---------|-------------|
-| `user_profiles` | User identity & role | `id`, `full_name`, `email`, `role`, `phone`, `avatar_url`, `is_approved` |
-| `vendor_profiles` | Vendor business details | `user_id`, `business_name`, `business_address` |
+| `user_profiles` | User identity & role | `id`, `full_name`, `email`, `role`, `phone`, `avatar_url`, `is_approved`, `fcm_token` |
+| `vendor_profiles` | Vendor business details | `user_id`, `business_name`, `business_address`, `fcm_token` |
 | `user_cars` | User's registered vehicles | `user_id`, `make`, `model`, `year` |
 | `car_parts` | 50 YOLO class metadata | `class_name`, `description`, `average_price`, `compatibility_notes` |
 | `scan_history` | AI Vision scan logs | `user_id`, `image_url`, `predicted_class`, `confidence` |
@@ -297,9 +303,9 @@ Fully implemented multi-role authentication system using **Supabase Auth** with 
 | `categories` | Marketplace categories | `name`, `icon_name`, `display_order` |
 | `products` | Vendor product listings | `vendor_id`, `name`, `price`, `stock`, `image_url` |
 | `cart_items` | Shopping cart | `user_id`, `product_id`, `quantity` |
-| `orders` | Order headers | `customer_id`, `vendor_id`, `rider_id`, `status`, `total` |
+| `orders` | Order headers | `customer_id`, `vendor_id`, `rider_id`, `status`, `total_amount`, `delivery_address`, `delivery_fee`, `payment_method` |
 | `order_items` | Order line items | `order_id`, `product_id`, `quantity`, `unit_price` |
-| `notifications` | In-app notifications | `user_id`, `title`, `body`, `type` |
+| `notifications` | In-app notifications | `user_id`, `title`, `body`, `type`, `data` |
 | `performance_runs` | Performance test results | `user_id`, `test_type`, `time_seconds`, `speed_data` |
 
 ### Database Functions & Triggers

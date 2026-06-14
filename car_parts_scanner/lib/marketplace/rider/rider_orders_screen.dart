@@ -15,22 +15,36 @@ class RiderOrdersScreen extends StatefulWidget {
   State<RiderOrdersScreen> createState() => _RiderOrdersScreenState();
 }
 
-class _RiderOrdersScreenState extends State<RiderOrdersScreen> {
-  List<Order> _orders = [];
+class _RiderOrdersScreenState extends State<RiderOrdersScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tab;
+  List<Order> _myDeliveries = [];
+  List<Order> _availableOrders = [];
   bool _loading = true;
 
   @override
   void initState() {
     super.initState();
+    _tab = TabController(length: 2, vsync: this);
     _load();
+  }
+
+  @override
+  void dispose() {
+    _tab.dispose();
+    super.dispose();
   }
 
   Future<void> _load() async {
     if (mounted) setState(() => _loading = true);
-    final orders = await MarketplaceService.fetchRiderOrders();
+    final results = await Future.wait([
+      MarketplaceService.fetchRiderOrders(),
+      MarketplaceService.fetchAvailableOrders(),
+    ]);
     if (mounted) {
       setState(() {
-        _orders = orders;
+        _myDeliveries = results[0];
+        _availableOrders = results[1];
         _loading = false;
       });
     }
@@ -46,6 +60,16 @@ class _RiderOrdersScreenState extends State<RiderOrdersScreen> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))));
   }
 
+  Future<void> _claimOrder(Order order) async {
+    await MarketplaceService.claimOrder(order.id);
+    _load();
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text('🎉 Delivery accepted!', style: GoogleFonts.inter()),
+      backgroundColor: kSuccess, behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,7 +77,7 @@ class _RiderOrdersScreenState extends State<RiderOrdersScreen> {
       appBar: AppBar(
         backgroundColor: kBg,
         automaticallyImplyLeading: false,
-        title: Text('My Deliveries', style: GoogleFonts.inter(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+        title: Text('Rider Dashboard', style: GoogleFonts.inter(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
         actions: [
           TappableScale(
             onTap: _load,
@@ -63,33 +87,58 @@ class _RiderOrdersScreenState extends State<RiderOrdersScreen> {
             ),
           ),
         ],
+        bottom: TabBar(
+          controller: _tab,
+          indicatorColor: kRider,
+          labelColor: kRider,
+          unselectedLabelColor: Colors.white38,
+          dividerColor: Colors.transparent,
+          tabs: [
+            Tab(text: _myDeliveries.isNotEmpty ? 'My Deliveries (${_myDeliveries.length})' : 'My Deliveries'),
+            Tab(text: _availableOrders.isNotEmpty ? 'Available (${_availableOrders.length})' : 'Available'),
+          ],
+        ),
       ),
       body: _loading
           ? const Center(child: CircularProgressIndicator(color: kRider))
-          : _orders.isEmpty
-              ? _empty()
-              : RefreshIndicator(
-                  onRefresh: _load,
-                  color: kRider, backgroundColor: kSurface,
-                  child: ListView.separated(
-                    padding: const EdgeInsets.all(16),
-                    itemCount: _orders.length,
-                    separatorBuilder: (context, i) => const SizedBox(height: 12),
-                    itemBuilder: (context, i) => StaggeredEntrance(
-                      index: i,
-                      child: _RiderOrderCard(
-                        order: _orders[i],
-                        onMarkDelivered: _orders[i].status == 'dispatched'
-                            ? () => _markDelivered(_orders[i])
-                            : null,
-                      ),
-                    ),
-                  ),
-                ),
+          : TabBarView(
+              controller: _tab,
+              children: [
+                _buildList(_myDeliveries, isClaimed: true),
+                _buildList(_availableOrders, isClaimed: false),
+              ],
+            ),
     );
   }
 
-  Widget _empty() => Center(
+  Widget _buildList(List<Order> list, {required bool isClaimed}) {
+    if (list.isEmpty) {
+      return _empty(isClaimed: isClaimed);
+    }
+    return RefreshIndicator(
+      onRefresh: _load,
+      color: kRider, backgroundColor: kSurface,
+      child: ListView.separated(
+        padding: const EdgeInsets.all(16),
+        itemCount: list.length,
+        separatorBuilder: (context, i) => const SizedBox(height: 12),
+        itemBuilder: (context, i) => StaggeredEntrance(
+          index: i,
+          child: _RiderOrderCard(
+            order: list[i],
+            onMarkDelivered: isClaimed && list[i].status == 'dispatched'
+                ? () => _markDelivered(list[i])
+                : null,
+            onAcceptDelivery: !isClaimed
+                ? () => _claimOrder(list[i])
+                : null,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _empty({required bool isClaimed}) => Center(
     child: Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -100,8 +149,8 @@ class _RiderOrdersScreenState extends State<RiderOrdersScreen> {
             color: kSurface,
             border: Border.all(color: kBorder),
           ),
-          child: const Icon(
-            Icons.local_shipping_rounded,
+          child: Icon(
+            isClaimed ? Icons.local_shipping_rounded : Icons.explore_rounded,
             color: kRider,
             size: 64,
           ),
@@ -110,9 +159,15 @@ class _RiderOrdersScreenState extends State<RiderOrdersScreen> {
         .scaleXY(begin: 0.8, end: 1.0, duration: 600.ms, curve: Curves.easeOutBack)
         .fadeIn(duration: 500.ms),
         const SizedBox(height: 16),
-        Text('No deliveries assigned yet', style: GoogleFonts.inter(color: Colors.white38, fontSize: 16)),
+        Text(
+          isClaimed ? 'No deliveries assigned yet' : 'No available deliveries',
+          style: GoogleFonts.inter(color: Colors.white38, fontSize: 16),
+        ),
         const SizedBox(height: 8),
-        Text('Check back later', style: GoogleFonts.inter(color: Colors.white24, fontSize: 13)),
+        Text(
+          isClaimed ? 'Check the available tab to claim' : 'Check back later',
+          style: GoogleFonts.inter(color: Colors.white24, fontSize: 13),
+        ),
       ],
     ),
   );
@@ -122,7 +177,12 @@ class _RiderOrdersScreenState extends State<RiderOrdersScreen> {
 class _RiderOrderCard extends StatefulWidget {
   final Order order;
   final VoidCallback? onMarkDelivered;
-  const _RiderOrderCard({required this.order, this.onMarkDelivered});
+  final VoidCallback? onAcceptDelivery;
+  const _RiderOrderCard({
+    required this.order,
+    this.onMarkDelivered,
+    this.onAcceptDelivery,
+  });
   @override
   State<_RiderOrderCard> createState() => _RiderOrderCardState();
 }
@@ -247,6 +307,32 @@ class _RiderOrderCardState extends State<_RiderOrderCard> {
                             const Icon(Icons.check_circle_rounded, size: 20, color: Colors.white),
                             const SizedBox(width: 8),
                             Text('Mark as Delivered', style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white)),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+
+                // ── Accept Delivery Button ───────────────────────────────
+                if (widget.onAcceptDelivery != null) ...[
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: double.infinity, height: 48,
+                    child: TappableScale(
+                      onTap: widget.onAcceptDelivery,
+                      child: Container(
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: kRider,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.check_circle_rounded, size: 20, color: Colors.black),
+                            const SizedBox(width: 8),
+                            Text('Accept Delivery', style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black)),
                           ],
                         ),
                       ),

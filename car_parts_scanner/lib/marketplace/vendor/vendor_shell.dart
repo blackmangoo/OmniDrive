@@ -9,15 +9,19 @@ import 'vendor_profile_screen.dart';
 class VendorShell extends StatefulWidget {
   const VendorShell({super.key});
   @override
-  State<VendorShell> createState() => _VendorShellState();
+  State<VendorShell> createState() => VendorShellState();
 }
 
-class _VendorShellState extends State<VendorShell> {
+class VendorShellState extends State<VendorShell> {
   int _idx = 0;
   int _pendingOrders = 0;
 
   void updatePending(int count) {
     if (mounted) setState(() => _pendingOrders = count);
+  }
+
+  void setIndex(int index) {
+    if (mounted) setState(() => _idx = index);
   }
 
   List<Widget> get _screens => [

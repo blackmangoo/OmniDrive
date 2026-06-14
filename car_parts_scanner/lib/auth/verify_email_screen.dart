@@ -12,7 +12,8 @@ import '../core/motion/motion_tappable.dart';
 
 class VerifyEmailScreen extends StatefulWidget {
   final String email;
-  const VerifyEmailScreen({super.key, required this.email});
+  final String? password;
+  const VerifyEmailScreen({super.key, required this.email, this.password});
 
   @override
   State<VerifyEmailScreen> createState() => _VerifyEmailScreenState();
@@ -24,7 +25,6 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
   bool _checkingStatus = false;
 
   StreamSubscription<AuthState>? _authSub;
-  Timer? _pollTimer;
 
   @override
   void initState() {
@@ -36,8 +36,6 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
           session != null &&
           session.user.emailConfirmedAt != null) {
         if (!mounted) return;
-        _pollTimer?.cancel();
-        _pollTimer = null;
         setState(() => _verified = true);
 
         Future.delayed(const Duration(milliseconds: 800), () {
@@ -50,12 +48,10 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
       }
     });
 
-    _startPolling();
   }
 
   @override
   void dispose() {
-    _pollTimer?.cancel();
     _authSub?.cancel();
     super.dispose();
   }
@@ -85,60 +81,49 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
     }
   }
 
-  void _startPolling() {
-    _pollTimer = Timer.periodic(const Duration(seconds: 4), (timer) async {
-      try {
-        final response = await Supabase.instance.client.auth.getUser();
-        final user = response.user;
-        if (user != null && user.emailConfirmedAt != null) {
-          _pollTimer?.cancel();
-          _pollTimer = null;
 
-          await Supabase.instance.client.auth.refreshSession();
-
-          if (!mounted) return;
-          setState(() => _verified = true);
-
-          Future.delayed(const Duration(milliseconds: 800), () {
-            if (!mounted) return;
-            Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (_) => const AuthGate()),
-              (_) => false,
-            );
-          });
-        }
-      } catch (e) {
-        debugPrint('Email verification polling error: $e');
-      }
-    });
-  }
 
   Future<void> _checkVerificationStatus() async {
     setState(() => _checkingStatus = true);
     try {
-      final response = await Supabase.instance.client.auth.getUser();
-      final user = response.user;
-      if (user != null && user.emailConfirmedAt != null) {
-        _pollTimer?.cancel();
-        _pollTimer = null;
-
-        await Supabase.instance.client.auth.refreshSession();
-
-        if (!mounted) return;
-        setState(() => _verified = true);
-
-        Future.delayed(const Duration(milliseconds: 800), () {
-          if (!mounted) return;
-          Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (_) => const AuthGate()),
-            (_) => false,
-          );
-        });
+      if (widget.password != null && widget.password!.isNotEmpty) {
+        // If the user clicked the link on ANOTHER device, this app instance has no session
+        // and deep links won't reach here. The best way to check is to attempt a login.
+        await Supabase.instance.client.auth.signInWithPassword(
+          email: widget.email,
+          password: widget.password!,
+        );
       } else {
+        // Fallback if password is not available
+        final response = await Supabase.instance.client.auth.getUser();
+        final user = response.user;
+        if (user == null || user.emailConfirmedAt == null) {
+          throw const AuthException('Email not confirmed');
+        }
+      }
+
+      if (!mounted) return;
+      setState(() => _verified = true);
+
+      Future.delayed(const Duration(milliseconds: 800), () {
         if (!mounted) return;
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => const AuthGate()),
+          (_) => false,
+        );
+      });
+    } on AuthException catch (e) {
+      if (!mounted) return;
+      if (e.message.contains('Email not confirmed')) {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text("Email has not been verified yet. Please check your inbox."),
           backgroundColor: AppColors.warning,
+          behavior: SnackBarBehavior.floating,
+        ));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Verification check failed: ${e.message}'),
+          backgroundColor: AppColors.error,
           behavior: SnackBarBehavior.floating,
         ));
       }
@@ -208,7 +193,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
         const SizedBox(height: 10),
 
         Text(
-          'Click the link in that email.\nThis screen will automatically update.',
+          'Click the link in that email.\nIf you click it on another device, click the button below after verifying.',
           textAlign: TextAlign.center,
           style: AppTypography.caption,
         ),

@@ -631,7 +631,7 @@ class _ResultsSheet extends StatelessWidget {
                   iconColor: AppColors.cyan,
                   label: 'Estimated Price',
                   value:
-                      '\$${result.part!.averagePrice!.toStringAsFixed(2)}',
+                      'Rs. ${result.part!.averagePrice!.toStringAsFixed(0)}',
                 ),
 
               if (result.part!.description != null) ...[

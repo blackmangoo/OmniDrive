@@ -1,5 +1,14 @@
 // ─── Performance Module — Shared Data Models ──────────────────────────────────
 
+double _toDouble(dynamic val) {
+  if (val == null) return 0.0;
+  if (val is num) return val.toDouble();
+  if (val is String) return double.tryParse(val) ?? 0.0;
+  return 0.0;
+}
+
+
+
 /// Identifies which metric a run is testing.
 enum MetricType {
   zeroTo60,
@@ -110,19 +119,19 @@ class PerformanceRunData {
           [],
       resultTimesS: {
         if (json['result_0_to_60'] != null)
-          MetricType.zeroTo60: (json['result_0_to_60'] as num).toDouble(),
+          MetricType.zeroTo60: _toDouble(json['result_0_to_60']),
         if (json['result_0_to_100'] != null)
-          MetricType.zeroTo100: (json['result_0_to_100'] as num).toDouble(),
+          MetricType.zeroTo100: _toDouble(json['result_0_to_100']),
         if (json['result_quarter_mi'] != null)
-          MetricType.quarterMile: (json['result_quarter_mi'] as num).toDouble(),
+          MetricType.quarterMile: _toDouble(json['result_quarter_mi']),
         if (json['result_100_to_0'] != null)
-          MetricType.hundredToZero: (json['result_100_to_0'] as num).toDouble(),
+          MetricType.hundredToZero: _toDouble(json['result_100_to_0']),
       },
       resultSpeeds: {
         if (json['trap_speed_kmh'] != null)
-          MetricType.quarterMile: (json['trap_speed_kmh'] as num).toDouble(),
+          MetricType.quarterMile: _toDouble(json['trap_speed_kmh']),
       },
-      topSpeedKmh: (json['top_speed_kmh'] as num?)?.toDouble() ?? 0.0,
+      topSpeedKmh: _toDouble(json['top_speed_kmh']),
     );
   }
 

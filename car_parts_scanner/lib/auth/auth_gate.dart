@@ -14,6 +14,8 @@ import '../marketplace/vendor/vendor_shell.dart';
 import '../marketplace/rider/rider_shell.dart';
 import '../marketplace/admin/admin_shell.dart';
 import '../core/theme/app_colors.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import '../main.dart';
 
 /// Role-aware auth gate.  Routes to the correct shell based on user role.
 class AuthGate extends StatefulWidget {
@@ -107,6 +109,9 @@ class _AuthGateState extends State<AuthGate> {
       // Only reset role and MFA on meaningful auth transitions
       if (data.event == AuthChangeEvent.signedIn ||
           data.event == AuthChangeEvent.signedOut) {
+        if (data.event == AuthChangeEvent.signedOut) {
+          MarketplaceService.stopNotificationListener();
+        }
         if (mounted) {
           setState(() {
             _role = null;
@@ -150,13 +155,49 @@ class _AuthGateState extends State<AuthGate> {
         _loadingRole = false; 
       });
     }
+
+    if (!_isPendingApproval) {
+      _startNotifications();
+    }
+
     return r;
+  }
+
+  void _startNotifications() {
+    MarketplaceService.startNotificationListener((notif) {
+      if (!mounted) return;
+      try {
+        flutterLocalNotificationsPlugin.show(
+          id: notif.id.hashCode,
+          title: notif.title,
+          body: notif.body,
+          notificationDetails: NotificationDetails(
+            android: AndroidNotificationDetails(
+              fcmChannel.id,
+              fcmChannel.name,
+              channelDescription: fcmChannel.description,
+              importance: Importance.high,
+              priority: Priority.high,
+              icon: '@mipmap/ic_launcher',
+            ),
+            iOS: const DarwinNotificationDetails(
+              presentAlert: true,
+              presentBadge: true,
+              presentSound: true,
+            ),
+          ),
+        );
+      } catch (e) {
+        debugPrint('Error showing local notification: $e');
+      }
+    });
   }
 
   @override
   void dispose() {
     _authSub?.cancel();
     _linkSub?.cancel();
+    MarketplaceService.stopNotificationListener();
     super.dispose();
   }
 
