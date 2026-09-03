@@ -213,14 +213,12 @@ class _VendorOrderCardState extends State<_VendorOrderCard> {
     'pending':    'confirmed',
     'confirmed':  'preparing',
     'preparing':  'ready',
-    'ready':      'dispatched',
   };
 
   static const _nextLabel = {
     'pending':    'Confirm Order',
     'confirmed':  'Start Preparing',
     'preparing':  'Mark Ready',
-    'ready':      'Mark Dispatched',
   };
 
   Future<void> _advance() async {

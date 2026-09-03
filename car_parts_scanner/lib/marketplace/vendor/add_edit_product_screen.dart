@@ -251,6 +251,7 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                         hint: Text('Select category', style: GoogleFonts.inter(color: Colors.white24)),
                         items: _categories.map((cat) => DropdownMenuItem(value: cat.id, child: Text(cat.name))).toList(),
                         onChanged: (v) => setState(() => _selectedCategoryId = v),
+                        validator: (v) => v == null ? 'Required' : null,
                       ),
                       const SizedBox(height: 14),
                     ],

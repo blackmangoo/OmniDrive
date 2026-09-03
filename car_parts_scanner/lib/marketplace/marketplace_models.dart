@@ -1,3 +1,17 @@
+double _toDouble(dynamic val) {
+  if (val == null) return 0.0;
+  if (val is num) return val.toDouble();
+  if (val is String) return double.tryParse(val) ?? 0.0;
+  return 0.0;
+}
+
+double? _toOptionalDouble(dynamic val) {
+  if (val == null) return null;
+  if (val is num) return val.toDouble();
+  if (val is String) return double.tryParse(val);
+  return null;
+}
+
 class AppUser {
   final String id;
   final String fullName;
@@ -63,7 +77,7 @@ class VendorProfile {
         shopLogoUrl: m['shop_logo_url'] as String?,
         shopBannerUrl: m['shop_banner_url'] as String?,
         location: m['location'] as String?,
-        rating: (m['rating'] as num?)?.toDouble() ?? 0,
+        rating: _toDouble(m['rating']),
         totalOrders: m['total_orders'] as int? ?? 0,
         isVerified: m['is_verified'] as bool? ?? false,
         isActive: m['is_active'] as bool? ?? true,
@@ -128,22 +142,28 @@ class Product {
     this.vendorLogoUrl,
   });
 
-  factory Product.fromMap(Map<String, dynamic> m) => Product(
-        id: m['id'] as String,
-        vendorId: m['vendor_id'] as String,
-        categoryId: m['category_id'] as String?,
-        name: m['name'] as String,
-        description: m['description'] as String?,
-        price: (m['price'] as num).toDouble(),
-        comparePrice: (m['compare_price'] as num?)?.toDouble(),
-        stockQuantity: m['stock_quantity'] as int? ?? 0,
-        unit: m['unit'] as String? ?? 'piece',
-        images: List<String>.from(m['images'] as List? ?? []),
-        sku: m['sku'] as String?,
-        isActive: m['is_active'] as bool? ?? true,
-        vendorShopName: m['vendor_profiles']?['shop_name'] as String?,
-        vendorLogoUrl: m['vendor_profiles']?['shop_logo_url'] as String?,
-      );
+  factory Product.fromMap(Map<String, dynamic> m) {
+    final p = Product(
+      id: m['id'] as String,
+      vendorId: m['vendor_id'] as String,
+      categoryId: m['category_id'] as String?,
+      name: m['name'] as String,
+      description: m['description'] as String?,
+      price: _toDouble(m['price']),
+      comparePrice: _toOptionalDouble(m['compare_price']),
+      stockQuantity: m['stock_quantity'] as int? ?? 0,
+      unit: m['unit'] as String? ?? 'piece',
+      images: List<String>.from(m['images'] as List? ?? []),
+      sku: m['sku'] as String?,
+      isActive: m['is_active'] as bool? ?? true,
+      vendorShopName: m['vendor_profiles']?['shop_name'] as String?,
+      vendorLogoUrl: m['vendor_profiles']?['shop_logo_url'] as String?,
+    );
+    if (m['categories'] != null) {
+      p.setCategoryName(m['categories']['name'] as String?);
+    }
+    return p;
+  }
 
   bool get hasDiscount => comparePrice != null && comparePrice! > price;
   double get discountPercent =>
@@ -211,7 +231,7 @@ class OrderItem {
         orderId: m['order_id'] as String,
         productId: m['product_id'] as String,
         quantity: m['quantity'] as int,
-        unitPrice: (m['unit_price'] as num).toDouble(),
+        unitPrice: _toDouble(m['unit_price']),
         productName: m['product_name'] as String,
         productImage: m['product_image'] as String?,
       );
@@ -280,9 +300,9 @@ class Order {
       customerId: m['customer_id'] as String,
       vendorId: m['vendor_id'] as String,
       status: m['status'] as String,
-      totalAmount: (m['total_amount'] as num).toDouble(),
+      totalAmount: _toDouble(m['total_amount']),
       deliveryAddress: m['delivery_address'] as String,
-      deliveryFee: (m['delivery_fee'] as num?)?.toDouble() ?? 0,
+      deliveryFee: _toDouble(m['delivery_fee']),
       customerNotes: m['customer_notes'] as String?,
       riderId: m['rider_id'] as String?,
       createdAt: DateTime.parse(m['created_at'] as String),

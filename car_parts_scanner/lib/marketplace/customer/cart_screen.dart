@@ -4,6 +4,7 @@ import 'package:shimmer/shimmer.dart';
 import '../marketplace_constants.dart';
 import '../marketplace_models.dart';
 import '../marketplace_service.dart';
+import 'checkout_screen.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/motion/motion_stagger.dart';
@@ -20,7 +21,7 @@ class CartScreen extends StatefulWidget {
 class _CartScreenState extends State<CartScreen> {
   List<CartItem> _items = [];
   bool _loading = true;
-  bool _checkingOut = false;
+  final bool _checkingOut = false;
   String _paymentMethod = 'COD';
 
   @override
@@ -38,32 +39,15 @@ class _CartScreenState extends State<CartScreen> {
 
   Future<void> _checkout() async {
     if (_items.isEmpty) return;
-    setState(() => _checkingOut = true);
-    try {
-      await MarketplaceService.placeOrderFromCart(
-        paymentMethod: _paymentMethod,
-        deliveryAddress: 'My saved address',
-      );
-      if (mounted) {
-        setState(() => _items = []); // clear local list immediately
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Order placed successfully! 🎉',
-            style: AppTypography.label.copyWith(fontWeight: FontWeight.w600, color: Colors.black)),
-          backgroundColor: kSuccess,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        ));
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Error placing order: $e'),
-          backgroundColor: kError,
-        ));
-      }
-    } finally {
-      if (mounted) setState(() => _checkingOut = false);
-    }
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => CheckoutScreen(
+          items: _items,
+          deliveryFee: _delivery,
+        ),
+      ),
+    ).then((_) => _load());
   }
 
   @override

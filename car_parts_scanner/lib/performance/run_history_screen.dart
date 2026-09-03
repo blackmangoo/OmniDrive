@@ -112,19 +112,19 @@ class _RunHistoryScreenState extends State<RunHistoryScreen> {
 
                     if (run['result_0_to_100'] != null) {
                       topMetric = '0-100';
-                      topValue  = (run['result_0_to_100'] as num).toDouble();
+                      topValue  = double.tryParse(run['result_0_to_100'].toString()) ?? 0.0;
                       topValueStr = '${topValue.toStringAsFixed(2)}s';
                     } else if (run['result_0_to_60'] != null) {
                       topMetric = '0-60';
-                      topValue  = (run['result_0_to_60'] as num).toDouble();
+                      topValue  = double.tryParse(run['result_0_to_60'].toString()) ?? 0.0;
                       topValueStr = '${topValue.toStringAsFixed(2)}s';
                     } else if (run['result_quarter_mi'] != null) {
                       topMetric = '¼ Mile';
-                      topValue  = (run['result_quarter_mi'] as num).toDouble();
+                      topValue  = double.tryParse(run['result_quarter_mi'].toString()) ?? 0.0;
                       topValueStr = '${topValue.toStringAsFixed(2)}s';
                     } else if (run['result_100_to_0'] != null) {
                       topMetric = '100-0';
-                      topValue  = (run['result_100_to_0'] as num).toDouble();
+                      topValue  = double.tryParse(run['result_100_to_0'].toString()) ?? 0.0;
                       topValueStr = '${topValue.toStringAsFixed(2)}s';
                     }
 

@@ -101,10 +101,13 @@ class _LoginScreenState extends State<LoginScreen>
       String title = 'Login Failed';
       String msg = e.message;
       if (msg.contains('email_not_confirmed') || msg.contains('Email not confirmed')) {
-        Navigator.push(
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (_) => VerifyEmailScreen(email: _emailCtrl.text.trim()),
+            builder: (_) => VerifyEmailScreen(
+              email: _emailCtrl.text.trim(),
+              password: _passCtrl.text,
+            ),
           ),
         );
         return;

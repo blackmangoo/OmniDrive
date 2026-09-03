@@ -17,7 +17,6 @@ class AdminOrdersScreen extends StatefulWidget {
 
 class _AdminOrdersScreenState extends State<AdminOrdersScreen> {
   List<Order> _orders = [];
-  List<AppUser> _riders = [];
   bool _loading = true;
 
   @override
@@ -29,58 +28,11 @@ class _AdminOrdersScreenState extends State<AdminOrdersScreen> {
   Future<void> _load() async {
     if (mounted) setState(() => _loading = true);
     final orders = await MarketplaceService.fetchAllOrders();
-    final riders = await MarketplaceService.fetchRiders();
     if (mounted) {
       setState(() {
         _orders = orders;
-        _riders = riders;
         _loading = false;
       });
-    }
-  }
-
-  /// Show a dialog to assign a rider to the order
-  Future<void> _assignRider(Order order) async {
-    if (_riders.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('No riders available. Add rider accounts first.'),
-        backgroundColor: kWarning, behavior: SnackBarBehavior.floating));
-      return;
-    }
-    final selected = await showDialog<AppUser>(
-      context: context,
-      builder: (_) => AlertDialog(
-        backgroundColor: kSurface,
-        title: Text('Assign Rider', style: GoogleFonts.inter(color: Colors.white, fontWeight: FontWeight.bold)),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: _riders.map((r) => TappableScale(
-            onTap: () => Navigator.pop(context, r),
-            child: Container(
-              margin: const EdgeInsets.only(bottom: 8),
-              decoration: kCardDeco(radius: 12),
-              child: ListTile(
-                leading: const Icon(Icons.delivery_dining_rounded, color: kRider),
-                title: Text(r.fullName, style: GoogleFonts.inter(color: Colors.white)),
-                subtitle: Text(r.phone ?? r.email, style: GoogleFonts.inter(color: Colors.white38, fontSize: 12)),
-              ),
-            ),
-          )).toList(),
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: Text('Cancel', style: GoogleFonts.inter(color: Colors.white38))),
-        ],
-      ),
-    );
-
-    if (selected != null) {
-      await MarketplaceService.assignRider(order.id, selected.id);
-      _load();
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Rider ${selected.fullName} assigned!', style: GoogleFonts.inter()),
-        backgroundColor: kSuccess, behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))));
     }
   }
 
@@ -128,9 +80,6 @@ class _AdminOrdersScreenState extends State<AdminOrdersScreen> {
                       index: i,
                       child: _AdminOrderTile(
                         order: _orders[i],
-                        onAssignRider: _orders[i].status == 'ready' && _orders[i].riderId == null
-                            ? () => _assignRider(_orders[i])
-                            : null,
                       ),
                     ),
                   ),
@@ -167,8 +116,7 @@ class _AdminOrdersScreenState extends State<AdminOrdersScreen> {
 
 class _AdminOrderTile extends StatelessWidget {
   final Order order;
-  final VoidCallback? onAssignRider;
-  const _AdminOrderTile({required this.order, this.onAssignRider});
+  const _AdminOrderTile({required this.order});
 
   @override
   Widget build(BuildContext context) {
@@ -208,27 +156,6 @@ class _AdminOrderTile extends StatelessWidget {
           child: Text('🏍️ Rider: ${order.riderName ?? "Assigned"}',
               style: GoogleFonts.inter(color: kRider, fontSize: 11, fontWeight: FontWeight.w600)),
         ),
-        if (onAssignRider != null) ...[
-          const SizedBox(height: 10),
-          SizedBox(
-            width: double.infinity, height: 38,
-            child: TappableScale(
-              onTap: onAssignRider,
-              child: Container(
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: kRider,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                  const Icon(Icons.delivery_dining_rounded, size: 16, color: Colors.white),
-                  const SizedBox(width: 6),
-                  Text('Assign Rider', style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white)),
-                ]),
-              ),
-            ),
-          ),
-        ],
       ]),
     );
   }

@@ -8,6 +8,7 @@ import 'marketplace_models.dart';
 class MarketplaceService {
   static final _sb = Supabase.instance.client;
   static const String _bucket = 'product-images';
+  static RealtimeChannel? _notifChannel;
 
   // ── Current user helpers ───────────────────────────────────────────────────
   static String get currentUserId => _sb.auth.currentUser!.id;
@@ -85,15 +86,58 @@ class MarketplaceService {
   // ── FCM Token ───────────────────────────────────────────────────────────────
   static Future<void> saveFcmToken(String token) async {
     try {
+      // Save on user_profiles for all roles
+      await _sb
+          .from('user_profiles')
+          .update({'fcm_token': token}).eq('id', currentUserId);
+
       final role = await getUserRole();
       if (role == 'vendor') {
         await _sb
             .from('vendor_profiles')
             .update({'fcm_token': token}).eq('id', currentUserId);
       }
-      // For riders/customers, store on user_profiles if needed
     } catch (e) {
       debugPrint('saveFcmToken error: $e');
+    }
+  }
+
+  // ── Realtime Notification Listener ─────────────────────────────────────────
+  static void startNotificationListener(void Function(AppNotification) onNotificationReceived) {
+    stopNotificationListener();
+    try {
+      _notifChannel = _sb
+          .channel('public:notifications:user:$currentUserId')
+          .onPostgresChanges(
+            event: PostgresChangeEvent.insert,
+            schema: 'public',
+            table: 'notifications',
+            filter: PostgresChangeFilter(
+              type: PostgresChangeFilterType.eq,
+              column: 'user_id',
+              value: currentUserId,
+            ),
+            callback: (payload) {
+              try {
+                final notif = AppNotification.fromMap(payload.newRecord);
+                onNotificationReceived(notif);
+              } catch (e) {
+                debugPrint('Error parsing realtime notification: $e');
+              }
+            },
+          )
+          .subscribe();
+    } catch (e) {
+      debugPrint('Error starting notification listener: $e');
+    }
+  }
+
+  static void stopNotificationListener() {
+    if (_notifChannel != null) {
+      try {
+        _sb.removeChannel(_notifChannel!);
+      } catch (_) {}
+      _notifChannel = null;
     }
   }
 
@@ -156,7 +200,7 @@ class MarketplaceService {
   }) async {
     try {
       var query = _sb.from('products').select(
-            '*, vendor_profiles(shop_name, shop_logo_url)',
+            '*, vendor_profiles(shop_name, shop_logo_url), categories(name)',
           );
       if (activeOnly) query = query.eq('is_active', true);
       if (categoryId != null) query = query.eq('category_id', categoryId);
@@ -176,7 +220,7 @@ class MarketplaceService {
     try {
       final data = await _sb
           .from('products')
-          .select('*, vendor_profiles(shop_name, shop_logo_url)')
+          .select('*, vendor_profiles(shop_name, shop_logo_url), categories(name)')
           .eq('id', productId)
           .single();
       return Product.fromMap(data);
@@ -191,13 +235,18 @@ class MarketplaceService {
       final ext = file.path.split('.').last;
       final path = '$currentUserId/${DateTime.now().millisecondsSinceEpoch}.$ext';
       
-      // Compress the image before uploading to save bandwidth & storage
-      final compressedBytes = await FlutterImageCompress.compressWithFile(
-        file.absolute.path,
-        quality: 70,
-        minWidth: 1024,
-        minHeight: 1024,
-      );
+      Uint8List? compressedBytes;
+      try {
+        // Compress the image before uploading to save bandwidth & storage
+        compressedBytes = await FlutterImageCompress.compressWithFile(
+          file.absolute.path,
+          quality: 70,
+          minWidth: 1024,
+          minHeight: 1024,
+        );
+      } catch (compressError) {
+        debugPrint('[Resilient Upload] FlutterImageCompress error, falling back to original: $compressError');
+      }
 
       if (compressedBytes != null) {
         await _sb.storage.from(_bucket).uploadBinary(path, compressedBytes);
@@ -236,7 +285,7 @@ class MarketplaceService {
     try {
       var query = _sb
           .from('products')
-          .select('*, vendor_profiles(shop_name, shop_logo_url)')
+          .select('*, vendor_profiles(shop_name, shop_logo_url), categories(name)')
           .eq('vendor_id', currentUserId);
       if (search != null && search.isNotEmpty) {
         query = query.ilike('name', '%$search%');
@@ -283,7 +332,7 @@ class MarketplaceService {
     try {
       final data = await _sb
           .from('cart_items')
-          .select('*, products(*, vendor_profiles(shop_name))')
+          .select('*, products(*, vendor_profiles(shop_name), categories(name))')
           .eq('user_id', currentUserId);
       return (data as List).map((m) => CartItem.fromMap(m)).toList();
     } catch (e) {
@@ -427,14 +476,9 @@ class MarketplaceService {
   static Future<List<Order>> fetchCustomerOrders() async {
     try {
       final data = await _sb.from('orders').select(
-            'id, customer_id, vendor_id, status, total_amount, delivery_address, delivery_fee, customer_notes, rider_id, created_at, order_items(*), vendor:vendor_id(shop_name, location)',
+            'id, customer_id, vendor_id, status, total_amount, delivery_address, delivery_fee, customer_notes, rider_id, created_at, payment_method, order_items(*), customer:user_profiles!orders_customer_id_fkey(full_name, phone), vendor:vendor_profiles!orders_vendor_id_fkey(shop_name, location, phone), rider:user_profiles!orders_rider_id_fkey(full_name, phone)',
           ).eq('customer_id', currentUserId).order('created_at', ascending: false);
-      return (data as List).map((m) {
-        final m2 = Map<String, dynamic>.from(m);
-        // Alias vendor join
-        m2['vendor'] = m['vendor_id'] is Map ? m['vendor_id'] : m['vendor'];
-        return Order.fromMap(m2);
-      }).toList();
+      return (data as List).map((m) => Order.fromMap(Map<String, dynamic>.from(m))).toList();
     } catch (e) {
       debugPrint('fetchCustomerOrders error: $e');
       return [];
@@ -445,15 +489,11 @@ class MarketplaceService {
   static Future<List<Order>> fetchVendorOrders({String? status}) async {
     try {
       var query = _sb.from('orders').select(
-            'id, customer_id, vendor_id, status, total_amount, delivery_address, delivery_fee, customer_notes, rider_id, created_at, order_items(*), customer:customer_id(full_name, phone)',
+            'id, customer_id, vendor_id, status, total_amount, delivery_address, delivery_fee, customer_notes, rider_id, created_at, payment_method, order_items(*), customer:user_profiles!orders_customer_id_fkey(full_name, phone), vendor:vendor_profiles!orders_vendor_id_fkey(shop_name, location, phone), rider:user_profiles!orders_rider_id_fkey(full_name, phone)',
           ).eq('vendor_id', currentUserId);
       if (status != null) query = query.eq('status', status);
       final data = await query.order('created_at', ascending: false);
-      return (data as List).map((m) {
-        final m2 = Map<String, dynamic>.from(m);
-        m2['customer'] = m['customer_id'] is Map ? m['customer_id'] : m['customer'];
-        return Order.fromMap(m2);
-      }).toList();
+      return (data as List).map((m) => Order.fromMap(Map<String, dynamic>.from(m))).toList();
     } catch (e) {
       debugPrint('fetchVendorOrders error: $e');
       return [];
@@ -464,9 +504,9 @@ class MarketplaceService {
   static Future<List<Order>> fetchRiderOrders() async {
     try {
       final data = await _sb.from('orders').select(
-            'id, customer_id, vendor_id, status, total_amount, delivery_address, delivery_fee, customer_notes, rider_id, created_at, order_items(*), customer:customer_id(full_name, phone, address), vendor:vendor_id(shop_name, location)',
+            'id, customer_id, vendor_id, status, total_amount, delivery_address, delivery_fee, customer_notes, rider_id, created_at, payment_method, order_items(*), customer:user_profiles!orders_customer_id_fkey(full_name, phone, address), vendor:vendor_profiles!orders_vendor_id_fkey(shop_name, location, phone), rider:user_profiles!orders_rider_id_fkey(full_name, phone)',
           ).eq('rider_id', currentUserId).order('created_at', ascending: false);
-      return (data as List).map((m) => Order.fromMap(m)).toList();
+      return (data as List).map((m) => Order.fromMap(Map<String, dynamic>.from(m))).toList();
     } catch (e) {
       debugPrint('fetchRiderOrders error: $e');
       return [];
@@ -478,6 +518,75 @@ class MarketplaceService {
       'status': status,
       'updated_at': DateTime.now().toIso8601String(),
     }).eq('id', orderId);
+
+    // If order is marked as ready, automatically notify all registered riders
+    if (status == 'ready') {
+      try {
+        final riders = await fetchRiders();
+        final notifs = riders.map((r) => {
+          'user_id': r.id,
+          'title': '📦 New Delivery Available!',
+          'body': 'An order is ready for pickup. Accept it now!',
+          'type': 'delivery_available',
+          'data': {'order_id': orderId},
+        }).toList();
+        if (notifs.isNotEmpty) {
+          await _sb.from('notifications').insert(notifs);
+        }
+      } catch (e) {
+        debugPrint('[Notification] Error notifying riders of ready order: $e');
+      }
+    }
+  }
+
+  /// Fetch all unassigned orders that are ready for delivery (status = 'ready' and rider_id is null)
+  static Future<List<Order>> fetchAvailableOrders() async {
+    try {
+      final data = await _sb.from('orders').select(
+            'id, customer_id, vendor_id, status, total_amount, delivery_address, delivery_fee, customer_notes, rider_id, created_at, payment_method, order_items(*), customer:user_profiles!orders_customer_id_fkey(full_name, phone, address), vendor:vendor_profiles!orders_vendor_id_fkey(shop_name, location, phone)',
+          )
+          .eq('status', 'ready')
+          .isFilter('rider_id', null)
+          .order('created_at', ascending: false);
+      return (data as List).map((m) => Order.fromMap(Map<String, dynamic>.from(m))).toList();
+    } catch (e) {
+      debugPrint('fetchAvailableOrders error: $e');
+      return [];
+    }
+  }
+
+  /// Let a rider accept/claim an available ready order
+  static Future<void> claimOrder(String orderId) async {
+    await _sb.from('orders').update({
+      'rider_id': currentUserId,
+      'status': 'dispatched',
+      'updated_at': DateTime.now().toIso8601String(),
+    }).eq('id', orderId);
+
+    try {
+      final order = await _sb.from('orders').select('customer_id, vendor_id').eq('id', orderId).single();
+      final customerId = order['customer_id'] as String;
+      final vendorId = order['vendor_id'] as String;
+
+      await Future.wait([
+        _sb.from('notifications').insert({
+          'user_id': customerId,
+          'title': '🏍️ Order Dispatched!',
+          'body': 'A rider has accepted your order and is on the way.',
+          'type': 'order_dispatched',
+          'data': {'order_id': orderId},
+        }),
+        _sb.from('notifications').insert({
+          'user_id': vendorId,
+          'title': '🏍️ Rider Assigned!',
+          'body': 'A rider has accepted and is picking up the order.',
+          'type': 'rider_accepted',
+          'data': {'order_id': orderId},
+        }),
+      ]);
+    } catch (e) {
+      debugPrint('claimOrder notify error: $e');
+    }
   }
 
   static Future<void> assignRider(String orderId, String riderId) async {
@@ -531,10 +640,11 @@ class MarketplaceService {
   static Future<List<Order>> fetchAllOrders() async {
     try {
       final data = await _sb.from('orders').select(
-            'id, customer_id, vendor_id, status, total_amount, delivery_address, delivery_fee, customer_notes, rider_id, created_at, order_items(*), customer:customer_id(full_name, phone), vendor:vendor_id(shop_name), rider:rider_id(full_name, phone)',
+            'id, customer_id, vendor_id, status, total_amount, delivery_address, delivery_fee, customer_notes, rider_id, created_at, payment_method, order_items(*), customer:user_profiles!orders_customer_id_fkey(full_name, phone), vendor:vendor_profiles!orders_vendor_id_fkey(shop_name, location, phone), rider:user_profiles!orders_rider_id_fkey(full_name, phone)',
           ).order('created_at', ascending: false);
-      return (data as List).map((m) => Order.fromMap(m)).toList();
+      return (data as List).map((m) => Order.fromMap(Map<String, dynamic>.from(m))).toList();
     } catch (e) {
+      debugPrint('fetchAllOrders error: $e');
       return [];
     }
   }

@@ -62,7 +62,10 @@ class _SignupScreenState extends State<SignupScreen> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (_) => VerifyEmailScreen(email: _emailCtrl.text.trim()),
+          builder: (_) => VerifyEmailScreen(
+            email: _emailCtrl.text.trim(),
+            password: _passCtrl.text,
+          ),
         ),
       );
     } on AuthException catch (e) {
