@@ -56,10 +56,12 @@ class _CartScreenState extends State<CartScreen> {
     appBar: AppBar(
       backgroundColor: kBg,
       surfaceTintColor: Colors.transparent,
-      leading: TappableScale(
-        onTap: () => Navigator.pop(context),
-        child: const Icon(Icons.arrow_back_rounded, color: kTextSecondary),
-      ),
+      leading: ModalRoute.of(context)?.isFirst == false
+          ? TappableScale(
+              onTap: () => Navigator.pop(context),
+              child: const Icon(Icons.arrow_back_rounded, color: kTextSecondary),
+            )
+          : null,
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

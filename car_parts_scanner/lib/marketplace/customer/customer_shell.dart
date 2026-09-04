@@ -18,6 +18,7 @@ class CustomerShell extends StatefulWidget {
 class _CustomerShellState extends State<CustomerShell> {
   int _idx = 0;
   int _cartCount = 0;
+  int _cartRefreshKey = 0;
 
   @override
   void initState() {
@@ -33,14 +34,21 @@ class _CustomerShellState extends State<CustomerShell> {
   List<Widget> get _screens => [
         const MarketplaceHomeScreen(),
         ImageSearchScreen(cameras: cameras),
-        const CartScreen(),
+        CartScreen(key: ValueKey(_cartRefreshKey)),
         const PerformanceHomeScreen(),
         const CustomerProfileScreen(),
       ];
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return PopScope(
+      canPop: _idx == 0,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) {
+          setState(() => _idx = 0);
+        }
+      },
+      child: Scaffold(
       backgroundColor: kBg,
       body: IndexedStack(index: _idx, children: _screens),
       bottomNavigationBar: Container(
@@ -53,8 +61,13 @@ class _CustomerShellState extends State<CustomerShell> {
           indicatorColor: kAccent.withValues(alpha: 0.15),
           selectedIndex: _idx,
           onDestinationSelected: (i) {
-            setState(() => _idx = i);
-            if (i == 2) _loadCartCount(); // refresh cart count when tab tapped
+            setState(() {
+              _idx = i;
+              if (i == 2) {
+                _cartRefreshKey++;
+                _loadCartCount();
+              }
+            });
           },
           labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
           destinations: [
@@ -96,6 +109,6 @@ class _CustomerShellState extends State<CustomerShell> {
           ],
         ),
       ),
-    );
+    ));
   }
 }

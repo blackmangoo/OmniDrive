@@ -226,15 +226,22 @@ class OrderItem {
     this.productImage,
   });
 
-  factory OrderItem.fromMap(Map<String, dynamic> m) => OrderItem(
-        id: m['id'] as String,
-        orderId: m['order_id'] as String,
-        productId: m['product_id'] as String,
-        quantity: m['quantity'] as int,
+  factory OrderItem.fromMap(Map<String, dynamic> m) {
+    try {
+      return OrderItem(
+        id: m['id']?.toString() ?? '',
+        orderId: m['order_id']?.toString() ?? '',
+        productId: m['product_id']?.toString() ?? '',
+        quantity: m['quantity'] as int? ?? 1,
         unitPrice: _toDouble(m['unit_price']),
-        productName: m['product_name'] as String,
-        productImage: m['product_image'] as String?,
+        productName: m['product_name']?.toString() ?? 'Unknown',
+        productImage: m['product_image']?.toString(),
       );
+    } catch (e) {
+      print('OrderItem.fromMap error: $e | Data: $m');
+      rethrow;
+    }
+  }
 
   double get total => unitPrice * quantity;
 }
@@ -295,27 +302,32 @@ class Order {
     final vendor = m['vendor'] as Map<String, dynamic>?;
     final rider = m['rider'] as Map<String, dynamic>?;
 
-    return Order(
-      id: m['id'] as String,
-      customerId: m['customer_id'] as String,
-      vendorId: m['vendor_id'] as String,
-      status: m['status'] as String,
-      totalAmount: _toDouble(m['total_amount']),
-      deliveryAddress: m['delivery_address'] as String,
-      deliveryFee: _toDouble(m['delivery_fee']),
-      customerNotes: m['customer_notes'] as String?,
-      riderId: m['rider_id'] as String?,
-      createdAt: DateTime.parse(m['created_at'] as String),
-      paymentMethod: m['payment_method'] as String?,
-      items: parsedItems,
-      customerName: customer?['full_name'] as String?,
-      customerPhone: customer?['phone'] as String?,
-      vendorShopName: vendor?['shop_name'] as String?,
-      vendorLocation: vendor?['location'] as String?,
-      vendorPhone: vendor?['phone'] as String?,
-      riderName: rider?['full_name'] as String?,
-      riderPhone: rider?['phone'] as String?,
-    );
+    try {
+      return Order(
+        id: m['id']?.toString() ?? '',
+        customerId: m['customer_id']?.toString() ?? '',
+        vendorId: m['vendor_id']?.toString() ?? '',
+        status: m['status']?.toString() ?? 'pending',
+        totalAmount: _toDouble(m['total_amount']),
+        deliveryAddress: m['delivery_address']?.toString() ?? '',
+        deliveryFee: _toDouble(m['delivery_fee']),
+        customerNotes: m['customer_notes']?.toString(),
+        riderId: m['rider_id']?.toString(),
+        createdAt: m['created_at'] != null ? DateTime.tryParse(m['created_at'].toString()) ?? DateTime.now() : DateTime.now(),
+        paymentMethod: m['payment_method']?.toString(),
+        items: parsedItems,
+        customerName: customer?['full_name']?.toString(),
+        customerPhone: customer?['phone']?.toString(),
+        vendorShopName: vendor?['shop_name']?.toString(),
+        vendorLocation: vendor?['location']?.toString(),
+        vendorPhone: vendor?['phone']?.toString(),
+        riderName: rider?['full_name']?.toString(),
+        riderPhone: rider?['phone']?.toString(),
+      );
+    } catch (e) {
+      print('Order.fromMap error: $e | Data: $m');
+      rethrow;
+    }
   }
 }
 

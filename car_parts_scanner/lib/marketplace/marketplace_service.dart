@@ -405,8 +405,7 @@ class MarketplaceService {
 
       final orderId = orderData['id'] as String;
 
-      // 2. Insert order items (snapshot)
-      final orderItems = items.map((ci) => {
+      final orderItemsData = items.map((ci) => {
             'order_id': orderId,
             'product_id': ci.productId,
             'quantity': ci.quantity,
@@ -414,14 +413,17 @@ class MarketplaceService {
             'product_name': ci.product?.name ?? '',
             'product_image': ci.product?.primaryImage,
           }).toList();
-      await _sb.from('order_items').insert(orderItems);
+      final insertedItems = await _sb.from('order_items').insert(orderItemsData).select();
 
       // 3. Decrement stock for each product using atomic RPC
       for (final ci in items) {
-        await _sb.rpc('decrement_stock', params: {
+        final success = await _sb.rpc('decrement_stock', params: {
           'p_product_id': ci.productId,
           'p_quantity': ci.quantity,
         });
+        if (success != true) {
+          throw Exception('Insufficient stock for item: ${ci.product?.name}');
+        }
       }
 
       // 4 & 5. Clear cart and notify vendor concurrently
@@ -436,10 +438,10 @@ class MarketplaceService {
         }),
       ]);
 
-      return Order.fromMap({...orderData, 'order_items': orderItems});
-    } catch (e) {
-      debugPrint('placeOrder error: $e');
-      return null;
+      return Order.fromMap({...orderData, 'order_items': insertedItems});
+    } catch (e, st) {
+      debugPrint('placeOrder error: $e\n$st');
+      throw Exception('$e\n$st');
     }
   }
 

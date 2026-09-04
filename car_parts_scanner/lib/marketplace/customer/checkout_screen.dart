@@ -56,10 +56,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             (route) => route.isFirst);
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text('🎉 Order placed successfully!'), backgroundColor: kSuccess, behavior: SnackBarBehavior.floating));
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('Failed to place order. Try again.'), backgroundColor: kError, behavior: SnackBarBehavior.floating));
       }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Failed to place order: $e'), backgroundColor: kError, behavior: SnackBarBehavior.floating));
     } finally {
       if (mounted) setState(() => _loading = false);
     }
