@@ -89,7 +89,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
       if (!mounted) return;
       Navigator.of(context).push(
-        MaterialPageRoute(builder: (_) => const UpdatePasswordScreen()),
+        MaterialPageRoute(builder: (_) => UpdatePasswordScreen()),
       ).then((_) {
         if (mounted) {
           setState(() {
@@ -133,29 +133,29 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.textPrimary, size: 20),
+          icon: Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.textPrimary, size: 20),
           onPressed: () => Navigator.pop(context),
         ),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.md),
+          padding: EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.md),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text('Reset Password', style: AppTypography.display.copyWith(fontSize: 32)),
-              const SizedBox(height: 12),
+              SizedBox(height: 12),
               Text(
                 _emailSent 
                   ? 'Check your email for a password reset link or recovery code. Click the link on this device, OR copy and paste the code/link below to reset:'
                   : 'Enter your email address and we will send you a link to reset your password.', 
                 style: AppTypography.body.copyWith(color: AppColors.textSecondary)
               ),
-              const SizedBox(height: 40),
+              SizedBox(height: 40),
               
               if (!_emailSent) ...[
                 Text('Email', style: AppTypography.label.copyWith(color: AppColors.textSecondary)),
-                const SizedBox(height: 8),
+                SizedBox(height: 8),
                 TextFormField(
                   controller: _emailCtrl,
                   style: AppTypography.body.copyWith(color: AppColors.textPrimary),
@@ -165,13 +165,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     hintStyle: AppTypography.body.copyWith(color: AppColors.textMuted),
                     filled: true,
                     fillColor: AppColors.surface,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.rLg), borderSide: const BorderSide(color: AppColors.border)),
-                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.rLg), borderSide: const BorderSide(color: AppColors.border)),
-                    focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.rLg), borderSide: const BorderSide(color: AppColors.cyan, width: 1.5)),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.rLg), borderSide: BorderSide(color: AppColors.border)),
+                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.rLg), borderSide: BorderSide(color: AppColors.border)),
+                    focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.rLg), borderSide: BorderSide(color: AppColors.cyan, width: 1.5)),
                   ),
                 ),
-                const SizedBox(height: 36),
+                SizedBox(height: 36),
                 
                 SizedBox(
                   width: double.infinity,
@@ -186,7 +186,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       ),
                       child: Center(
                         child: _loading
-                            ? const SizedBox(width: 22, height: 22, child: CircularProgressIndicator(color: Colors.black, strokeWidth: 2.5))
+                            ? SizedBox(width: 22, height: 22, child: CircularProgressIndicator(color: Colors.black, strokeWidth: 2.5))
                             : Text('Send Reset Link', style: AppTypography.label.copyWith(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black)),
                       ),
                     ),
@@ -194,7 +194,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 ),
               ] else ...[
                 Text('Recovery Code or Link', style: AppTypography.label.copyWith(color: AppColors.textSecondary)),
-                const SizedBox(height: 8),
+                SizedBox(height: 8),
                 TextFormField(
                   controller: _codeCtrl,
                   style: AppTypography.body.copyWith(color: AppColors.textPrimary),
@@ -203,13 +203,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     hintStyle: AppTypography.body.copyWith(color: AppColors.textMuted),
                     filled: true,
                     fillColor: AppColors.surface,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.rLg), borderSide: const BorderSide(color: AppColors.border)),
-                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.rLg), borderSide: const BorderSide(color: AppColors.border)),
-                    focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.rLg), borderSide: const BorderSide(color: AppColors.cyan, width: 1.5)),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.rLg), borderSide: BorderSide(color: AppColors.border)),
+                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.rLg), borderSide: BorderSide(color: AppColors.border)),
+                    focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.rLg), borderSide: BorderSide(color: AppColors.cyan, width: 1.5)),
                   ),
                 ),
-                const SizedBox(height: 36),
+                SizedBox(height: 36),
                 
                 SizedBox(
                   width: double.infinity,
@@ -224,13 +224,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       ),
                       child: Center(
                         child: _loading
-                            ? const SizedBox(width: 22, height: 22, child: CircularProgressIndicator(color: Colors.black, strokeWidth: 2.5))
+                            ? SizedBox(width: 22, height: 22, child: CircularProgressIndicator(color: Colors.black, strokeWidth: 2.5))
                             : Text('Verify & Reset Password', style: AppTypography.label.copyWith(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black)),
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: 20),
                 Center(
                   child: TextButton(
                     onPressed: () => setState(() => _emailSent = false),

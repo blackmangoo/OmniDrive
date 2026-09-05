@@ -26,7 +26,7 @@ class LiveTestScreen extends StatefulWidget {
   final SensorFusionService? gpsService;
   final ObdWifiService? obdService;
 
-  const LiveTestScreen({
+  LiveTestScreen({
     super.key,
     required this.carId,
     required this.runService,
@@ -174,7 +174,7 @@ class _LiveTestScreenState extends State<LiveTestScreen> {
             children: [
               // ── Header row ────────────────────────────────────────────
               Padding(
-                padding: const EdgeInsets.fromLTRB(20, 20, 12, 0),
+                padding: EdgeInsets.fromLTRB(20, 20, 12, 0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -183,7 +183,7 @@ class _LiveTestScreenState extends State<LiveTestScreen> {
                     if (_state == RunState.running)
                       Text(
                         _formatElapsed(_elapsedS),
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: Colors.white38,
                           fontSize: 16,
                           fontFeatures: [FontFeature.tabularFigures()],
@@ -192,7 +192,7 @@ class _LiveTestScreenState extends State<LiveTestScreen> {
                       ),
                     TappableScale(
                       onTap: _cancelTest,
-                      child: const Padding(
+                      child: Padding(
                         padding: EdgeInsets.all(8.0),
                         child: Icon(Icons.close_rounded, color: Colors.white38),
                       ),
@@ -201,7 +201,7 @@ class _LiveTestScreenState extends State<LiveTestScreen> {
                 ),
               ),
 
-              const Spacer(flex: 1),
+              Spacer(flex: 1),
 
               // ── Custom Speedometer Gauge ────────────────────────────────
               SpeedometerGauge(
@@ -210,7 +210,7 @@ class _LiveTestScreenState extends State<LiveTestScreen> {
                 runState: _state,
               ),
 
-              const Spacer(flex: 1),
+              Spacer(flex: 1),
 
               // ── BRAKE NOW button ──────────────────────────────────────
               if (showBrakeButton) ...[
@@ -222,7 +222,7 @@ class _LiveTestScreenState extends State<LiveTestScreen> {
                     }
                   },
                   child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
+                    duration: Duration(milliseconds: 200),
                     width: 190,
                     height: 190,
                     decoration: BoxDecoration(
@@ -250,7 +250,7 @@ class _LiveTestScreenState extends State<LiveTestScreen> {
                         Icon(Icons.block_rounded,
                           color: _currentSpeed >= 98 ? AppColors.error : Colors.white38,
                           size: 36),
-                        const SizedBox(height: 8),
+                        SizedBox(height: 8),
                         Text(
                           _currentSpeed >= 98 ? 'BRAKE NOW' : 'Reach 100',
                           style: TextStyle(
@@ -264,21 +264,21 @@ class _LiveTestScreenState extends State<LiveTestScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
               ],
 
               // ── Live chart ────────────────────────────────────────────
               if (!showBrakeButton)
                 Container(
                   height: 180,
-                  padding: const EdgeInsets.only(left: 8, right: 16, bottom: 4),
+                  padding: EdgeInsets.only(left: 8, right: 16, bottom: 4),
                   child: LineChart(
                     LineChartData(
                       minX: 0,
                       maxX: _maxX,
                       minY: 0,
                       maxY: _chartMaxY,  
-                      clipData: const FlClipData.all(),
+                      clipData: FlClipData.all(),
                       gridData: FlGridData(
                         show: true,
                         drawVerticalLine: false,
@@ -287,8 +287,8 @@ class _LiveTestScreenState extends State<LiveTestScreen> {
                             FlLine(color: Colors.white.withValues(alpha: 0.07), strokeWidth: 1),
                       ),
                       titlesData: FlTitlesData(
-                        rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                        topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                        rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                        topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
                         bottomTitles: AxisTitles(
                           sideTitles: SideTitles(
                             showTitles: true,
@@ -296,7 +296,7 @@ class _LiveTestScreenState extends State<LiveTestScreen> {
                             interval: 5,
                             getTitlesWidget: (v, _) => Text(
                               '${v.toInt()}s',
-                              style: const TextStyle(color: Colors.white24, fontSize: 10),
+                              style: TextStyle(color: Colors.white24, fontSize: 10),
                             ),
                           ),
                         ),
@@ -307,7 +307,7 @@ class _LiveTestScreenState extends State<LiveTestScreen> {
                             interval: _chartMaxY / 3,
                             getTitlesWidget: (v, _) => Text(
                               '${v.toInt()}',
-                              style: const TextStyle(color: Colors.white24, fontSize: 10),
+                              style: TextStyle(color: Colors.white24, fontSize: 10),
                             ),
                           ),
                         ),
@@ -316,13 +316,13 @@ class _LiveTestScreenState extends State<LiveTestScreen> {
                       lineBarsData: [
                         LineChartBarData(
                           spots: _chartData.isEmpty
-                              ? [const FlSpot(0, 0)]
+                              ? [FlSpot(0, 0)]
                               : _chartData,
                           isCurved: true,
                           color: AppColors.cyan,
                           barWidth: 2.5,
                           isStrokeCapRound: true,
-                          dotData: const FlDotData(show: false),
+                          dotData: FlDotData(show: false),
                           belowBarData: BarAreaData(
                             show: true,
                             gradient: LinearGradient(
@@ -337,20 +337,20 @@ class _LiveTestScreenState extends State<LiveTestScreen> {
                         ),
                       ],
                     ),
-                    duration: const Duration(milliseconds: 0), 
+                    duration: Duration(milliseconds: 0), 
                   ),
                 ),
 
-              const Spacer(flex: 1),
+              Spacer(flex: 1),
 
               // ── Metric status list ────────────────────────────────────
               Padding(
-                padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+                padding: EdgeInsets.fromLTRB(24, 0, 24, 24),
                 child: Column(
                   children: widget.runService.selectedMetrics.map((m) {
                     final done = _completedMetrics.contains(m);
                     return Padding(
-                      padding: const EdgeInsets.only(bottom: 6),
+                      padding: EdgeInsets.only(bottom: 6),
                       child: Row(
                         children: [
                           Icon(
@@ -358,7 +358,7 @@ class _LiveTestScreenState extends State<LiveTestScreen> {
                             color: done ? AppColors.success : Colors.white24,
                             size: 18,
                           ),
-                          const SizedBox(width: 10),
+                          SizedBox(width: 10),
                           Text(
                             m.displayName,
                             style: TextStyle(
@@ -369,10 +369,10 @@ class _LiveTestScreenState extends State<LiveTestScreen> {
                             ),
                           ),
                           if (done && _resultTime(m) != null) ...[
-                            const Spacer(),
+                            Spacer(),
                             Text(
                               '${_resultTime(m)!.toStringAsFixed(2)}s',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 color: AppColors.success,
                                 fontSize: 15,
                                 fontWeight: FontWeight.bold,
@@ -423,7 +423,7 @@ class _LiveTestScreenState extends State<LiveTestScreen> {
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+      padding: EdgeInsets.symmetric(horizontal: 14, vertical: 7),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(20),
@@ -436,7 +436,7 @@ class _LiveTestScreenState extends State<LiveTestScreen> {
             width: 7, height: 7,
             decoration: BoxDecoration(shape: BoxShape.circle, color: color),
           ),
-          const SizedBox(width: 8),
+          SizedBox(width: 8),
           Text(text,
             style: TextStyle(
               color: color,
@@ -456,7 +456,7 @@ class SpeedometerGauge extends StatelessWidget {
   final double maxSpeed;
   final RunState runState;
 
-  const SpeedometerGauge({
+  SpeedometerGauge({
     super.key,
     required this.speed,
     required this.maxSpeed,
@@ -470,10 +470,10 @@ class SpeedometerGauge extends StatelessWidget {
     
     return TweenAnimationBuilder<double>(
       tween: Tween<double>(begin: speed, end: speed),
-      duration: const Duration(milliseconds: 100),
+      duration: Duration(milliseconds: 100),
       builder: (context, animSpeed, child) {
         return CustomPaint(
-          size: const Size(220, 220),
+          size: Size(220, 220),
           painter: _GaugePainter(
             speed: animSpeed,
             maxSpeed: maxSpeed,
@@ -544,7 +544,7 @@ class _GaugePainter extends CustomPainter {
     final activeSweep = speedRatio * sweepAngle;
     
     final speedPaint = Paint()
-      ..shader = const LinearGradient(
+      ..shader = LinearGradient(
         colors: [AppColors.cyan, AppColors.warning],
       ).createShader(Rect.fromCircle(center: center, radius: radius))
       ..style = PaintingStyle.stroke
@@ -591,7 +591,7 @@ class _GaugePainter extends CustomPainter {
         ..color = AppColors.cyan.withValues(alpha: 0.15)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 4
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8);
+        ..maskFilter = MaskFilter.blur(BlurStyle.normal, 8);
         
       canvas.drawCircle(center, radius + 8, glowPaint);
     }

@@ -15,7 +15,7 @@ class MotionCounter extends StatelessWidget {
     this.suffix = '',
     this.decimals = 0,
     required this.style,
-    this.duration = const Duration(milliseconds: 800),
+    this.duration = Duration(milliseconds: 800),
   });
 
   @override

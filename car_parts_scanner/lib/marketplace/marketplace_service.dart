@@ -7,7 +7,7 @@ import 'marketplace_models.dart';
 /// Single source of truth for all Supabase calls in the Marketplace module.
 class MarketplaceService {
   static final _sb = Supabase.instance.client;
-  static const String _bucket = 'product-images';
+  static final String _bucket = 'product-images';
   static RealtimeChannel? _notifChannel;
 
   // ── Current user helpers ───────────────────────────────────────────────────

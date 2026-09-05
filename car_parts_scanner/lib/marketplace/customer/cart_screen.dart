@@ -59,7 +59,7 @@ class _CartScreenState extends State<CartScreen> {
       leading: ModalRoute.of(context)?.isFirst == false
           ? TappableScale(
               onTap: () => Navigator.pop(context),
-              child: const Icon(Icons.arrow_back_rounded, color: kTextSecondary),
+              child: Icon(Icons.arrow_back_rounded, color: kTextSecondary),
             )
           : null,
       title: Column(
@@ -75,11 +75,11 @@ class _CartScreenState extends State<CartScreen> {
             baseColor: AppColors.surface,
             highlightColor: AppColors.card,
             child: ListView.builder(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(16),
               itemCount: 3,
               itemBuilder: (_, index) => Container(
                 height: 94,
-                margin: const EdgeInsets.only(bottom: 12),
+                margin: EdgeInsets.only(bottom: 12),
                 decoration: BoxDecoration(
                   color: AppColors.surface,
                   borderRadius: BorderRadius.circular(14),
@@ -96,17 +96,17 @@ class _CartScreenState extends State<CartScreen> {
         width: 96, height: 96,
         decoration: BoxDecoration(
           color: kCard, shape: BoxShape.circle, border: Border.all(color: kBorder)),
-        child: const Icon(Icons.shopping_cart_outlined, color: kBorder, size: 48),
+        child: Icon(Icons.shopping_cart_outlined, color: kBorder, size: 48),
       ),
-      const SizedBox(height: 20),
+      SizedBox(height: 20),
       Text('Your cart is empty', style: kHeadline(18, color: kTextSecondary)),
-      const SizedBox(height: 8),
+      SizedBox(height: 8),
       Text('Add some auto parts to get started', style: kBody(13)),
-      const SizedBox(height: 24),
+      SizedBox(height: 24),
       TappableScale(
         onTap: () => Navigator.pop(context),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
+          padding: EdgeInsets.symmetric(horizontal: 32, vertical: 14),
           decoration: BoxDecoration(
             color: kCyan,
             borderRadius: BorderRadius.circular(14),
@@ -124,20 +124,20 @@ class _CartScreenState extends State<CartScreen> {
         color: kCyan, backgroundColor: kCard,
         onRefresh: _load,
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 200),
+          padding: EdgeInsets.fromLTRB(16, 8, 16, 200),
           children: [
             // ── Free delivery banner ─────────────────────────────────────
             if (_subtotal < 2000) Container(
-              margin: const EdgeInsets.only(bottom: 12),
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              margin: EdgeInsets.only(bottom: 12),
+              padding: EdgeInsets.symmetric(horizontal: 14, vertical: 10),
               decoration: BoxDecoration(
                 color: kSuccess.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: kSuccess.withValues(alpha: 0.3)),
               ),
               child: Row(children: [
-                const Icon(Icons.local_shipping_rounded, color: kSuccess, size: 18),
-                const SizedBox(width: 10),
+                Icon(Icons.local_shipping_rounded, color: kSuccess, size: 18),
+                SizedBox(width: 10),
                 Expanded(child: Text(
                   'Add Rs ${(2000 - _subtotal).toStringAsFixed(0)} more for free delivery',
                   style: kBody(12, color: kSuccess, fw: FontWeight.w500))),
@@ -164,28 +164,28 @@ class _CartScreenState extends State<CartScreen> {
               );
             }),
 
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
 
             // ── Payment method ────────────────────────────────────────────
             kSectionHeader('Payment Method'),
-            const SizedBox(height: 12),
+            SizedBox(height: 12),
             Row(children: [
               _payChip('COD', 'Cash on Delivery', Icons.payments_rounded),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
               _payChip('Prepaid', 'JazzCash / Bank', Icons.credit_card_rounded),
             ]),
 
-            const SizedBox(height: 20),
+            SizedBox(height: 20),
 
             // ── Order summary ─────────────────────────────────────────────
             kSectionHeader('Order Summary'),
-            const SizedBox(height: 12),
+            SizedBox(height: 12),
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(16),
               decoration: kCardDeco(radius: 16),
               child: Column(children: [
                 _SummaryRow('Subtotal', '', numericValue: _subtotal, prefix: 'Rs '),
-                const SizedBox(height: 8),
+                SizedBox(height: 8),
                 _SummaryRow(
                   'Delivery',
                   _delivery == 0 ? 'FREE' : '',
@@ -193,9 +193,9 @@ class _CartScreenState extends State<CartScreen> {
                   prefix: _delivery == 0 ? '' : 'Rs ',
                   color: _delivery == 0 ? kSuccess : kTextSecondary,
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8),
                 Divider(color: kBorder),
-                const SizedBox(height: 8),
+                SizedBox(height: 8),
                 _SummaryRow('Total', '', numericValue: _total, prefix: 'Rs ', bold: true, color: kCyan),
               ]),
             ),
@@ -225,12 +225,12 @@ class _CartScreenState extends State<CartScreen> {
                   BoxShadow(
                     color: kCyan.withValues(alpha: 0.25),
                     blurRadius: 16,
-                    offset: const Offset(0, 4),
+                    offset: Offset(0, 4),
                   )
                 ],
               ),
               child: _checkingOut
-                  ? const SizedBox(width: 20, height: 20,
+                  ? SizedBox(width: 20, height: 20,
                       child: CircularProgressIndicator(
                         strokeWidth: 2.5, color: Colors.black))
                   : Text('Place Order · Rs ${_total.toStringAsFixed(0)}',
@@ -247,8 +247,8 @@ class _CartScreenState extends State<CartScreen> {
     child: TappableScale(
       onTap: () => setState(() => _paymentMethod = id),
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+        duration: Duration(milliseconds: 200),
+        padding: EdgeInsets.symmetric(vertical: 12, horizontal: 12),
         decoration: BoxDecoration(
           color: _paymentMethod == id ? kCyan.withValues(alpha: 0.12) : kCard,
           borderRadius: BorderRadius.circular(12),
@@ -260,7 +260,7 @@ class _CartScreenState extends State<CartScreen> {
         child: Row(children: [
           Icon(icon,
             color: _paymentMethod == id ? kCyan : kTextMuted, size: 18),
-          const SizedBox(width: 8),
+          SizedBox(width: 8),
           Expanded(child: Text(label, style: kBody(11,
             color: _paymentMethod == id ? kCyan : kTextSecondary,
             fw: FontWeight.w500), overflow: TextOverflow.ellipsis)),
@@ -279,8 +279,8 @@ class _CartItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-    margin: const EdgeInsets.only(bottom: 12),
-    padding: const EdgeInsets.all(12),
+    margin: EdgeInsets.only(bottom: 12),
+    padding: EdgeInsets.all(12),
     decoration: kCardDeco(radius: 14),
     child: Row(
       children: [
@@ -291,12 +291,12 @@ class _CartItemCard extends StatelessWidget {
             color: kSurface,
             child: item.product?.primaryImage.isNotEmpty == true
                 ? Image.network(item.product!.primaryImage, fit: BoxFit.cover,
-                    errorBuilder: (ctx, err, stack) => const Icon(
+                    errorBuilder: (ctx, err, stack) => Icon(
                       Icons.car_repair_rounded, color: kBorder, size: 28))
-                : const Icon(Icons.car_repair_rounded, color: kBorder, size: 28),
+                : Icon(Icons.car_repair_rounded, color: kBorder, size: 28),
           ),
         ),
-        const SizedBox(width: 12),
+        SizedBox(width: 12),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -304,10 +304,10 @@ class _CartItemCard extends StatelessWidget {
               Text(item.product?.name ?? 'Product', style: GoogleFonts.inter(
                 fontSize: 13, fontWeight: FontWeight.w600, color: kTextPrimary),
                 maxLines: 2, overflow: TextOverflow.ellipsis),
-              const SizedBox(height: 3),
+              SizedBox(height: 3),
               if (item.product?.vendorShopName != null)
                 Text(item.product!.vendorShopName!, style: kLabel(10)),
-              const SizedBox(height: 8),
+              SizedBox(height: 8),
               Row(
                 children: [
                   MotionCounter(
@@ -316,7 +316,7 @@ class _CartItemCard extends StatelessWidget {
                     style: GoogleFonts.inter(fontSize: 14,
                       fontWeight: FontWeight.w800, color: kCyan),
                   ),
-                  const Spacer(),
+                  Spacer(),
                   // Qty controls
                   Container(
                     decoration: kGlassDeco(radius: 10),
@@ -334,13 +334,13 @@ class _CartItemCard extends StatelessWidget {
                             color: item.quantity > 1 ? kTextMuted : kError)),
                       ),
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                        padding: EdgeInsets.symmetric(horizontal: 4.0),
                         child: Text('${item.quantity}', style: kBody(12,
                           color: kTextPrimary, fw: FontWeight.w700)),
                       ),
                       TappableScale(
                         onTap: () => onQtyChange(item.quantity + 1),
-                        child: const SizedBox(
+                        child: SizedBox(
                           width: 28, height: 28,
                           child: Icon(Icons.add_rounded,
                             size: 14, color: kTextMuted)),
@@ -377,7 +377,7 @@ class _SummaryRow extends StatelessWidget {
       children: [
         Text(label, style: bold
             ? kHeadline(14) : kBody(13, color: kTextMuted)),
-        const Spacer(),
+        Spacer(),
         if (numericValue != null)
           MotionCounter(
             value: numericValue!,

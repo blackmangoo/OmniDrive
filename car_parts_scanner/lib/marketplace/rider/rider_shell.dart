@@ -12,7 +12,7 @@ class RiderShell extends StatefulWidget {
 class _RiderShellState extends State<RiderShell> {
   int _idx = 0;
 
-  final List<Widget> _screens = const [
+  final List<Widget> _screens = [
     RiderOrdersScreen(),
     RiderProfileScreen(),
   ];
@@ -33,7 +33,7 @@ class _RiderShellState extends State<RiderShell> {
           selectedIndex: _idx,
           onDestinationSelected: (i) => setState(() => _idx = i),
           labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-          destinations: const [
+          destinations: [
             NavigationDestination(
               icon: Icon(Icons.delivery_dining_outlined, color: Colors.white38),
               selectedIcon: Icon(Icons.delivery_dining_rounded, color: kRider),

@@ -24,12 +24,12 @@ class OrderDetailScreen extends StatelessWidget {
         elevation: 0,
         leading: TappableScale(
           onTap: () => Navigator.pop(context),
-          child: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white70, size: 20),
+          child: Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white70, size: 20),
         ),
         title: Text('Order Details', style: AppTypography.h2.copyWith(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
+        padding: EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -38,20 +38,20 @@ class OrderDetailScreen extends StatelessWidget {
               index: 0,
               child: Container(
                 width: double.infinity,
-                padding: const EdgeInsets.all(20),
-                decoration: kGlowCard(color),
+                padding: EdgeInsets.all(20),
+                decoration: kGlowCard(backgroundColor),
                 child: Column(children: [
-                  Text(statusIcon(order.status), style: const TextStyle(fontSize: 42)),
-                  const SizedBox(height: 10),
+                  Text(statusIcon(order.status), style: TextStyle(fontSize: 42)),
+                  SizedBox(height: 10),
                   Text(statusLabel(order.status),
                       style: GoogleFonts.inter(color: color, fontSize: 20, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 6),
+                  SizedBox(height: 6),
                   Text(date, style: AppTypography.body.copyWith(color: AppColors.textMuted, fontSize: 12)),
                 ]),
               ),
             ),
 
-            const SizedBox(height: 20),
+            SizedBox(height: 20),
 
             // ── Order ID ────────────────────────────────────────────────
             StaggeredEntrance(
@@ -65,7 +65,7 @@ class OrderDetailScreen extends StatelessWidget {
               ]),
             ),
 
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
 
             // ── Items ────────────────────────────────────────────────────
             _sectionHeader('Items Ordered'),
@@ -75,18 +75,18 @@ class OrderDetailScreen extends StatelessWidget {
               return StaggeredEntrance(
                 index: idx + 2,
                 child: Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
+                  padding: EdgeInsets.only(bottom: 8),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     decoration: kCardDeco(),
                     child: Row(children: [
                       if (item.productImage != null)
                         ClipRRect(
                           borderRadius: BorderRadius.circular(8),
                           child: Image.network(item.productImage!, width: 44, height: 44, fit: BoxFit.cover,
-                              errorBuilder: (ctx, err, stack) => const Icon(Icons.car_repair, color: Colors.white24)),
+                              errorBuilder: (ctx, err, stack) => Icon(Icons.car_repair, color: Colors.white24)),
                         ),
-                      const SizedBox(width: 12),
+                      SizedBox(width: 12),
                       Expanded(
                         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                           Text(item.productName, style: AppTypography.title.copyWith(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600)),
@@ -102,7 +102,7 @@ class OrderDetailScreen extends StatelessWidget {
               );
             }),
 
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
 
             // ── Vendor Info ──────────────────────────────────────────────
             _sectionHeader('Vendor'),
@@ -112,24 +112,24 @@ class OrderDetailScreen extends StatelessWidget {
               if (order.vendorPhone != null) _infoRow('Phone', order.vendorPhone!),
             ]),
 
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
 
             // ── Delivery Address ─────────────────────────────────────────
             _sectionHeader('Delivery Address'),
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(16),
               decoration: kCardDeco(),
               child: Row(children: [
-                const Icon(Icons.location_on_rounded, color: kAccent, size: 20),
-                const SizedBox(width: 10),
+                Icon(Icons.location_on_rounded, color: kAccent, size: 20),
+                SizedBox(width: 10),
                 Expanded(child: Text(order.deliveryAddress, style: AppTypography.body.copyWith(color: Colors.white70, fontSize: 13))),
               ]),
             ),
 
             // ── Rider Info (when dispatched) ──────────────────────────────
             if (order.status == 'dispatched' || order.status == 'delivered') ...[
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               _sectionHeader('Rider'),
               _infoCard(children: [
                 _infoRow('Name', order.riderName ?? 'Assigned'),
@@ -137,7 +137,7 @@ class OrderDetailScreen extends StatelessWidget {
               ]),
             ],
 
-            const SizedBox(height: 40),
+            SizedBox(height: 40),
           ],
         ),
       ),
@@ -145,18 +145,18 @@ class OrderDetailScreen extends StatelessWidget {
   }
 
   Widget _sectionHeader(String t) => Padding(
-    padding: const EdgeInsets.only(bottom: 10),
+    padding: EdgeInsets.only(bottom: 10),
     child: Row(children: [
       Container(width: 3, height: 16, decoration: BoxDecoration(color: kAccent, borderRadius: BorderRadius.circular(2))),
-      const SizedBox(width: 10),
+      SizedBox(width: 10),
       Text(t, style: AppTypography.title.copyWith(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w700)),
     ]),
   );
 
   Widget _infoCard({required List<Widget> children}) => Container(
     width: double.infinity,
-    padding: const EdgeInsets.all(16),
-    margin: const EdgeInsets.only(bottom: 16),
+    padding: EdgeInsets.all(16),
+    margin: EdgeInsets.only(bottom: 16),
     decoration: kCardDeco(),
     child: Column(children: [
       for (int i = 0; i < children.length; i++) ...[

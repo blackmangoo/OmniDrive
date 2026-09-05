@@ -79,11 +79,11 @@ class _VendorCatalogueScreenState extends State<VendorCatalogueScreen> {
     floatingActionButton: TappableScale(
       onTap: () => Navigator.push(
         context,
-        MaterialPageRoute(builder: (_) => const AddEditProductScreen()),
+        MaterialPageRoute(builder: (_) => AddEditProductScreen()),
       ).then((_) => _load()),
       child: Container(
         height: 48,
-        padding: const EdgeInsets.symmetric(horizontal: 20),
+        padding: EdgeInsets.symmetric(horizontal: 20),
         decoration: BoxDecoration(
           gradient: kVendorGradient,
           borderRadius: BorderRadius.circular(24),
@@ -91,15 +91,15 @@ class _VendorCatalogueScreenState extends State<VendorCatalogueScreen> {
             BoxShadow(
               color: kVendor.withValues(alpha: 0.3),
               blurRadius: 12,
-              offset: const Offset(0, 4),
+              offset: Offset(0, 4),
             )
           ],
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.add_rounded, color: Colors.black),
-            const SizedBox(width: 8),
+            Icon(Icons.add_rounded, color: Colors.black),
+            SizedBox(width: 8),
             Text('Add Product', style: GoogleFonts.inter(
               fontWeight: FontWeight.w700,
               color: Colors.black,
@@ -114,7 +114,7 @@ class _VendorCatalogueScreenState extends State<VendorCatalogueScreen> {
         Container(
           padding: EdgeInsets.fromLTRB(
               20, MediaQuery.of(context).padding.top + 16, 20, 16),
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             color: kBg,
             border: Border(bottom: BorderSide(color: kBorder)),
           ),
@@ -123,9 +123,9 @@ class _VendorCatalogueScreenState extends State<VendorCatalogueScreen> {
             children: [
               Row(children: [
                 Text('Inventory Management', style: kLabel(11, color: kTextMuted)),
-                const Spacer(),
+                Spacer(),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
                     color: kVendor.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(20),
@@ -142,7 +142,7 @@ class _VendorCatalogueScreenState extends State<VendorCatalogueScreen> {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      const SizedBox(width: 4),
+                      SizedBox(width: 4),
                       Text('products', style: GoogleFonts.inter(
                         fontSize: 11,
                         color: kVendor,
@@ -152,9 +152,9 @@ class _VendorCatalogueScreenState extends State<VendorCatalogueScreen> {
                   ),
                 ),
               ]),
-              const SizedBox(height: 4),
+              SizedBox(height: 4),
               Text('Catalogue', style: kHeadline(22)),
-              const SizedBox(height: 14),
+              SizedBox(height: 14),
               Container(
                 height: 44,
                 decoration: kGlassDeco(radius: 12),
@@ -168,12 +168,12 @@ class _VendorCatalogueScreenState extends State<VendorCatalogueScreen> {
                   decoration: InputDecoration(
                     hintText: 'Search products…',
                     hintStyle: kBody(12, color: kTextMuted),
-                    prefixIcon: const Icon(Icons.search_rounded,
+                    prefixIcon: Icon(Icons.search_rounded,
                         color: kTextMuted, size: 18),
                     border: InputBorder.none,
-                    contentPadding: const EdgeInsets.symmetric(vertical: 12),
+                    contentPadding: EdgeInsets.symmetric(vertical: 12),
                     suffixIcon: _search != null ? IconButton(
-                      icon: const Icon(Icons.close_rounded,
+                      icon: Icon(Icons.close_rounded,
                           color: kTextMuted, size: 16),
                       onPressed: () {
                         _searchCtrl.clear();
@@ -190,14 +190,14 @@ class _VendorCatalogueScreenState extends State<VendorCatalogueScreen> {
         // ── Product list ──────────────────────────────────────────────────
         Expanded(
           child: _loading
-              ? const Center(child: CircularProgressIndicator(color: kVendor))
+              ? Center(child: CircularProgressIndicator(color: kVendor))
               : _products.isEmpty
                   ? _empty()
                   : RefreshIndicator(
                       color: kVendor, backgroundColor: kCard,
                       onRefresh: _load,
                       child: ListView.builder(
-                        padding: const EdgeInsets.fromLTRB(16, 12, 16, 100),
+                        padding: EdgeInsets.fromLTRB(16, 12, 16, 100),
                         itemCount: _products.length,
                         itemBuilder: (context, i) => StaggeredEntrance(
                           index: i,
@@ -223,13 +223,13 @@ class _VendorCatalogueScreenState extends State<VendorCatalogueScreen> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Container(
-          padding: const EdgeInsets.all(20),
+          padding: EdgeInsets.all(20),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: kSurface,
             border: Border.all(color: kBorder),
           ),
-          child: const Icon(
+          child: Icon(
             Icons.inventory_2_rounded,
             color: kVendor,
             size: 64,
@@ -238,9 +238,9 @@ class _VendorCatalogueScreenState extends State<VendorCatalogueScreen> {
         .animate()
         .scaleXY(begin: 0.8, end: 1.0, duration: 600.ms, curve: Curves.easeOutBack)
         .fadeIn(duration: 500.ms),
-        const SizedBox(height: 16),
+        SizedBox(height: 16),
         Text('No products yet', style: kHeadline(16, color: kTextSecondary)),
-        const SizedBox(height: 8),
+        SizedBox(height: 8),
         Text('Tap + Add Product to get started', style: kBody(13, color: kTextMuted)),
       ],
     ),
@@ -263,12 +263,12 @@ class _ProductRow extends StatelessWidget {
         : product.stockQuantity <= 5 ? kWarning : kSuccess;
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: EdgeInsets.only(bottom: 12),
       decoration: kCardDeco(radius: 16),
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(14),
+            padding: EdgeInsets.all(14),
             child: Row(
               children: [
                 // Product image
@@ -280,13 +280,13 @@ class _ProductRow extends StatelessWidget {
                         ? CachedNetworkImage(
                             imageUrl: product.primaryImage,
                             fit: BoxFit.cover,
-                            errorWidget: (_, _, _) => const Icon(
+                            errorWidget: (_, _, _) => Icon(
                               Icons.car_repair_rounded, color: kBorder, size: 28))
-                        : const Icon(Icons.car_repair_rounded,
+                        : Icon(Icons.car_repair_rounded,
                             color: kBorder, size: 28),
                   ),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: 12),
 
                 Expanded(
                   child: Column(
@@ -295,10 +295,10 @@ class _ProductRow extends StatelessWidget {
                       Text(product.name, style: GoogleFonts.inter(fontSize: 13,
                         fontWeight: FontWeight.w700, color: kTextPrimary),
                         maxLines: 2, overflow: TextOverflow.ellipsis),
-                      const SizedBox(height: 4),
+                      SizedBox(height: 4),
                       Text(product.categoryName ?? 'Uncategorised',
                         style: kLabel(10)),
-                      const SizedBox(height: 6),
+                      SizedBox(height: 6),
                       Row(children: [
                         MotionCounter(
                           value: product.price,
@@ -306,9 +306,9 @@ class _ProductRow extends StatelessWidget {
                           style: GoogleFonts.inter(fontSize: 14,
                             fontWeight: FontWeight.w800, color: kVendor),
                         ),
-                        const SizedBox(width: 8),
+                        SizedBox(width: 8),
                         Container(
-                          padding: const EdgeInsets.symmetric(
+                          padding: EdgeInsets.symmetric(
                               horizontal: 8, vertical: 2),
                           decoration: BoxDecoration(
                             color: stockColor.withValues(alpha: 0.12),
@@ -327,24 +327,24 @@ class _ProductRow extends StatelessWidget {
                   TappableScale(
                     onTap: onEdit,
                     child: Container(
-                      padding: const EdgeInsets.all(8),
+                      padding: EdgeInsets.all(8),
                       decoration: BoxDecoration(
                         color: kCyan.withValues(alpha: 0.1),
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(Icons.edit_rounded, color: kCyan, size: 18),
+                      child: Icon(Icons.edit_rounded, color: kCyan, size: 18),
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  SizedBox(width: 8),
                   TappableScale(
                     onTap: onDelete,
                     child: Container(
-                      padding: const EdgeInsets.all(8),
+                      padding: EdgeInsets.all(8),
                       decoration: BoxDecoration(
                         color: kError.withValues(alpha: 0.1),
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(Icons.delete_outline_rounded, color: kError, size: 18),
+                      child: Icon(Icons.delete_outline_rounded, color: kError, size: 18),
                     ),
                   ),
                 ]),
@@ -356,8 +356,8 @@ class _ProductRow extends StatelessWidget {
           TappableScale(
             onTap: () => _showStockSheet(context),
             child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              decoration: const BoxDecoration(
+              padding: EdgeInsets.symmetric(vertical: 10),
+              decoration: BoxDecoration(
                 color: kSurface,
                 borderRadius: BorderRadius.vertical(
                     bottom: Radius.circular(15)),
@@ -365,9 +365,9 @@ class _ProductRow extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.inventory_2_rounded,
+                  Icon(Icons.inventory_2_rounded,
                       color: kTextMuted, size: 14),
-                  const SizedBox(width: 6),
+                  SizedBox(width: 6),
                   Text('Update Stock', style: kBody(12, color: kTextMuted,
                     fw: FontWeight.w500)),
                 ],
@@ -383,7 +383,7 @@ class _ProductRow extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       backgroundColor: kSurface,
-      shape: const RoundedRectangleBorder(
+      shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
       builder: (_) => _StockUpdateSheet(
           product: product, onUpdated: onStockUpdate),
@@ -422,36 +422,36 @@ class _StockUpdateSheetState extends State<_StockUpdateSheet> {
             decoration: BoxDecoration(
               color: kBorder, borderRadius: BorderRadius.circular(2))),
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16),
         Text('Update Stock', style: kHeadline(18)),
-        const SizedBox(height: 4),
+        SizedBox(height: 4),
         Text(widget.product.name, style: kBody(13, color: kTextMuted),
           maxLines: 1, overflow: TextOverflow.ellipsis),
-        const SizedBox(height: 24),
+        SizedBox(height: 24),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             _QtyBtn(Icons.remove_rounded, () {
               if (_qty > 0) setState(() => _qty--);
             }),
-            const SizedBox(width: 24),
+            SizedBox(width: 24),
             Text('$_qty', style: GoogleFonts.inter(fontSize: 42,
               fontWeight: FontWeight.w800, color: kTextPrimary)),
-            const SizedBox(width: 24),
+            SizedBox(width: 24),
             _QtyBtn(Icons.add_rounded, () => setState(() => _qty++)),
           ],
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: 8),
         Center(child: Text('units in stock', style: kBody(12, color: kTextMuted))),
-        const SizedBox(height: 20),
+        SizedBox(height: 20),
         // Quick presets
         Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           for (final preset in [10, 25, 50, 100])
             TappableScale(
               onTap: () => setState(() => _qty = preset),
               child: Container(
-                margin: const EdgeInsets.symmetric(horizontal: 4),
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                margin: EdgeInsets.symmetric(horizontal: 4),
+                padding: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                 decoration: BoxDecoration(
                   color: _qty == preset ? kVendor.withValues(alpha: 0.2) : kCard,
                   borderRadius: BorderRadius.circular(10),
@@ -463,7 +463,7 @@ class _StockUpdateSheetState extends State<_StockUpdateSheet> {
               ),
             ),
         ]),
-        const SizedBox(height: 24),
+        SizedBox(height: 24),
         TappableScale(
           onTap: _saving ? null : () async {
             setState(() => _saving = true);
@@ -481,7 +481,7 @@ class _StockUpdateSheetState extends State<_StockUpdateSheet> {
               borderRadius: BorderRadius.circular(14),
             ),
             child: _saving
-                ? const SizedBox(width: 20, height: 20,
+                ? SizedBox(width: 20, height: 20,
                     child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black))
                 : Text('Save Stock', style: GoogleFonts.inter(
                     fontWeight: FontWeight.w700, fontSize: 15, color: Colors.black)),

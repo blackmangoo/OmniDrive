@@ -4,31 +4,31 @@ import '../core/theme/app_colors.dart';
 import '../core/theme/app_gradients.dart';
 
 // ── Color Tokens ──────────────────────────────────────────────────────────────
-const Color kBg      = AppColors.background;
-const Color kSurface = AppColors.surface;
-const Color kCard    = AppColors.card;
-const Color kBorder  = AppColors.border;
-const Color kBorder2 = AppColors.border;
+Color get kBg      => AppColors.background;
+Color get kSurface => AppColors.surface;
+Color get kCard    => AppColors.card;
+Color get kBorder  => AppColors.border;
+Color get kBorder2 => AppColors.border;
 
 // Role accents
-const Color kCyan    = AppColors.cyan;
-const Color kVendor  = AppColors.vendor;
-const Color kRider   = AppColors.rider;
-const Color kAdmin   = AppColors.admin;
+Color get kCyan    => AppColors.customer;
+Color kVendor  = AppColors.vendor;
+Color get kRider   => AppColors.rider;
+Color get kAdmin   => AppColors.admin;
 
 // Legacy alias (used by pre-refactor screens)
-const Color kAccent  = kCyan;
+Color get kAccent  => kCyan;
 
 // Status colours
-const Color kSuccess = AppColors.success;
-const Color kError   = AppColors.error;
-const Color kWarning = AppColors.warning;
-const Color kInfo    = AppColors.info;
+Color get kSuccess => AppColors.success;
+Color get kError   => AppColors.error;
+Color get kWarning => AppColors.warning;
+Color get kInfo    => AppColors.info;
 
 // Text shades
-const Color kTextPrimary   = AppColors.textPrimary;
-const Color kTextSecondary = AppColors.textSecondary;
-const Color kTextMuted     = AppColors.textMuted;
+Color get kTextPrimary   => AppColors.textPrimary;
+Color get kTextSecondary => AppColors.textSecondary;
+Color get kTextMuted     => AppColors.textMuted;
 
 // ── Typography ────────────────────────────────────────────────────────────────
 TextStyle kHeadline(double size, {Color color = kTextPrimary, FontWeight fw = FontWeight.bold}) =>
@@ -41,10 +41,10 @@ TextStyle kLabel(double size, {Color color = kTextMuted, FontWeight fw = FontWei
     GoogleFonts.inter(fontSize: size, fontWeight: fw, color: color, letterSpacing: 0.3);
 
 // ── Gradients ─────────────────────────────────────────────────────────────────
-const LinearGradient kCyanGradient = AppGradients.customer;
-const LinearGradient kVendorGradient = AppGradients.vendor;
-const LinearGradient kRiderGradient = AppGradients.rider;
-const LinearGradient kBgGradient = LinearGradient(
+LinearGradient kCyanGradient = AppGradients.customer;
+LinearGradient kVendorGradient = AppGradients.vendor;
+LinearGradient kRiderGradient = AppGradients.rider;
+LinearGradient kBgGradient = LinearGradient(
   colors: [AppColors.surface, AppColors.background],
   begin: Alignment.topCenter, end: Alignment.bottomCenter,
 );
@@ -60,7 +60,7 @@ BoxDecoration kGlassDeco({double radius = 16}) => BoxDecoration(
   color: kSurface.withValues(alpha: 0.85),
   borderRadius: BorderRadius.circular(radius),
   border: Border.all(color: kBorder, width: 1),
-  boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.4), blurRadius: 20, offset: const Offset(0, 8))],
+  boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.4), blurRadius: 20, offset: Offset(0, 8))],
 );
 
 BoxDecoration kGlowDeco(Color accent, {double radius = 16}) => BoxDecoration(
@@ -77,7 +77,7 @@ BoxDecoration kGlowCard(Color accent, {double radius = 14}) =>
 
 // ── Shared helpers ────────────────────────────────────────────────────────────
 Widget kStatusPill(String label, Color color, {double fontSize = 11}) => Container(
-  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
   decoration: BoxDecoration(
     color: color.withValues(alpha: 0.15),
     borderRadius: BorderRadius.circular(20),
@@ -90,10 +90,10 @@ Widget kSectionHeader(String title, {Widget? trailing}) => Row(
   children: [
     Container(width: 3, height: 18, decoration: BoxDecoration(
       gradient: kCyanGradient, borderRadius: BorderRadius.circular(2))),
-    const SizedBox(width: 10),
+    SizedBox(width: 10),
     Expanded(child: Text(title, style: GoogleFonts.inter(
       fontSize: 15, fontWeight: FontWeight.w700, color: kTextPrimary))),
-    trailing ?? const SizedBox.shrink(),
+    trailing ?? SizedBox.shrink(),
   ],
 );
 

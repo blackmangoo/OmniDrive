@@ -101,7 +101,7 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
     // 1. Pick metrics
     final selection = await Navigator.push<Map<String, dynamic>?>(
       context,
-      MaterialPageRoute(builder: (_) => const MetricSelectionScreen()),
+      MaterialPageRoute(builder: (_) => MetricSelectionScreen()),
     );
     if (selection == null || !mounted) return;
 
@@ -134,7 +134,7 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
             SliverAppBar(
               backgroundColor: AppColors.background,
               pinned: true,
-              title: const Text('Performance',
+              title: Text('Performance',
                   style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -142,7 +142,7 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
               actions: [
                 TappableScale(
                   onTap: _signOut,
-                  child: const Padding(
+                  child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16),
                     child: Icon(Icons.logout_rounded, color: Colors.white54, size: 22),
                   ),
@@ -154,10 +154,10 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
             SliverToBoxAdapter(
               child: Padding(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                    EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                 child: Text(
                   'Welcome, ${user?.userMetadata?['full_name'] ?? 'Driver'} 👋',
-                  style: const TextStyle(color: Colors.white54, fontSize: 14),
+                  style: TextStyle(color: Colors.white54, fontSize: 14),
                 ),
               ),
             ),
@@ -165,11 +165,11 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
             // ── My Cars section ───────────────────────────────────────────────
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
+                padding: EdgeInsets.fromLTRB(20, 20, 20, 12),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text('My Cars',
+                    Text('My Cars',
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 18,
@@ -178,9 +178,9 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
                       onTap: () => _showAddCarDialog(context),
                       child: Row(
                         children: [
-                          const Icon(Icons.add, color: AppColors.cyan, size: 18),
-                          const SizedBox(width: 4),
-                          const Text('Add Car',
+                          Icon(Icons.add, color: AppColors.cyan, size: 18),
+                          SizedBox(width: 4),
+                          Text('Add Car',
                               style: TextStyle(color: AppColors.cyan, fontSize: 13, fontWeight: FontWeight.bold)),
                         ],
                       ),
@@ -192,7 +192,7 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
 
             // Car list
             _loadingCars
-                ? const SliverToBoxAdapter(
+                ? SliverToBoxAdapter(
                     child: Center(
                         child: Padding(
                     padding: EdgeInsets.all(32),
@@ -224,11 +224,11 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
             // ── Recent Runs section ──────────────────────────────────────────
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 32, 20, 12),
+                padding: EdgeInsets.fromLTRB(20, 32, 20, 12),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text('Recent Runs',
+                    Text('Recent Runs',
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 18,
@@ -243,7 +243,7 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
                             ),
                           ).then((_) => _loadRecentRuns());
                         },
-                        child: const Text('See All',
+                        child: Text('See All',
                             style: TextStyle(color: AppColors.cyan, fontSize: 13, fontWeight: FontWeight.bold)),
                       ),
                   ],
@@ -252,7 +252,7 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
             ),
 
             _loadingRuns
-                ? const SliverToBoxAdapter(
+                ? SliverToBoxAdapter(
                     child: Center(
                         child: Padding(
                       padding: EdgeInsets.all(24),
@@ -261,14 +261,14 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
                 : _recentRuns.isEmpty
                     ? SliverToBoxAdapter(
                         child: Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 20),
-                          padding: const EdgeInsets.all(24),
+                          margin: EdgeInsets.symmetric(horizontal: 20),
+                          padding: EdgeInsets.all(24),
                           decoration: BoxDecoration(
                             color: AppColors.surface,
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(color: AppColors.border),
                           ),
-                          child: const Column(
+                          child: Column(
                             children: [
                               Icon(Icons.speed_rounded, color: Colors.white24, size: 48),
                               SizedBox(height: 12),
@@ -315,7 +315,7 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
                             return StaggeredEntrance(
                               index: i,
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                                 child: TappableScale(
                                   onTap: () {
                                     Navigator.push(
@@ -326,7 +326,7 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
                                     );
                                   },
                                   child: Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                                     decoration: BoxDecoration(
                                       color: AppColors.surface,
                                       borderRadius: BorderRadius.circular(14),
@@ -335,28 +335,28 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
                                     child: Row(
                                       children: [
                                         Container(
-                                          padding: const EdgeInsets.all(12),
+                                          padding: EdgeInsets.all(12),
                                           decoration: BoxDecoration(
                                             color: AppColors.cyan.withValues(alpha: 0.1),
                                             shape: BoxShape.circle,
                                           ),
-                                          child: const Icon(Icons.speed_rounded, color: AppColors.cyan, size: 22),
+                                          child: Icon(Icons.speed_rounded, color: AppColors.cyan, size: 22),
                                         ),
-                                        const SizedBox(width: 14),
+                                        SizedBox(width: 14),
                                         Expanded(
                                           child: Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               Text(topMetric,
-                                                  style: const TextStyle(
+                                                  style: TextStyle(
                                                     color: Colors.white,
                                                     fontWeight: FontWeight.bold,
                                                     fontSize: 16,
                                                   )),
-                                              const SizedBox(height: 3),
+                                              SizedBox(height: 3),
                                               Text(
                                                 '$dateStr  •  ${isObd ? 'OBD-II' : 'GPS'}',
-                                                style: const TextStyle(color: Colors.white38, fontSize: 12),
+                                                style: TextStyle(color: Colors.white38, fontSize: 12),
                                               ),
                                             ],
                                           ),
@@ -366,16 +366,16 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
                                             value: topValue,
                                             decimals: 2,
                                             suffix: 's',
-                                            style: const TextStyle(
+                                            style: TextStyle(
                                               color: AppColors.cyan,
                                               fontWeight: FontWeight.w900,
                                               fontSize: 18,
                                             ),
                                           )
                                         else
-                                          Text('--', style: const TextStyle(color: AppColors.cyan, fontWeight: FontWeight.w900, fontSize: 18)),
-                                        const SizedBox(width: 6),
-                                        const Icon(Icons.chevron_right_rounded, color: Colors.white24),
+                                          Text('--', style: TextStyle(color: AppColors.cyan, fontWeight: FontWeight.w900, fontSize: 18)),
+                                        SizedBox(width: 6),
+                                        Icon(Icons.chevron_right_rounded, color: Colors.white24),
                                       ],
                                     ),
                                   ),
@@ -387,7 +387,7 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
                         ),
                       ),
 
-            const SliverPadding(padding: EdgeInsets.only(bottom: 32)),
+            SliverPadding(padding: EdgeInsets.only(bottom: 32)),
           ],
         ),
       ),
@@ -398,7 +398,7 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
               onTap: _startNewTest,
               child: Container(
                 height: 48,
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: EdgeInsets.symmetric(horizontal: 20),
                 decoration: BoxDecoration(
                   color: AppColors.cyan,
                   borderRadius: BorderRadius.circular(24),
@@ -406,15 +406,15 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
                     BoxShadow(
                       color: AppColors.cyan.withValues(alpha: 0.3),
                       blurRadius: 12,
-                      offset: const Offset(0, 4),
+                      offset: Offset(0, 4),
                     )
                   ],
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.play_arrow_rounded, color: Colors.black),
-                    const SizedBox(width: 8),
+                    Icon(Icons.play_arrow_rounded, color: Colors.black),
+                    SizedBox(width: 8),
                     Text('New Test', style: GoogleFonts.inter(
                       fontWeight: FontWeight.w700,
                       color: Colors.black,
@@ -439,7 +439,7 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
       context: context,
       isScrollControlled: true,
       backgroundColor: AppColors.surface,
-      shape: const RoundedRectangleBorder(
+      shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
       builder: (ctx) => Padding(
         padding: EdgeInsets.fromLTRB(
@@ -449,16 +449,16 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('Add Car',
+              Text('Add Car',
                   style: TextStyle(
                       color: Colors.white,
                       fontSize: 20,
                       fontWeight: FontWeight.bold)),
-              const SizedBox(height: 20),
+              SizedBox(height: 20),
               _DialogField(ctrl: makeCtrl, hint: 'Make (e.g. Honda)'),
-              const SizedBox(height: 12),
+              SizedBox(height: 12),
               _DialogField(ctrl: modelCtrl, hint: 'Model (e.g. Civic EK)'),
-              const SizedBox(height: 12),
+              SizedBox(height: 12),
               Row(children: [
                 Expanded(
                   child: _DialogField(
@@ -466,7 +466,7 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
                       hint: 'Year',
                       keyboardType: TextInputType.number),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: 12),
                 Expanded(
                   child: _DialogField(
                       ctrl: ccCtrl,
@@ -474,23 +474,23 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
                       keyboardType: TextInputType.number),
                 ),
               ]),
-              const SizedBox(height: 12),
+              SizedBox(height: 12),
               // Fuel type dropdown
               DropdownButtonFormField<String>(
                 initialValue: fuel,
                 dropdownColor: AppColors.surface,
-                style: const TextStyle(color: Colors.white),
+                style: TextStyle(color: Colors.white),
                 decoration: InputDecoration(
                   labelText: 'Fuel Type',
-                  labelStyle: const TextStyle(color: Colors.white38),
+                  labelStyle: TextStyle(color: Colors.white38),
                   filled: true,
                   fillColor: AppColors.card,
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: AppColors.border)),
+                      borderSide: BorderSide(color: AppColors.border)),
                   enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: AppColors.border)),
+                      borderSide: BorderSide(color: AppColors.border)),
                 ),
                 items: ['petrol', 'diesel', 'hybrid', 'electric']
                     .map((f) => DropdownMenuItem(
@@ -499,12 +499,12 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
                     .toList(),
                 onChanged: (v) => setModalState(() => fuel = v!),
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: 12),
               _DialogField(
                   ctrl: modsCtrl,
                   hint: 'Modifications (optional)',
                   maxLines: 2),
-              const SizedBox(height: 20),
+              SizedBox(height: 20),
               SizedBox(
                 width: double.infinity,
                 height: 48,
@@ -533,7 +533,7 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
                       color: AppColors.cyan,
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Text('Save Car',
+                    child: Text('Save Car',
                         style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black)),
                   ),
                 ),
@@ -556,8 +556,8 @@ class _CarCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
-      padding: const EdgeInsets.all(16),
+      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 6),
+      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(16),
@@ -566,25 +566,25 @@ class _CarCard extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(10),
+            padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
               color: AppColors.cyan.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Icon(Icons.directions_car_rounded,
+            child: Icon(Icons.directions_car_rounded,
                 color: AppColors.cyan, size: 28),
           ),
-          const SizedBox(width: 14),
+          SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('${car['make']} ${car['model']}',
-                    style: const TextStyle(
+                    style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w600,
                         fontSize: 15)),
-                const SizedBox(height: 3),
+                SizedBox(height: 3),
                 Text(
                   [
                     if (car['year'] != null) '${car['year']}',
@@ -594,13 +594,13 @@ class _CarCard extends StatelessWidget {
                           (car['fuel_type'] as String).substring(1),
                   ].join(' · '),
                   style:
-                      const TextStyle(color: Colors.white38, fontSize: 12),
+                      TextStyle(color: Colors.white38, fontSize: 12),
                 ),
                 if (car['mods'] != null && car['mods'].toString().isNotEmpty)
                   Padding(
-                    padding: const EdgeInsets.only(top: 4),
+                    padding: EdgeInsets.only(top: 4),
                     child: Text(car['mods'],
-                        style: const TextStyle(
+                        style: TextStyle(
                             color: AppColors.cyan, fontSize: 11),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis),
@@ -608,7 +608,7 @@ class _CarCard extends StatelessWidget {
               ],
             ),
           ),
-          const Icon(Icons.chevron_right_rounded,
+          Icon(Icons.chevron_right_rounded,
               color: Colors.white24, size: 20),
         ],
       ),
@@ -623,11 +623,11 @@ class _EmptyCarPrompt extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all(20),
       child: TappableScale(
         onTap: onAdd,
         child: Container(
-          padding: const EdgeInsets.all(28),
+          padding: EdgeInsets.all(28),
           decoration: BoxDecoration(
             color: AppColors.surface,
             borderRadius: BorderRadius.circular(16),
@@ -635,7 +635,7 @@ class _EmptyCarPrompt extends StatelessWidget {
                 color: AppColors.cyan.withValues(alpha: 0.25),
                 style: BorderStyle.solid),
           ),
-          child: const Column(
+          child: Column(
             children: [
               Icon(Icons.add_circle_outline_rounded,
                   color: AppColors.cyan, size: 44),
@@ -676,23 +676,23 @@ class _DialogField extends StatelessWidget {
       controller: ctrl,
       keyboardType: keyboardType,
       maxLines: maxLines,
-      style: const TextStyle(color: Colors.white, fontSize: 14),
+      style: TextStyle(color: Colors.white, fontSize: 14),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: const TextStyle(color: Colors.white24, fontSize: 13),
+        hintStyle: TextStyle(color: Colors.white24, fontSize: 13),
         filled: true,
         fillColor: AppColors.card,
         contentPadding:
-            const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: AppColors.border)),
+            borderSide: BorderSide(color: AppColors.border)),
         enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: AppColors.border)),
+            borderSide: BorderSide(color: AppColors.border)),
         focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: AppColors.cyan, width: 1.5)),
+            borderSide: BorderSide(color: AppColors.cyan, width: 1.5)),
       ),
     );
   }

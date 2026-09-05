@@ -21,7 +21,7 @@ class AppUser {
   final String? avatarUrl;
   final String? address;
 
-  const AppUser({
+  AppUser({
     required this.id,
     required this.fullName,
     required this.email,
@@ -56,7 +56,7 @@ class VendorProfile {
   final bool isActive;
   final String? fcmToken;
 
-  const VendorProfile({
+  VendorProfile({
     required this.id,
     required this.shopName,
     this.shopDescription,
@@ -92,7 +92,7 @@ class Category {
   final String? iconName;
   final String? color;
 
-  const Category({
+  Category({
     required this.id,
     required this.name,
     this.iconName,
@@ -135,7 +135,7 @@ class Product {
     this.comparePrice,
     required this.stockQuantity,
     this.unit = 'piece',
-    this.images = const [],
+    this.images = [],
     this.sku,
     this.isActive = true,
     this.vendorShopName,
@@ -216,7 +216,7 @@ class OrderItem {
   final String productName;
   final String? productImage;
 
-  const OrderItem({
+  OrderItem({
     required this.id,
     required this.orderId,
     required this.productId,
@@ -281,7 +281,7 @@ class Order {
     this.riderId,
     required this.createdAt,
     this.paymentMethod,
-    this.items = const [],
+    this.items = [],
     this.customerName,
     this.customerPhone,
     this.vendorShopName,
@@ -346,7 +346,7 @@ class AppNotification {
     required this.title,
     required this.body,
     required this.type,
-    this.data = const {},
+    this.data = {},
     this.isRead = false,
     required this.createdAt,
   });

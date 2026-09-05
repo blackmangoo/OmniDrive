@@ -39,7 +39,7 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen> {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (_) => const Center(
+      builder: (_) => Center(
         child: CircularProgressIndicator(color: kAdmin),
       ),
     );
@@ -54,11 +54,11 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen> {
       showDialog(
         context: context,
         barrierDismissible: false,
-        builder: (_) => const _SuccessFeedbackDialog(),
+        builder: (_) => _SuccessFeedbackDialog(),
       );
 
       // Wait 1.5s for success feedback
-      await Future.delayed(const Duration(milliseconds: 1500));
+      await Future.delayed(Duration(milliseconds: 1500));
 
       if (!mounted) return;
       Navigator.pop(context); // Dismiss success feedback dialog
@@ -68,7 +68,7 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen> {
       if (!mounted) return;
       Navigator.pop(context); // Dismiss loading dialog
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text('Failed to approve user.'),
           backgroundColor: kError,
         ),
@@ -83,7 +83,7 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen> {
         backgroundColor: kSurface,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: const BorderSide(color: kBorder),
+          side: BorderSide(color: kBorder),
         ),
         title: Text(
           'Reject Registration?',
@@ -104,12 +104,12 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen> {
           TappableScale(
             onTap: () => Navigator.pop(context, true),
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
                 color: kError,
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: const Text('Reject & Block', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
+              child: Text('Reject & Block', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
             ),
           ),
         ],
@@ -123,7 +123,7 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen> {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (_) => const Center(
+      builder: (_) => Center(
         child: CircularProgressIndicator(color: kAdmin),
       ),
     );
@@ -134,7 +134,7 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen> {
       Navigator.pop(context); // Dismiss loading dialog
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text('User registration rejected.'),
           backgroundColor: kWarning,
         ),
@@ -145,7 +145,7 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen> {
       if (!mounted) return;
       Navigator.pop(context); // Dismiss loading dialog
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text('Failed to reject user.'),
           backgroundColor: kError,
         ),
@@ -168,7 +168,7 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen> {
         actions: [
           TappableScale(
             onTap: _loadApprovals,
-            child: const Padding(
+            child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 16),
               child: Icon(Icons.refresh_rounded, color: Colors.white70),
             ),
@@ -176,7 +176,7 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen> {
         ],
       ),
       body: _loading
-          ? const Center(child: CircularProgressIndicator(color: kAdmin))
+          ? Center(child: CircularProgressIndicator(color: kAdmin))
           : RefreshIndicator(
               color: kAdmin,
               backgroundColor: kSurface,
@@ -184,7 +184,7 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen> {
               child: _pendingUsers.isEmpty
                   ? _buildEmptyState()
                   : ListView.builder(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       itemCount: _pendingUsers.length,
                       itemBuilder: (context, index) {
                         final item = _pendingUsers[index];
@@ -207,13 +207,13 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                padding: const EdgeInsets.all(20),
+                padding: EdgeInsets.all(20),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: kSurface,
                   border: Border.all(color: kBorder),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.check_circle_outline_rounded,
                   color: kCyan,
                   size: 64,
@@ -222,12 +222,12 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen> {
               .animate()
               .scaleXY(begin: 0.8, end: 1.0, duration: 600.ms, curve: Curves.easeOutBack)
               .fadeIn(duration: 500.ms),
-              const SizedBox(height: 20),
+              SizedBox(height: 20),
               Text(
                 'All Caught Up!',
                 style: kHeadline(18, color: Colors.white),
               ),
-              const SizedBox(height: 6),
+              SizedBox(height: 6),
               Text(
                 'No pending registration requests.',
                 style: kBody(13, color: kTextMuted),
@@ -253,7 +253,7 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen> {
     final roleName = isVendor ? 'Vendor' : 'Rider';
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
+      margin: EdgeInsets.only(bottom: 16),
       decoration: kGlowDeco(roleAccent, radius: 16),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16),
@@ -262,7 +262,7 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen> {
           children: [
             // Top Header section
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               color: kSurface,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -274,7 +274,7 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen> {
                         color: roleAccent,
                         size: 20,
                       ),
-                      const SizedBox(width: 8),
+                      SizedBox(width: 8),
                       Text(
                         isVendor ? (shopName ?? 'Vendor Shop') : 'Rider Account',
                         style: kHeadline(15, color: Colors.white),
@@ -288,7 +288,7 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen> {
 
             // Card Body (Details)
             Padding(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -299,7 +299,7 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen> {
                         label: 'Location',
                         value: location,
                       ),
-                      const SizedBox(height: 10),
+                      SizedBox(height: 10),
                     ],
                     _buildDetailRow(
                       icon: Icons.person_outline,
@@ -313,13 +313,13 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen> {
                       value: name,
                     ),
                   ],
-                  const SizedBox(height: 10),
+                  SizedBox(height: 10),
                   _buildDetailRow(
                     icon: Icons.mail_outline_rounded,
                     label: 'Email Address',
                     value: email,
                   ),
-                  const SizedBox(height: 10),
+                  SizedBox(height: 10),
                   _buildDetailRow(
                     icon: Icons.phone_android_rounded,
                     label: 'Phone Number',
@@ -331,7 +331,7 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen> {
 
             // Action Buttons
             Container(
-              padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+              padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
               child: Row(
                 children: [
                   Expanded(
@@ -355,7 +355,7 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  SizedBox(width: 12),
                   Expanded(
                     child: TappableScale(
                       onTap: () => _approveUser(userId, role),
@@ -395,7 +395,7 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Icon(icon, color: kTextMuted, size: 16),
-        const SizedBox(width: 10),
+        SizedBox(width: 10),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -404,7 +404,7 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen> {
                 label,
                 style: kLabel(10, color: kTextMuted),
               ),
-              const SizedBox(height: 1),
+              SizedBox(height: 1),
               Text(
                 value,
                 style: kBody(13, color: kTextPrimary),
@@ -426,38 +426,38 @@ class _SuccessFeedbackDialog extends StatelessWidget {
       backgroundColor: kSurface,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: const BorderSide(color: kBorder),
+        side: BorderSide(color: kBorder),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(24.0),
+        padding: EdgeInsets.all(24.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const SizedBox(height: 12),
+            SizedBox(height: 12),
             Container(
-              padding: const EdgeInsets.all(16),
-              decoration: const BoxDecoration(
+              padding: EdgeInsets.all(16),
+              decoration: BoxDecoration(
                 color: kSuccess,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.check_rounded,
                 color: Colors.black,
                 size: 40,
               ),
             ).animate().scale(duration: 400.ms, curve: Curves.easeOutBack),
-            const SizedBox(height: 24),
+            SizedBox(height: 24),
             Text(
               'User Approved!',
               style: kHeadline(18, color: Colors.white),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8),
             Text(
               'The account has been activated successfully.',
               style: kBody(13, color: kTextSecondary),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: 12),
           ],
         ),
       ),

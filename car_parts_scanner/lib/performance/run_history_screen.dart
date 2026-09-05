@@ -67,40 +67,40 @@ class _RunHistoryScreenState extends State<RunHistoryScreen> {
       appBar: AppBar(
         title: Text(
           '${widget.car['make']} ${widget.car['model']}',
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
         ),
         backgroundColor: AppColors.background,
         elevation: 0,
         leading: TappableScale(
           onTap: () => Navigator.pop(context),
-          child: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white70, size: 20),
+          child: Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white70, size: 20),
         ),
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1),
+          preferredSize: Size.fromHeight(1),
           child: Container(height: 1, color: AppColors.border),
         ),
       ),
       body: _loading
-          ? const Center(child: CircularProgressIndicator(color: AppColors.cyan))
+          ? Center(child: CircularProgressIndicator(color: AppColors.cyan))
           : _runs.isEmpty
               ? Center(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.timer_outlined, color: Colors.white24, size: 56),
-                      const SizedBox(height: 16),
-                      const Text('No runs recorded yet.',
+                      Icon(Icons.timer_outlined, color: Colors.white24, size: 56),
+                      SizedBox(height: 16),
+                      Text('No runs recorded yet.',
                         style: TextStyle(color: Colors.white38, fontSize: 16)),
-                      const SizedBox(height: 6),
-                      const Text('Head to the garage and start your first test!',
+                      SizedBox(height: 6),
+                      Text('Head to the garage and start your first test!',
                         style: TextStyle(color: Colors.white24, fontSize: 13), textAlign: TextAlign.center),
                     ],
                   ),
                 )
               : ListView.separated(
-                  padding: const EdgeInsets.all(16),
+                  padding: EdgeInsets.all(16),
                   itemCount: _runs.length,
-                  separatorBuilder: (context, index) => const SizedBox(height: 10),
+                  separatorBuilder: (context, index) => SizedBox(height: 10),
                   itemBuilder: (context, index) {
                     final run = _runs[index];
                     final dateStr = _formatDate(run['created_at'] as String);
@@ -135,7 +135,7 @@ class _RunHistoryScreenState extends State<RunHistoryScreen> {
                       child: TappableScale(
                         onTap: () => _openRun(run),
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                           decoration: BoxDecoration(
                             color: AppColors.surface,
                             borderRadius: BorderRadius.circular(14),
@@ -144,28 +144,28 @@ class _RunHistoryScreenState extends State<RunHistoryScreen> {
                           child: Row(
                             children: [
                               Container(
-                                padding: const EdgeInsets.all(12),
+                                padding: EdgeInsets.all(12),
                                 decoration: BoxDecoration(
                                   color: AppColors.cyan.withValues(alpha: 0.1),
                                   shape: BoxShape.circle,
                                 ),
-                                child: const Icon(Icons.speed_rounded, color: AppColors.cyan, size: 22),
+                                child: Icon(Icons.speed_rounded, color: AppColors.cyan, size: 22),
                               ),
-                              const SizedBox(width: 14),
+                              SizedBox(width: 14),
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(topMetric,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
                                         fontSize: 16,
                                       )),
-                                    const SizedBox(height: 3),
+                                    SizedBox(height: 3),
                                     Text(
                                       '$dateStr  •  ${isObd ? 'OBD-II' : 'GPS'}',
-                                      style: const TextStyle(color: Colors.white38, fontSize: 12),
+                                      style: TextStyle(color: Colors.white38, fontSize: 12),
                                     ),
                                   ],
                                 ),
@@ -175,16 +175,16 @@ class _RunHistoryScreenState extends State<RunHistoryScreen> {
                                   value: topValue,
                                   decimals: 2,
                                   suffix: 's',
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     color: AppColors.cyan,
                                     fontWeight: FontWeight.w900,
                                     fontSize: 18,
                                   ),
                                 )
                               else
-                                Text('--', style: const TextStyle(color: AppColors.cyan, fontWeight: FontWeight.w900, fontSize: 18)),
-                              const SizedBox(width: 6),
-                              const Icon(Icons.chevron_right_rounded, color: Colors.white24),
+                                Text('--', style: TextStyle(color: AppColors.cyan, fontWeight: FontWeight.w900, fontSize: 18)),
+                              SizedBox(width: 6),
+                              Icon(Icons.chevron_right_rounded, color: Colors.white24),
                             ],
                           ),
                         ),

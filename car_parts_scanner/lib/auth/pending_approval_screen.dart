@@ -38,7 +38,7 @@ class _PendingApprovalScreenState extends State<PendingApprovalScreen> {
       if (isApproved) {
         widget.onCheckStatus?.call();
         Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (_) => const AuthGate()),
+          MaterialPageRoute(builder: (_) => AuthGate()),
           (route) => false,
         );
       } else {
@@ -51,14 +51,14 @@ class _PendingApprovalScreenState extends State<PendingApprovalScreen> {
             backgroundColor: AppColors.surface,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            duration: const Duration(seconds: 3),
+            duration: Duration(seconds: 3),
           ),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Text('Failed to check status. Please try again.'),
             backgroundColor: AppColors.error,
             behavior: SnackBarBehavior.floating,
@@ -79,13 +79,13 @@ class _PendingApprovalScreenState extends State<PendingApprovalScreen> {
       if (!mounted) return;
 
       Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (_) => const AuthGate()),
+        MaterialPageRoute(builder: (_) => AuthGate()),
         (route) => false,
       );
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Text('Failed to sign out. Please try again.'),
             backgroundColor: AppColors.error,
             behavior: SnackBarBehavior.floating,
@@ -114,17 +114,17 @@ class _PendingApprovalScreenState extends State<PendingApprovalScreen> {
       backgroundColor: AppColors.background,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.lg),
+          padding: EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.lg),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Spacer(),
+              Spacer(),
               
               // Hourglass icon with pulsing neon glow
               Center(
                 child: Container(
-                  padding: const EdgeInsets.all(24),
+                  padding: EdgeInsets.all(24),
                   decoration: BoxDecoration(
                     color: accentColor.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
@@ -141,9 +141,9 @@ class _PendingApprovalScreenState extends State<PendingApprovalScreen> {
                   ),
                 )
                     .animate(onPlay: (controller) => controller.repeat(reverse: true))
-                    .scale(begin: const Offset(0.92, 0.92), end: const Offset(1.08, 1.08), duration: 1500.ms, curve: Curves.easeInOutCubic),
+                    .scale(begin: Offset(0.92, 0.92), end: Offset(1.08, 1.08), duration: 1500.ms, curve: Curves.easeInOutCubic),
               ),
-              const SizedBox(height: 32),
+              SizedBox(height: 32),
 
               // Title
               Text(
@@ -151,7 +151,7 @@ class _PendingApprovalScreenState extends State<PendingApprovalScreen> {
                 textAlign: TextAlign.center,
                 style: AppTypography.display.copyWith(fontSize: 26),
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: 12),
 
               // Description
               Text(
@@ -159,11 +159,11 @@ class _PendingApprovalScreenState extends State<PendingApprovalScreen> {
                 textAlign: TextAlign.center,
                 style: AppTypography.body.copyWith(color: AppColors.textSecondary),
               ),
-              const SizedBox(height: 40),
+              SizedBox(height: 40),
 
               // Details Card
               Container(
-                padding: const EdgeInsets.all(20),
+                padding: EdgeInsets.all(20),
                 decoration: BoxDecoration(
                   color: AppColors.card,
                   borderRadius: BorderRadius.circular(AppSpacing.rLg),
@@ -177,7 +177,7 @@ class _PendingApprovalScreenState extends State<PendingApprovalScreen> {
                       icon: Icons.alternate_email_rounded,
                       accentColor: accentColor,
                     ),
-                    const Divider(color: AppColors.border, height: 28),
+                    Divider(color: AppColors.border, height: 28),
                     _buildDetailRow(
                       label: 'Requested Role',
                       value: roleText,
@@ -190,7 +190,7 @@ class _PendingApprovalScreenState extends State<PendingApprovalScreen> {
                 ),
               ),
 
-              const Spacer(),
+              Spacer(),
 
               // Check Status Button
               SizedBox(
@@ -206,7 +206,7 @@ class _PendingApprovalScreenState extends State<PendingApprovalScreen> {
                     ),
                     child: Center(
                       child: _checkingStatus
-                          ? const SizedBox(
+                          ? SizedBox(
                               height: 20,
                               width: 20,
                               child: CircularProgressIndicator(
@@ -222,7 +222,7 @@ class _PendingApprovalScreenState extends State<PendingApprovalScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 14),
+              SizedBox(height: 14),
 
               // Log Out Button
               SizedBox(
@@ -238,7 +238,7 @@ class _PendingApprovalScreenState extends State<PendingApprovalScreen> {
                     ),
                     child: Center(
                       child: _loggingOut
-                          ? const SizedBox(
+                          ? SizedBox(
                               height: 20,
                               width: 20,
                               child: CircularProgressIndicator(
@@ -254,7 +254,7 @@ class _PendingApprovalScreenState extends State<PendingApprovalScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: 12),
             ],
           ),
         ),
@@ -271,7 +271,7 @@ class _PendingApprovalScreenState extends State<PendingApprovalScreen> {
     return Row(
       children: [
         Icon(icon, color: accentColor.withValues(alpha: 0.8), size: 20),
-        const SizedBox(width: 14),
+        SizedBox(width: 14),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -279,7 +279,7 @@ class _PendingApprovalScreenState extends State<PendingApprovalScreen> {
               label,
               style: AppTypography.caption,
             ),
-            const SizedBox(height: 3),
+            SizedBox(height: 3),
             Text(
               value,
               style: AppTypography.title.copyWith(fontSize: 15),

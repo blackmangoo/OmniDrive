@@ -10,7 +10,7 @@ class StaggeredEntrance extends StatelessWidget {
     super.key,
     required this.child,
     required this.index,
-    this.delayStep = const Duration(milliseconds: 40),
+    this.delayStep = Duration(milliseconds: 40),
   });
 
   @override
@@ -21,11 +21,11 @@ class StaggeredEntrance extends StatelessWidget {
 
     return child
         .animate(delay: delayStep * index)
-        .fadeIn(duration: const Duration(milliseconds: 300), curve: Curves.easeOutCubic)
+        .fadeIn(duration: Duration(milliseconds: 300), curve: Curves.easeOutCubic)
         .slideY(
           begin: 0.08,
           end: 0.0,
-          duration: const Duration(milliseconds: 350),
+          duration: Duration(milliseconds: 350),
           curve: Curves.easeOutCubic,
         );
   }

@@ -38,10 +38,10 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
         if (!mounted) return;
         setState(() => _verified = true);
 
-        Future.delayed(const Duration(milliseconds: 800), () {
+        Future.delayed(Duration(milliseconds: 800), () {
           if (!mounted) return;
           Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (_) => const AuthGate()),
+            MaterialPageRoute(builder: (_) => AuthGate()),
             (_) => false,
           );
         });
@@ -64,7 +64,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
         email: widget.email,
       );
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Verification email resent. Check your inbox.'),
         backgroundColor: AppColors.success,
         behavior: SnackBarBehavior.floating,
@@ -98,24 +98,24 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
         final response = await Supabase.instance.client.auth.getUser();
         final user = response.user;
         if (user == null || user.emailConfirmedAt == null) {
-          throw const AuthException('Email not confirmed');
+          throw AuthException('Email not confirmed');
         }
       }
 
       if (!mounted) return;
       setState(() => _verified = true);
 
-      Future.delayed(const Duration(milliseconds: 800), () {
+      Future.delayed(Duration(milliseconds: 800), () {
         if (!mounted) return;
         Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (_) => const AuthGate()),
+          MaterialPageRoute(builder: (_) => AuthGate()),
           (_) => false,
         );
       });
     } on AuthException catch (e) {
       if (!mounted) return;
       if (e.message.contains('Email not confirmed')) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text("Email has not been verified yet. Please check your inbox."),
           backgroundColor: AppColors.warning,
           behavior: SnackBarBehavior.floating,
@@ -147,9 +147,9 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
       backgroundColor: AppColors.background,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+          padding: EdgeInsets.symmetric(horizontal: AppSpacing.xl),
           child: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 400),
+            duration: Duration(milliseconds: 400),
             child: _verified ? _buildVerified() : _buildWaiting(),
           ),
         ),
@@ -159,7 +159,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
 
   Widget _buildWaiting() {
     return Column(
-      key: const ValueKey('waiting'),
+      key: ValueKey('waiting'),
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Container(
@@ -171,18 +171,18 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
             border: Border.all(color: AppColors.cyan.withValues(alpha: 0.3), width: 1.5),
             boxShadow: AppShadows.cyanGlow,
           ),
-          child: const Icon(Icons.mark_email_unread_outlined,
+          child: Icon(Icons.mark_email_unread_outlined,
               color: AppColors.cyan, size: 54),
         )
             .animate(onPlay: (controller) => controller.repeat(reverse: true))
-            .scale(begin: const Offset(0.92, 0.92), end: const Offset(1.08, 1.08), duration: 1500.ms, curve: Curves.easeInOutCubic),
+            .scale(begin: Offset(0.92, 0.92), end: Offset(1.08, 1.08), duration: 1500.ms, curve: Curves.easeInOutCubic),
 
-        const SizedBox(height: 36),
+        SizedBox(height: 36),
 
         Text('Check Your Inbox',
             style: AppTypography.display.copyWith(fontSize: 26)),
 
-        const SizedBox(height: 14),
+        SizedBox(height: 14),
 
         Text(
           'We sent a link to\n${widget.email}',
@@ -190,7 +190,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
           style: AppTypography.body,
         ),
 
-        const SizedBox(height: 10),
+        SizedBox(height: 10),
 
         Text(
           'Click the link in that email.\nIf you click it on another device, click the button below after verifying.',
@@ -198,7 +198,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
           style: AppTypography.caption,
         ),
 
-        const SizedBox(height: 36),
+        SizedBox(height: 36),
 
         TextButton.icon(
           onPressed: () async {
@@ -209,15 +209,15 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
             }
             if (!mounted) return;
             Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (_) => const LoginScreen()),
+              MaterialPageRoute(builder: (_) => LoginScreen()),
               (_) => false,
             );
           },
-          icon: const Icon(Icons.arrow_back, color: AppColors.textSecondary, size: 18),
+          icon: Icon(Icons.arrow_back, color: AppColors.textSecondary, size: 18),
           label: Text('Back to Login', style: AppTypography.label),
         ),
 
-        const SizedBox(height: 48),
+        SizedBox(height: 48),
 
         SizedBox(
           width: double.infinity,
@@ -232,7 +232,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
               ),
               child: Center(
                 child: _checkingStatus
-                    ? const SizedBox(
+                    ? SizedBox(
                         width: 20,
                         height: 20,
                         child: CircularProgressIndicator(
@@ -247,12 +247,12 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
           ),
         ),
 
-        const SizedBox(height: 20),
+        SizedBox(height: 20),
 
         TextButton(
           onPressed: _resending ? null : _resend,
           child: _resending
-              ? const SizedBox(
+              ? SizedBox(
                   width: 18, height: 18,
                   child: CircularProgressIndicator(
                       color: AppColors.cyan, strokeWidth: 2))
@@ -265,7 +265,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
 
   Widget _buildVerified() {
     return Column(
-      key: const ValueKey('verified'),
+      key: ValueKey('verified'),
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Container(
@@ -276,17 +276,17 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
             border: Border.all(color: AppColors.success.withValues(alpha: 0.5), width: 1.5),
             boxShadow: AppShadows.roleGlow(AppColors.success),
           ),
-          child: const Icon(Icons.check_circle_outline_rounded,
+          child: Icon(Icons.check_circle_outline_rounded,
               color: AppColors.success, size: 60),
         ),
-        const SizedBox(height: 28),
+        SizedBox(height: 28),
         Text('Email Verified!',
           style: AppTypography.display.copyWith(fontSize: 26)),
-        const SizedBox(height: 10),
+        SizedBox(height: 10),
         Text('Taking you in...',
           style: AppTypography.body.copyWith(color: AppColors.textMuted)),
-        const SizedBox(height: 24),
-        const SizedBox(
+        SizedBox(height: 24),
+        SizedBox(
           width: 28, height: 28,
           child: CircularProgressIndicator(strokeWidth: 2.5, color: AppColors.cyan),
         ),

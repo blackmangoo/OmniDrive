@@ -30,7 +30,7 @@ class _CameraPreviewScreenState extends State<CameraPreviewScreen>
   void initState() {
     super.initState();
     _captureAnim = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 120));
+        vsync: this, duration: Duration(milliseconds: 120));
     _captureScale = Tween<double>(begin: 1.0, end: 0.88)
         .animate(CurvedAnimation(parent: _captureAnim, curve: Curves.easeIn));
     _initCamera();
@@ -92,7 +92,7 @@ class _CameraPreviewScreenState extends State<CameraPreviewScreen>
   @override
   Widget build(BuildContext context) {
     if (!_isCameraInitialized) {
-      return const Scaffold(
+      return Scaffold(
         backgroundColor: AppColors.background,
         body: Center(
           child: Column(mainAxisSize: MainAxisSize.min, children: [
@@ -129,7 +129,7 @@ class _CameraPreviewScreenState extends State<CameraPreviewScreen>
               children: [
                 // Top bar
                 Padding(
-                  padding: const EdgeInsets.symmetric(
+                  padding: EdgeInsets.symmetric(
                       horizontal: AppSpacing.md, vertical: AppSpacing.sm),
                   child: Row(children: [
                     // Back button
@@ -139,17 +139,17 @@ class _CameraPreviewScreenState extends State<CameraPreviewScreen>
                       child: InkWell(
                         borderRadius: BorderRadius.circular(50),
                         onTap: () => Navigator.pop(context),
-                        child: const Padding(
+                        child: Padding(
                           padding: EdgeInsets.all(10),
                           child: Icon(Icons.arrow_back_ios_new_rounded,
                               color: Colors.white, size: 20),
                         ),
                       ),
                     ),
-                    const Spacer(),
+                    Spacer(),
                     // HUD label
                     Container(
-                      padding: const EdgeInsets.symmetric(
+                      padding: EdgeInsets.symmetric(
                           horizontal: 14, vertical: 6),
                       decoration: BoxDecoration(
                         color: Colors.black.withValues(alpha: 0.45),
@@ -166,21 +166,21 @@ class _CameraPreviewScreenState extends State<CameraPreviewScreen>
                             fontWeight: FontWeight.bold),
                       ),
                     ),
-                    const Spacer(),
-                    const SizedBox(width: 42), // balance back button
+                    Spacer(),
+                    SizedBox(width: 42), // balance back button
                   ]),
                 ),
 
                 // Scanning reticle area (middle)
-                const Spacer(),
+                Spacer(),
                 _ScanReticle(scanning: _isCapturing),
-                const SizedBox(height: 20),
+                SizedBox(height: 20),
 
                 // Framing tips — shown while not capturing
                 if (!_isCapturing)
                   Container(
-                    margin: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-                    padding: const EdgeInsets.symmetric(
+                    margin: EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+                    padding: EdgeInsets.symmetric(
                         horizontal: AppSpacing.md, vertical: AppSpacing.md),
                     decoration: BoxDecoration(
                       color: Colors.black.withValues(alpha: 0.54),
@@ -188,7 +188,7 @@ class _CameraPreviewScreenState extends State<CameraPreviewScreen>
                       border: Border.all(
                           color: AppColors.cyan.withValues(alpha: 0.25)),
                     ),
-                    child: const Column(
+                    child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         _TipRow(
@@ -209,16 +209,16 @@ class _CameraPreviewScreenState extends State<CameraPreviewScreen>
                     ),
                   ),
 
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
 
                 // Capture button row
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 36),
+                  padding: EdgeInsets.only(bottom: 36),
                   child: _isCapturing
                       ? Column(mainAxisSize: MainAxisSize.min, children: [
-                          const CircularProgressIndicator(
+                          CircularProgressIndicator(
                               color: AppColors.cyan, strokeWidth: 2.5),
-                          const SizedBox(height: 12),
+                          SizedBox(height: 12),
                           Text('ANALYSING…',
                               style: AppTypography.label.copyWith(
                                   color: AppColors.cyan,
@@ -250,11 +250,11 @@ class _CameraPreviewScreenState extends State<CameraPreviewScreen>
                                 child: Container(
                                   width: 58,
                                   height: 58,
-                                  decoration: const BoxDecoration(
+                                  decoration: BoxDecoration(
                                     shape: BoxShape.circle,
                                     color: AppColors.cyan,
                                   ),
-                                  child: const Icon(
+                                  child: Icon(
                                       Icons.camera_alt_rounded,
                                       color: Colors.white,
                                       size: 28),
@@ -285,7 +285,7 @@ class _TipRow extends StatelessWidget {
     return Row(
       children: [
         Icon(icon, color: AppColors.cyan, size: 16),
-        const SizedBox(width: 10),
+        SizedBox(width: 10),
         Expanded(
           child: Text(text,
               style: AppTypography.caption.copyWith(color: AppColors.textSecondary, fontSize: 12)),
@@ -314,7 +314,7 @@ class _ScanReticleState extends State<_ScanReticle>
   void initState() {
     super.initState();
     _ctrl = AnimationController(
-        vsync: this, duration: const Duration(seconds: 1));
+        vsync: this, duration: Duration(seconds: 1));
     _fade = Tween<double>(begin: 0.4, end: 1.0)
         .animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeInOut));
 
@@ -377,8 +377,8 @@ class _ReticlePainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
 
-    const r = 24.0; // corner radius
-    const l = 40.0; // corner length
+    r = 24.0; // corner radius
+    l = 40.0; // corner length
 
     final corners = [
       // top-left

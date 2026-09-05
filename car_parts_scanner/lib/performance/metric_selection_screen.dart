@@ -63,9 +63,9 @@ class _MetricSelectionScreenState extends State<MetricSelectionScreen>
         backgroundColor: AppColors.background,
         leading: TappableScale(
           onTap: () => Navigator.pop(context),
-          child: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white70, size: 20),
+          child: Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white70, size: 20),
         ),
-        title: const Text('Configure Test',
+        title: Text('Configure Test',
             style: TextStyle(
                 color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20)),
       ),
@@ -74,7 +74,7 @@ class _MetricSelectionScreenState extends State<MetricSelectionScreen>
         children: [
           // ── Segmented toggle: Acceleration | Braking ───────────────────
           Padding(
-            padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+            padding: EdgeInsets.fromLTRB(20, 8, 20, 24),
             child: Container(
               decoration: BoxDecoration(
                 color: AppColors.surface,
@@ -90,7 +90,7 @@ class _MetricSelectionScreenState extends State<MetricSelectionScreen>
                 ),
                 indicatorSize: TabBarIndicatorSize.tab,
                 dividerColor: Colors.transparent,
-                tabs: const [
+                tabs: [
                   Tab(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -143,7 +143,7 @@ class _MetricSelectionScreenState extends State<MetricSelectionScreen>
 
                 // ── Braking tab ───────────────────────────────────────────
                 _MetricList(
-                  metrics: const [MetricType.hundredToZero],
+                  metrics: [MetricType.hundredToZero],
                   selected: _selected,
                   onToggle: (m, v) => setState(() {
                     if (v) {
@@ -162,22 +162,22 @@ class _MetricSelectionScreenState extends State<MetricSelectionScreen>
 
           // ── Sensor mode toggle ─────────────────────────────────────────
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Sensor Mode',
+                Text('Sensor Mode',
                     style: TextStyle(
                         color: Colors.white70,
                         fontSize: 13,
                         fontWeight: FontWeight.w600)),
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
                 _SensorModeToggle(
                   isObd: _obdMode,
                   onChanged: (v) => setState(() => _obdMode = v),
                 ),
                 if (_obdMode)
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.only(top: 10),
                     child: Row(
                       children: [
@@ -198,7 +198,7 @@ class _MetricSelectionScreenState extends State<MetricSelectionScreen>
 
           // ── Proceed button ─────────────────────────────────────────────
           Padding(
-            padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
+            padding: EdgeInsets.fromLTRB(20, 12, 20, 32),
             child: SizedBox(
               width: double.infinity,
               height: 52,
@@ -219,7 +219,7 @@ class _MetricSelectionScreenState extends State<MetricSelectionScreen>
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(Icons.play_arrow_rounded, color: _canProceed ? Colors.black : Colors.white24),
-                      const SizedBox(width: 8),
+                      SizedBox(width: 8),
                       Text('Configure & Continue',
                           style: TextStyle(
                               fontSize: 16,
@@ -259,13 +259,13 @@ class _MetricList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Info note
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: noteColor.withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(10),
@@ -274,7 +274,7 @@ class _MetricList extends StatelessWidget {
             child: Row(
               children: [
                 Icon(noteIcon, color: noteColor, size: 16),
-                const SizedBox(width: 10),
+                SizedBox(width: 10),
                 Expanded(
                   child: Text(note,
                       style: TextStyle(color: noteColor, fontSize: 12)),
@@ -282,7 +282,7 @@ class _MetricList extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: 20),
 
           // Metric tiles
           ...metrics.map(
@@ -314,9 +314,9 @@ class _MetricTile extends StatelessWidget {
     return TappableScale(
       onTap: () => onToggle(!selected),
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.all(16),
+        duration: Duration(milliseconds: 180),
+        margin: EdgeInsets.only(bottom: 12),
+        padding: EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: selected ? AppColors.cyan.withValues(alpha: 0.1) : AppColors.surface,
           borderRadius: BorderRadius.circular(14),
@@ -328,7 +328,7 @@ class _MetricTile extends StatelessWidget {
         child: Row(
           children: [
             AnimatedContainer(
-              duration: const Duration(milliseconds: 180),
+              duration: Duration(milliseconds: 180),
               width: 22, height: 22,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
@@ -337,11 +337,11 @@ class _MetricTile extends StatelessWidget {
                     color: selected ? AppColors.cyan : Colors.white24, width: 1.5),
               ),
               child: selected
-                  ? const Icon(Icons.check_rounded,
+                  ? Icon(Icons.check_rounded,
                       color: Colors.black, size: 14)
                   : null,
             ),
-            const SizedBox(width: 14),
+            SizedBox(width: 14),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -351,9 +351,9 @@ class _MetricTile extends StatelessWidget {
                           color: selected ? Colors.white : Colors.white70,
                           fontWeight: FontWeight.w600,
                           fontSize: 15)),
-                  const SizedBox(height: 2),
+                  SizedBox(height: 2),
                   Text(_metricSubtitle(metric),
-                      style: const TextStyle(color: Colors.white38, fontSize: 12)),
+                      style: TextStyle(color: Colors.white38, fontSize: 12)),
                 ],
               ),
             ),
@@ -390,7 +390,7 @@ class _SensorModeToggle extends StatelessWidget {
           onTap: () => onChanged(false),
           description: 'Uses phone GPS & accelerometer',
         ),
-        const SizedBox(width: 12),
+        SizedBox(width: 12),
         _ModeChip(
           label: 'OBD-II WiFi',
           icon: Icons.bluetooth_connected_rounded,
@@ -421,8 +421,8 @@ class _ModeChip extends StatelessWidget {
       child: TappableScale(
         onTap: onTap,
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 180),
-          padding: const EdgeInsets.all(14),
+          duration: Duration(milliseconds: 180),
+          padding: EdgeInsets.all(14),
           decoration: BoxDecoration(
             color: selected ? AppColors.cyan.withValues(alpha: 0.1) : AppColors.surface,
             borderRadius: BorderRadius.circular(12),
@@ -434,14 +434,14 @@ class _ModeChip extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Icon(icon, color: selected ? AppColors.cyan : Colors.white38, size: 20),
-              const SizedBox(height: 8),
+              SizedBox(height: 8),
               Text(label,
                   style: TextStyle(
                       color: selected ? Colors.white : Colors.white54,
                       fontWeight: FontWeight.w600, fontSize: 13)),
-              const SizedBox(height: 3),
+              SizedBox(height: 3),
               Text(description,
-                  style: const TextStyle(color: Colors.white24, fontSize: 10)),
+                  style: TextStyle(color: Colors.white24, fontSize: 10)),
             ],
           ),
         ),

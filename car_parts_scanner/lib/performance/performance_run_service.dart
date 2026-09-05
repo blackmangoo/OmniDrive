@@ -218,7 +218,7 @@ class PerformanceRunService {
   // ── Elapsed ticker ────────────────────────────────────────────────────────
 
   void _tickElapsed() {
-    _ticker = Timer.periodic(const Duration(milliseconds: 50), (_) {
+    _ticker = Timer.periodic(Duration(milliseconds: 50), (_) {
       if (_state == RunState.running && _startTime != null) {
         _elapsed = DateTime.now().difference(_startTime!).inMicroseconds / 1e6;
         if (!_elapsedCtrl.isClosed) _elapsedCtrl.add(_elapsed);

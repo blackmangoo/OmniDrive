@@ -16,15 +16,15 @@ import 'core/theme/app_shadows.dart';
 
 List<CameraDescription> cameras = [];
 
-const String _supabaseUrl     = 'https://cqeubytgsrxdkfejxvan.supabase.co';
-const String _supabaseAnonKey =
+String _supabaseUrl     = 'https://cqeubytgsrxdkfejxvan.supabase.co';
+String _supabaseAnonKey =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNxZXVieXRnc3J4ZGtmZWp4dmFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwNzMwMTMsImV4cCI6MjA4ODY0OTAxM30.iTL7KvhVxLEJFZFO50OvkgNWAyKfhM8Q51wkbZZTuPk';
 
 // ── Local notifications plugin ───────────────────────────────────────────────
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 
-const AndroidNotificationChannel fcmChannel = AndroidNotificationChannel(
+AndroidNotificationChannel fcmChannel = AndroidNotificationChannel(
   'omnidrive_channel',
   'OmniDrive Notifications',
   description: 'OmniDrive Marketplace Notifications',
@@ -41,7 +41,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Show a splash screen IMMEDIATELY so the user doesn't see a black screen
-  runApp(const OmniDriveSplashScreen());
+  runApp(OmniDriveSplashScreen());
 
   // 0. Request basic permissions that the user expects on startup
   try {
@@ -54,7 +54,7 @@ Future<void> main() async {
 
   // 1. Initialize Firebase with Timeout
   try {
-    await Firebase.initializeApp().timeout(const Duration(seconds: 10));
+    await Firebase.initializeApp().timeout(Duration(seconds: 10));
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
     // Create the high-importance notification channel for Android
@@ -64,10 +64,10 @@ Future<void> main() async {
         ?.createNotificationChannel(fcmChannel);
 
     // Initialize local notifications
-    const android = AndroidInitializationSettings('@mipmap/ic_launcher');
-    const ios = DarwinInitializationSettings();
+    android = AndroidInitializationSettings('@mipmap/ic_launcher');
+    ios = DarwinInitializationSettings();
     await flutterLocalNotificationsPlugin
-        .initialize(settings: const InitializationSettings(android: android, iOS: ios));
+        .initialize(settings: InitializationSettings(android: android, iOS: ios));
 
     // Handle FCM messages when app is in the foreground
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
@@ -99,20 +99,20 @@ Future<void> main() async {
     await Supabase.initialize(
       url: _supabaseUrl,
       anonKey: _supabaseAnonKey,
-    ).timeout(const Duration(seconds: 10));
+    ).timeout(Duration(seconds: 10));
   } catch (e) {
     debugPrint('Supabase init error or timeout: $e');
   }
 
   // 3. Initialize device cameras with Timeout
   try {
-    cameras = await availableCameras().timeout(const Duration(seconds: 5));
+    cameras = await availableCameras().timeout(Duration(seconds: 5));
   } catch (e) {
     debugPrint('General camera init error or timeout: $e');
   }
 
   // Launch the real app now that dependencies are ready
-  runApp(const OmniDriveApp());
+  runApp(OmniDriveApp());
 }
 
 class OmniDriveSplashScreen extends StatelessWidget {
@@ -136,7 +136,7 @@ class OmniDriveSplashScreen extends StatelessWidget {
                   gradient: AppGradients.primary,
                   boxShadow: AppShadows.cyanGlow,
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.directions_car_rounded,
                   color: Colors.black,
                   size: 48,
@@ -144,12 +144,12 @@ class OmniDriveSplashScreen extends StatelessWidget {
               )
                   .animate(onPlay: (controller) => controller.repeat(reverse: true))
                   .scale(
-                    begin: const Offset(0.92, 0.92),
-                    end: const Offset(1.08, 1.08),
+                    begin: Offset(0.92, 0.92),
+                    end: Offset(1.08, 1.08),
                     duration: 1200.ms,
                     curve: Curves.easeInOutCubic,
                   ),
-              const SizedBox(height: 32),
+              SizedBox(height: 32),
               Text(
                 'Starting Engine...',
                 style: AppTypography.title.copyWith(
@@ -183,7 +183,7 @@ class OmniDriveApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'OmniDrive AI',
       theme: AppTheme.darkTheme,
-      home: const AuthGate(),
+      home: AuthGate(),
     );
   }
 }

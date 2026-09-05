@@ -96,7 +96,7 @@ class _SignupScreenState extends State<SignupScreen> {
       backgroundColor: AppColors.background,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.xl),
+          padding: EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.xl),
           child: Form(
             key: _formKey,
             child: Column(
@@ -104,24 +104,24 @@ class _SignupScreenState extends State<SignupScreen> {
               children: [
                 IconButton(
                   onPressed: () => Navigator.pop(context),
-                  icon: const Icon(Icons.arrow_back_ios_new_rounded,
+                  icon: Icon(Icons.arrow_back_ios_new_rounded,
                       color: AppColors.textSecondary, size: 20),
                   padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(),
+                  constraints: BoxConstraints(),
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: 24),
 
                 Text(widget.role == 'rider' ? 'Rider Sign Up' : 'Create Account',
                     style: AppTypography.display.copyWith(fontSize: 28)),
-                const SizedBox(height: 6),
+                SizedBox(height: 6),
                 Text("You'll receive a verification email",
                     style: AppTypography.body.copyWith(color: AppColors.textMuted)),
 
-                const SizedBox(height: 40),
+                SizedBox(height: 40),
 
                 // Full Name
-                const _FieldLabel('Full Name'),
-                const SizedBox(height: 8),
+                _FieldLabel('Full Name'),
+                SizedBox(height: 8),
                 _Field(
                   controller: _nameCtrl,
                   hint: 'Ammar Akbar',
@@ -134,11 +134,11 @@ class _SignupScreenState extends State<SignupScreen> {
                   },
                 ),
 
-                const SizedBox(height: 20),
+                SizedBox(height: 20),
 
                 // Email
-                const _FieldLabel('Email'),
-                const SizedBox(height: 8),
+                _FieldLabel('Email'),
+                SizedBox(height: 8),
                 _Field(
                   controller: _emailCtrl,
                   hint: 'you@example.com',
@@ -153,11 +153,11 @@ class _SignupScreenState extends State<SignupScreen> {
                   },
                 ),
 
-                const SizedBox(height: 20),
+                SizedBox(height: 20),
 
                 // Password
-                const _FieldLabel('Password'),
-                const SizedBox(height: 8),
+                _FieldLabel('Password'),
+                SizedBox(height: 8),
                 _Field(
                   controller: _passCtrl,
                   hint: 'Minimum 8 characters',
@@ -178,11 +178,11 @@ class _SignupScreenState extends State<SignupScreen> {
                   },
                 ),
 
-                const SizedBox(height: 20),
+                SizedBox(height: 20),
 
                 // Confirm Password
-                const _FieldLabel('Confirm Password'),
-                const SizedBox(height: 8),
+                _FieldLabel('Confirm Password'),
+                SizedBox(height: 8),
                 _Field(
                   controller: _confirmCtrl,
                   hint: 'Repeat your password',
@@ -202,7 +202,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   },
                 ),
 
-                const SizedBox(height: 32),
+                SizedBox(height: 32),
 
                 // Submit
                 SizedBox(
@@ -218,7 +218,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       ),
                       child: Center(
                         child: _loading
-                            ? const SizedBox(
+                            ? SizedBox(
                                 width: 22, height: 22,
                                 child: CircularProgressIndicator(
                                     color: Colors.black, strokeWidth: 2.5))
@@ -230,7 +230,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   ),
                 ),
 
-                const SizedBox(height: 20),
+                SizedBox(height: 20),
                 Center(
                   child: GestureDetector(
                     onTap: () => Navigator.pop(context),
@@ -291,17 +291,17 @@ class _Field extends StatelessWidget {
         suffixIcon: suffixIcon,
         filled: true,
         fillColor: AppColors.surface,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.rLg),
-            borderSide: const BorderSide(color: AppColors.border)),
+            borderSide: BorderSide(color: AppColors.border)),
         enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.rLg),
-            borderSide: const BorderSide(color: AppColors.border)),
+            borderSide: BorderSide(color: AppColors.border)),
         focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.rLg),
             borderSide: BorderSide(color: accentColor, width: 1.5)),
         errorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.rLg),
-            borderSide: const BorderSide(color: AppColors.error)),
+            borderSide: BorderSide(color: AppColors.error)),
         focusedErrorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.rLg),
-            borderSide: const BorderSide(color: AppColors.error)),
+            borderSide: BorderSide(color: AppColors.error)),
       ),
     );
   }

@@ -10,11 +10,11 @@ import 'dart:io';
 /// Default IP: 192.168.0.10  Port: 35000
 /// (same for most ELM327 WiFi clones — Veepeak, Vgate, ScanTool, etc.)
 class ObdWifiService {
-  static const String _defaultHost = '192.168.0.10';
+  static String _defaultHost = '192.168.0.10';
   static const int    _defaultPort = 35000;
-  static const Duration _connectTimeout  = Duration(seconds: 5);
-  static const Duration _commandTimeout  = Duration(milliseconds: 500);
-  static const Duration _pollInterval    = Duration(milliseconds: 200); // ~5 Hz (realistic ELM327 throughput)
+  static Duration _connectTimeout  = Duration(seconds: 5);
+  static Duration _commandTimeout  = Duration(milliseconds: 500);
+  static Duration _pollInterval    = Duration(milliseconds: 200); // ~5 Hz (realistic ELM327 throughput)
 
   Socket? _socket;
   Timer?  _pollTimer;
@@ -36,7 +36,7 @@ class ObdWifiService {
     int    port = _defaultPort,
   }) async {
     _socket = await Socket.connect(host, port, timeout: _connectTimeout);
-    _socket!.encoding = const AsciiCodec(); // ELM327 is ASCII
+    _socket!.encoding = AsciiCodec(); // ELM327 is ASCII
     _socket!.listen(
       _onData,
       onError: (e) => disconnect(),
@@ -46,7 +46,7 @@ class ObdWifiService {
 
     // ELM327 initialisation sequence
     await _sendCmd('ATZ');   // soft reset
-    await Future.delayed(const Duration(milliseconds: 500));
+    await Future.delayed(Duration(milliseconds: 500));
     await _sendCmd('ATE0');  // echo off
     await _sendCmd('ATL0');  // linefeed off
     await _sendCmd('ATH0');  // headers off
@@ -120,23 +120,23 @@ class ObdWifiService {
 }
 
 class AsciiCodec extends Encoding {
-  const AsciiCodec();
+  AsciiCodec();
   @override
-  Converter<List<int>, String> get decoder => const AsciiDecoder();
+  Converter<List<int>, String> get decoder => AsciiDecoder();
   @override
-  Converter<String, List<int>> get encoder => const AsciiEncoder();
+  Converter<String, List<int>> get encoder => AsciiEncoder();
   @override
   String get name => 'ascii';
 }
 
 class AsciiDecoder extends Converter<List<int>, String> {
-  const AsciiDecoder();
+  AsciiDecoder();
   @override
   String convert(List<int> input) => String.fromCharCodes(input);
 }
 
 class AsciiEncoder extends Converter<String, List<int>> {
-  const AsciiEncoder();
+  AsciiEncoder();
   @override
   List<int> convert(String input) => input.codeUnits;
 }

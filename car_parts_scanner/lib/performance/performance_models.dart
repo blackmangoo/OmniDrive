@@ -62,7 +62,7 @@ class SpeedDataPoint {
   final double timeS;
   final double speedKmh;
 
-  const SpeedDataPoint(this.timeS, this.speedKmh);
+  SpeedDataPoint(this.timeS, this.speedKmh);
 
   Map<String, dynamic> toJson() => {'t': timeS, 'v': speedKmh};
 
@@ -76,7 +76,7 @@ class MilestoneAchieved {
   final double timeS;
   final double? trapSpeedKmh; // filled for quarter mile
 
-  const MilestoneAchieved({
+  MilestoneAchieved({
     required this.type,
     required this.timeS,
     this.trapSpeedKmh,
@@ -92,7 +92,7 @@ class PerformanceRunData {
   final Map<MetricType, double> resultSpeeds; // metric → trap speed km/h
   final double topSpeedKmh;
 
-  const PerformanceRunData({
+  PerformanceRunData({
     required this.metrics,
     required this.sensorMode,
     required this.dataPoints,

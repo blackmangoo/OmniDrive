@@ -19,7 +19,7 @@ class VendorOrdersScreen extends StatefulWidget {
 class _VendorOrdersScreenState extends State<VendorOrdersScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tab;
-  final _tabs = const [
+  final _tabs = [
     _TabCfg('All', null),
     _TabCfg('Pending', 'pending'),
     _TabCfg('Confirmed', 'confirmed'),
@@ -68,7 +68,7 @@ class _VendorOrdersScreenState extends State<VendorOrdersScreen>
         Container(
           padding: EdgeInsets.fromLTRB(
               20, MediaQuery.of(context).padding.top + 16, 20, 0),
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             color: kBg,
             border: Border(bottom: BorderSide(color: kBorder)),
           ),
@@ -80,12 +80,12 @@ class _VendorOrdersScreenState extends State<VendorOrdersScreen>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('Vendor Dashboard', style: kLabel(12, color: kTextMuted)),
-                    const SizedBox(height: 2),
+                    SizedBox(height: 2),
                     Text('Active Orders', style: kHeadline(22)),
                   ],
                 )),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
                     color: kVendor.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(20),
@@ -102,7 +102,7 @@ class _VendorOrdersScreenState extends State<VendorOrdersScreen>
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      const SizedBox(width: 4),
+                      SizedBox(width: 4),
                       Text('orders', style: GoogleFonts.inter(
                         fontSize: 11,
                         color: kVendor,
@@ -112,7 +112,7 @@ class _VendorOrdersScreenState extends State<VendorOrdersScreen>
                   ),
                 ),
               ]),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               TabBar(
                 controller: _tab,
                 isScrollable: true,
@@ -141,7 +141,7 @@ class _VendorOrdersScreenState extends State<VendorOrdersScreen>
         // ── Tab content ────────────────────────────────────────────────────
         Expanded(
           child: _loading
-              ? const Center(child: CircularProgressIndicator(color: kVendor))
+              ? Center(child: CircularProgressIndicator(color: kVendor))
               : TabBarView(
                   controller: _tab,
                   children: _tabs.map((t) {
@@ -160,7 +160,7 @@ class _VendorOrdersScreenState extends State<VendorOrdersScreen>
 class _TabCfg {
   final String label;
   final String? status;
-  const _TabCfg(this.label, this.status);
+  _TabCfg(this.label, this.status);
 }
 
 class _OrderList extends StatelessWidget {
@@ -173,8 +173,8 @@ class _OrderList extends StatelessWidget {
     if (orders.isEmpty) {
       return Center(
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          const Icon(Icons.receipt_long_outlined, size: 56, color: kBorder),
-          const SizedBox(height: 12),
+          Icon(Icons.receipt_long_outlined, size: 56, color: kBorder),
+          SizedBox(height: 12),
           Text('No orders in this status', style: kBody(13, color: kTextMuted)),
         ]),
       );
@@ -183,7 +183,7 @@ class _OrderList extends StatelessWidget {
       color: kVendor, backgroundColor: kCard,
       onRefresh: () async => onStatusChange(),
       child: ListView.builder(
-        padding: const EdgeInsets.fromLTRB(16, 12, 16, 100),
+        padding: EdgeInsets.fromLTRB(16, 12, 16, 100),
         itemCount: orders.length,
         itemBuilder: (context, i) => StaggeredEntrance(
           index: i,
@@ -209,13 +209,13 @@ class _VendorOrderCardState extends State<_VendorOrderCard> {
   bool _expanded = false;
   bool _updating = false;
 
-  static const _nextStatus = {
+  static final _nextStatus = {
     'pending':    'confirmed',
     'confirmed':  'preparing',
     'preparing':  'ready',
   };
 
-  static const _nextLabel = {
+  static final _nextLabel = {
     'pending':    'Confirm Order',
     'confirmed':  'Start Preparing',
     'preparing':  'Mark Ready',
@@ -240,13 +240,13 @@ class _VendorOrderCardState extends State<_VendorOrderCard> {
     final nextLabel = _nextLabel[order.status];
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: EdgeInsets.only(bottom: 12),
       decoration: kGlowDeco(accent, radius: 18),
       child: Column(children: [
         TappableScale(
           onTap: () => setState(() => _expanded = !_expanded),
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(16),
             child: Column(children: [
               Row(children: [
                 // Customer initials
@@ -261,7 +261,7 @@ class _VendorOrderCardState extends State<_VendorOrderCard> {
                     style: GoogleFonts.inter(fontSize: 18,
                       fontWeight: FontWeight.w800, color: accent))),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -276,15 +276,15 @@ class _VendorOrderCardState extends State<_VendorOrderCard> {
                 ),
                 kStatusPill(statusLabel(order.status), accent, fontSize: 10),
               ]),
-              const SizedBox(height: 12),
+              SizedBox(height: 12),
               Row(children: [
                 _Chip(Icons.shopping_bag_rounded,
                   '${order.items.length} items', kTextMuted),
-                const SizedBox(width: 8),
+                SizedBox(width: 8),
                 Row(
                   children: [
-                    const Icon(Icons.payments_rounded, color: kVendor, size: 12),
-                    const SizedBox(width: 4),
+                    Icon(Icons.payments_rounded, color: kVendor, size: 12),
+                    SizedBox(width: 4),
                     MotionCounter(
                       value: order.totalAmount,
                       prefix: 'Rs ',
@@ -292,7 +292,7 @@ class _VendorOrderCardState extends State<_VendorOrderCard> {
                     ),
                   ],
                 ),
-                const SizedBox(width: 8),
+                SizedBox(width: 8),
                 _Chip(Icons.receipt_rounded,
                   order.paymentMethod ?? 'COD', kCyan),
               ]),
@@ -304,14 +304,14 @@ class _VendorOrderCardState extends State<_VendorOrderCard> {
         if (_expanded) ...[
           Divider(color: kBorder, height: 1),
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+            padding: EdgeInsets.fromLTRB(16, 12, 16, 0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 kSectionHeader('Order Items'),
-                const SizedBox(height: 10),
+                SizedBox(height: 10),
                 ...order.items.map((item) => Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
+                  padding: EdgeInsets.only(bottom: 8),
                   child: Row(children: [
                     Container(
                       width: 36, height: 36,
@@ -322,17 +322,17 @@ class _VendorOrderCardState extends State<_VendorOrderCard> {
                           ? ClipRRect(borderRadius: BorderRadius.circular(7),
                               child: CachedNetworkImage(imageUrl: item.productImage!,
                                 fit: BoxFit.cover,
-                                errorWidget: (_, _, _) => const Icon(
+                                errorWidget: (_, _, _) => Icon(
                                   Icons.inventory_2_rounded, color: kBorder, size: 16)))
-                          : const Icon(Icons.inventory_2_rounded,
+                          : Icon(Icons.inventory_2_rounded,
                               color: kBorder, size: 16),
                     ),
-                    const SizedBox(width: 10),
+                    SizedBox(width: 10),
                     Expanded(child: Text(item.productName, style: kBody(12,
                       color: kTextPrimary, fw: FontWeight.w500),
                       overflow: TextOverflow.ellipsis)),
                     Text('×${item.quantity}', style: kLabel(11)),
-                    const SizedBox(width: 8),
+                    SizedBox(width: 8),
                     MotionCounter(
                       value: item.total,
                       prefix: 'Rs ',
@@ -340,15 +340,15 @@ class _VendorOrderCardState extends State<_VendorOrderCard> {
                     ),
                   ]),
                 )),
-                const SizedBox(height: 4),
+                SizedBox(height: 4),
                 Row(children: [
-                  const Icon(Icons.location_on_rounded, color: kCyan, size: 14),
-                  const SizedBox(width: 6),
+                  Icon(Icons.location_on_rounded, color: kCyan, size: 14),
+                  SizedBox(width: 6),
                   Expanded(child: Text(order.deliveryAddress,
                     style: kBody(11, color: kTextMuted), maxLines: 2,
                     overflow: TextOverflow.ellipsis)),
                 ]),
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
               ],
             ),
           ),
@@ -356,7 +356,7 @@ class _VendorOrderCardState extends State<_VendorOrderCard> {
 
         // Action button
         if (nextLabel != null) Padding(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
+          padding: EdgeInsets.fromLTRB(16, 0, 16, 14),
           child: TappableScale(
             onTap: _updating ? null : _advance,
             child: Container(
@@ -367,12 +367,12 @@ class _VendorOrderCardState extends State<_VendorOrderCard> {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: _updating
-                  ? const SizedBox(width: 18, height: 18,
+                  ? SizedBox(width: 18, height: 18,
                       child: CircularProgressIndicator(
                         strokeWidth: 2, color: Colors.black))
                   : Row(mainAxisSize: MainAxisSize.min, children: [
-                      const Icon(Icons.arrow_forward_rounded, size: 16, color: Colors.black),
-                      const SizedBox(width: 6),
+                      Icon(Icons.arrow_forward_rounded, size: 16, color: Colors.black),
+                      SizedBox(width: 6),
                       Text(nextLabel, style: GoogleFonts.inter(
                         fontSize: 13, fontWeight: FontWeight.w700, color: Colors.black)),
                     ]),
@@ -393,7 +393,7 @@ class _Chip extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Row(children: [
     Icon(icon, color: color, size: 12),
-    const SizedBox(width: 4),
+    SizedBox(width: 4),
     Text(label, style: kBody(11, color: color)),
   ]);
 }

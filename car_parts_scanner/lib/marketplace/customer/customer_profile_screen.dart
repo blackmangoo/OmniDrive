@@ -42,9 +42,9 @@ class _CustomerProfileScreenState extends State<CustomerProfileScreen> {
         title: Text('My Profile', style: GoogleFonts.inter(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
       ),
       body: _loading
-          ? const Center(child: CircularProgressIndicator(color: kAccent))
+          ? Center(child: CircularProgressIndicator(color: kAccent))
           : SingleChildScrollView(
-              padding: const EdgeInsets.all(20),
+              padding: EdgeInsets.all(20),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 // ── Avatar + name ──────────────────────────────────────────
                 Center(
@@ -56,16 +56,16 @@ class _CustomerProfileScreenState extends State<CustomerProfileScreen> {
                         color: kAccent.withValues(alpha: 0.15),
                         border: Border.all(color: kAccent.withValues(alpha: 0.4), width: 2),
                       ),
-                      child: const Icon(Icons.person_rounded, color: kAccent, size: 44),
+                      child: Icon(Icons.person_rounded, color: kAccent, size: 44),
                     ),
-                    const SizedBox(height: 14),
+                    SizedBox(height: 14),
                     Text(_user?.fullName ?? '—',
                         style: GoogleFonts.inter(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 4),
+                    SizedBox(height: 4),
                     Text(_user?.email ?? '—', style: GoogleFonts.inter(color: Colors.white38, fontSize: 14)),
-                    const SizedBox(height: 6),
+                    SizedBox(height: 6),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                       decoration: BoxDecoration(
                         color: kAccent.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(20),
@@ -76,31 +76,31 @@ class _CustomerProfileScreenState extends State<CustomerProfileScreen> {
                   ]),
                 ),
 
-                const SizedBox(height: 32),
+                SizedBox(height: 32),
 
                 // ── Menu ───────────────────────────────────────────────────
                 _menuItem(icon: Icons.receipt_long_rounded, label: 'My Orders',
-                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const OrdersScreen()))),
+                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => OrdersScreen()))),
                 _menuItem(icon: Icons.location_on_outlined, label: 'Saved Addresses', onTap: () {}),
                 _menuItem(icon: Icons.help_outline_rounded, label: 'Help & Support', onTap: () {}),
 
-                const SizedBox(height: 24),
+                SizedBox(height: 24),
                 Divider(color: kBorder),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
 
                 // ── Logout ─────────────────────────────────────────────────
                 GestureDetector(
                   onTap: _logout,
                   child: Container(
-                    padding: const EdgeInsets.all(16),
+                    padding: EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: kError.withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(14),
                       border: Border.all(color: kError.withValues(alpha: 0.3)),
                     ),
                     child: Row(children: [
-                      const Icon(Icons.logout_rounded, color: kError, size: 22),
-                      const SizedBox(width: 14),
+                      Icon(Icons.logout_rounded, color: kError, size: 22),
+                      SizedBox(width: 14),
                       Text('Sign Out', style: GoogleFonts.inter(color: kError, fontSize: 15, fontWeight: FontWeight.w600)),
                     ]),
                   ),
@@ -114,14 +114,14 @@ class _CustomerProfileScreenState extends State<CustomerProfileScreen> {
       GestureDetector(
         onTap: onTap,
         child: Container(
-          margin: const EdgeInsets.only(bottom: 10),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          margin: EdgeInsets.only(bottom: 10),
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           decoration: kCardDeco(),
           child: Row(children: [
             Icon(icon, color: kAccent, size: 22),
-            const SizedBox(width: 14),
+            SizedBox(width: 14),
             Expanded(child: Text(label, style: GoogleFonts.inter(color: Colors.white, fontSize: 15))),
-            const Icon(Icons.chevron_right_rounded, color: Colors.white24),
+            Icon(Icons.chevron_right_rounded, color: Colors.white24),
           ]),
         ),
       );

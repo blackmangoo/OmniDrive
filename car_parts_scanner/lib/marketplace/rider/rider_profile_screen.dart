@@ -42,9 +42,9 @@ class _RiderProfileScreenState extends State<RiderProfileScreen> {
         title: Text('My Profile', style: GoogleFonts.inter(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
       ),
       body: _loading
-          ? const Center(child: CircularProgressIndicator(color: kRider))
+          ? Center(child: CircularProgressIndicator(color: kRider))
           : SingleChildScrollView(
-              padding: const EdgeInsets.all(20),
+              padding: EdgeInsets.all(20),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 // ── Avatar ─────────────────────────────────────────────────
                 Center(
@@ -56,15 +56,15 @@ class _RiderProfileScreenState extends State<RiderProfileScreen> {
                         color: kRider.withValues(alpha: 0.15),
                         border: Border.all(color: kRider.withValues(alpha: 0.4), width: 2),
                       ),
-                      child: const Icon(Icons.delivery_dining_rounded, color: kRider, size: 44),
+                      child: Icon(Icons.delivery_dining_rounded, color: kRider, size: 44),
                     ),
-                    const SizedBox(height: 14),
+                    SizedBox(height: 14),
                     Text(_user?.fullName ?? '—', style: GoogleFonts.inter(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 4),
+                    SizedBox(height: 4),
                     Text(_user?.email ?? '—', style: GoogleFonts.inter(color: Colors.white38, fontSize: 14)),
-                    const SizedBox(height: 8),
+                    SizedBox(height: 8),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
+                      padding: EdgeInsets.symmetric(horizontal: 14, vertical: 5),
                       decoration: BoxDecoration(
                         color: kRider.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(20),
@@ -75,27 +75,27 @@ class _RiderProfileScreenState extends State<RiderProfileScreen> {
                   ]),
                 ),
 
-                const SizedBox(height: 32),
+                SizedBox(height: 32),
 
                 // ── Info cards ─────────────────────────────────────────────
                 _infoCard(icon: Icons.phone_outlined, label: 'Phone', value: _user?.phone ?? 'Not set'),
                 _infoCard(icon: Icons.location_on_outlined, label: 'Address', value: _user?.address ?? 'Not set'),
 
-                const SizedBox(height: 32),
+                SizedBox(height: 32),
 
                 // ── Logout ─────────────────────────────────────────────────
                 TappableScale(
                   onTap: () async => await Supabase.instance.client.auth.signOut(),
                   child: Container(
-                    padding: const EdgeInsets.all(16),
+                    padding: EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: kError.withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(14),
                       border: Border.all(color: kError.withValues(alpha: 0.3)),
                     ),
                     child: Row(children: [
-                      const Icon(Icons.logout_rounded, color: kError, size: 22),
-                      const SizedBox(width: 14),
+                      Icon(Icons.logout_rounded, color: kError, size: 22),
+                      SizedBox(width: 14),
                       Text('Sign Out', style: GoogleFonts.inter(color: kError, fontSize: 15, fontWeight: FontWeight.w600)),
                     ]),
                   ),
@@ -107,16 +107,16 @@ class _RiderProfileScreenState extends State<RiderProfileScreen> {
 
   Widget _infoCard({required IconData icon, required String label, required String value}) =>
       Container(
-        margin: const EdgeInsets.only(bottom: 10),
-        padding: const EdgeInsets.all(16),
+        margin: EdgeInsets.only(bottom: 10),
+        padding: EdgeInsets.all(16),
         decoration: kCardDeco(),
         child: Row(children: [
           Icon(icon, color: kRider, size: 22),
-          const SizedBox(width: 14),
+          SizedBox(width: 14),
           Expanded(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text(label, style: GoogleFonts.inter(color: Colors.white38, fontSize: 11)),
-              const SizedBox(height: 2),
+              SizedBox(height: 2),
               Text(value, style: GoogleFonts.inter(color: Colors.white, fontSize: 14), overflow: TextOverflow.ellipsis, maxLines: 3),
             ]),
           ),

@@ -45,9 +45,9 @@ class _AdminOrdersScreenState extends State<AdminOrdersScreen> {
         title: Row(
           children: [
             Text('All Orders', style: GoogleFonts.inter(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
-            const SizedBox(width: 8),
+            SizedBox(width: 8),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               decoration: BoxDecoration(color: kAdmin.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(12)),
               child: MotionCounter(
                 value: _orders.length,
@@ -59,7 +59,7 @@ class _AdminOrdersScreenState extends State<AdminOrdersScreen> {
         actions: [
           TappableScale(
             onTap: _load,
-            child: const Padding(
+            child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 16),
               child: Icon(Icons.refresh_rounded, color: kAdmin),
             ),
@@ -67,15 +67,15 @@ class _AdminOrdersScreenState extends State<AdminOrdersScreen> {
         ],
       ),
       body: _loading
-          ? const Center(child: CircularProgressIndicator(color: kAdmin))
+          ? Center(child: CircularProgressIndicator(color: kAdmin))
           : _orders.isEmpty
               ? _empty()
               : RefreshIndicator(
                   onRefresh: _load, color: kAdmin, backgroundColor: kSurface,
                   child: ListView.separated(
-                    padding: const EdgeInsets.all(16),
+                    padding: EdgeInsets.all(16),
                     itemCount: _orders.length,
-                    separatorBuilder: (context, i) => const SizedBox(height: 10),
+                    separatorBuilder: (context, i) => SizedBox(height: 10),
                     itemBuilder: (context, i) => StaggeredEntrance(
                       index: i,
                       child: _AdminOrderTile(
@@ -92,13 +92,13 @@ class _AdminOrdersScreenState extends State<AdminOrdersScreen> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          padding: const EdgeInsets.all(20),
+          padding: EdgeInsets.all(20),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: kSurface,
             border: Border.all(color: kBorder),
           ),
-          child: const Icon(
+          child: Icon(
             Icons.receipt_long_rounded,
             color: kAdmin,
             size: 64,
@@ -107,7 +107,7 @@ class _AdminOrdersScreenState extends State<AdminOrdersScreen> {
         .animate()
         .scaleXY(begin: 0.8, end: 1.0, duration: 600.ms, curve: Curves.easeOutBack)
         .fadeIn(duration: 500.ms),
-        const SizedBox(height: 16),
+        SizedBox(height: 16),
         Text('No orders yet', style: GoogleFonts.inter(color: Colors.white38, fontSize: 16)),
       ],
     ),
@@ -124,8 +124,8 @@ class _AdminOrderTile extends StatelessWidget {
     final date  = DateFormat('d MMM, hh:mm a').format(order.createdAt.toLocal());
 
     return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: kGlowCard(color),
+      padding: EdgeInsets.all(14),
+      decoration: kGlowCard(backgroundColor),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
           Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -135,24 +135,24 @@ class _AdminOrderTile extends StatelessWidget {
                 style: GoogleFonts.inter(color: Colors.white38, fontSize: 11)),
           ])),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
             decoration: BoxDecoration(color: color.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(12)),
             child: Text('${statusIcon(order.status)} ${statusLabel(order.status)}',
                 style: GoogleFonts.inter(color: color, fontSize: 10, fontWeight: FontWeight.w600)),
           ),
         ]),
-        const SizedBox(height: 8),
+        SizedBox(height: 8),
         Row(children: [
           MotionCounter(
             value: order.totalAmount,
             prefix: 'Rs ',
             style: GoogleFonts.inter(color: kCyan, fontSize: 13, fontWeight: FontWeight.bold),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: 12),
           Text(date, style: GoogleFonts.inter(color: Colors.white24, fontSize: 11)),
         ]),
         if (order.riderId != null) Padding(
-          padding: const EdgeInsets.only(top: 6),
+          padding: EdgeInsets.only(top: 6),
           child: Text('🏍️ Rider: ${order.riderName ?? "Assigned"}',
               style: GoogleFonts.inter(color: kRider, fontSize: 11, fontWeight: FontWeight.w600)),
         ),

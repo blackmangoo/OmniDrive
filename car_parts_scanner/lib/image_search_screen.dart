@@ -31,7 +31,7 @@ class _ImageSearchScreenState extends State<ImageSearchScreen>
   void initState() {
     super.initState();
     _pulseCtrl = AnimationController(
-        vsync: this, duration: const Duration(seconds: 2))
+        vsync: this, duration: Duration(seconds: 2))
       ..repeat(reverse: true);
     _checkApi();
   }
@@ -133,11 +133,11 @@ class _ImageSearchScreenState extends State<ImageSearchScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildHeader(),
-                const SizedBox(height: 28),
+                SizedBox(height: 28),
                 _buildSearchBar(),
-                const SizedBox(height: 32),
+                SizedBox(height: 32),
                 _buildSectionLabel('HOW IT WORKS'),
-                const SizedBox(height: 14),
+                SizedBox(height: 14),
                 Expanded(child: _buildFeatureList()),
               ],
             ),
@@ -154,7 +154,7 @@ class _ImageSearchScreenState extends State<ImageSearchScreen>
 
   Widget _buildHeader() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
+      padding: EdgeInsets.fromLTRB(24, 20, 24, 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -181,7 +181,7 @@ class _ImageSearchScreenState extends State<ImageSearchScreen>
                   ),
                 ),
               ),
-              const SizedBox(width: 9),
+              SizedBox(width: 9),
               Text(
                 'OmniDrive AI',
                 style: AppTypography.h2.copyWith(
@@ -191,13 +191,13 @@ class _ImageSearchScreenState extends State<ImageSearchScreen>
                   letterSpacing: 0.4,
                 ),
               ),
-              const Spacer(),
+              Spacer(),
               // API status badge
               TappableScale(
                 onTap: _checkApi,
                 child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 400),
-                  padding: const EdgeInsets.symmetric(
+                  duration: Duration(milliseconds: 400),
+                  padding: EdgeInsets.symmetric(
                       horizontal: 10, vertical: 5),
                   decoration: BoxDecoration(
                     color: (_apiLive ? AppColors.success : AppColors.error)
@@ -215,7 +215,7 @@ class _ImageSearchScreenState extends State<ImageSearchScreen>
                           color:
                               _apiLive ? AppColors.success : AppColors.error,
                           size: 7),
-                      const SizedBox(width: 5),
+                      SizedBox(width: 5),
                       Text(
                         _apiLive ? 'API Live' : 'API Offline',
                         style: TextStyle(
@@ -232,7 +232,7 @@ class _ImageSearchScreenState extends State<ImageSearchScreen>
               ),
             ],
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: 4),
           Text(
             'Automotive Vision System',
             style: AppTypography.caption.copyWith(
@@ -245,7 +245,7 @@ class _ImageSearchScreenState extends State<ImageSearchScreen>
 
   Widget _buildSearchBar() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: EdgeInsets.symmetric(horizontal: 20),
       child: Container(
         height: 60,
         decoration: BoxDecoration(
@@ -268,7 +268,7 @@ class _ImageSearchScreenState extends State<ImageSearchScreen>
               child: _SearchBarButton(
                 icon: Icons.photo_library_rounded,
                 tooltip: 'Pick from Gallery',
-                radius: const BorderRadius.horizontal(
+                radius: BorderRadius.horizontal(
                     left: Radius.circular(18)),
                 onTap: _isAnalyzing ? null : _pickFromGallery,
               ),
@@ -283,7 +283,7 @@ class _ImageSearchScreenState extends State<ImageSearchScreen>
             // Hint text
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+                padding: EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
                   'Scan or upload a car part…',
                   style: AppTypography.body.copyWith(color: AppColors.textMuted, fontSize: 14),
@@ -307,7 +307,7 @@ class _ImageSearchScreenState extends State<ImageSearchScreen>
                   child: _SearchBarButton(
                     icon: Icons.camera_alt_rounded,
                     tooltip: 'Open Camera Scanner',
-                    radius: const BorderRadius.horizontal(
+                    radius: BorderRadius.horizontal(
                         right: Radius.circular(18)),
                     onTap: _isAnalyzing ? null : _openCameraScanner,
                   ),
@@ -322,7 +322,7 @@ class _ImageSearchScreenState extends State<ImageSearchScreen>
 
   Widget _buildSectionLabel(String label) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
+      padding: EdgeInsets.symmetric(horizontal: 24),
       child: Text(
         label,
         style: AppTypography.caption.copyWith(
@@ -337,7 +337,7 @@ class _ImageSearchScreenState extends State<ImageSearchScreen>
 
   Widget _buildFeatureList() {
     return ListView(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: EdgeInsets.symmetric(horizontal: 20),
       children: [
         StaggeredEntrance(
           index: 0,
@@ -349,7 +349,7 @@ class _ImageSearchScreenState extends State<ImageSearchScreen>
                 'Point the camera at any car part — YOLO11 identifies it in ~110ms.',
           ),
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: 12),
         StaggeredEntrance(
           index: 1,
           child: _FeatureCard(
@@ -360,7 +360,7 @@ class _ImageSearchScreenState extends State<ImageSearchScreen>
                 'Select an existing photo of a part and get instant AI identification.',
           ),
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: 12),
         StaggeredEntrance(
           index: 2,
           child: _FeatureCard(
@@ -371,7 +371,7 @@ class _ImageSearchScreenState extends State<ImageSearchScreen>
                 'Trained on 26,820 images across 50 car part classes (YOLO11 Large).',
           ),
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: 12),
         StaggeredEntrance(
           index: 3,
           child: _FeatureCard(
@@ -382,7 +382,7 @@ class _ImageSearchScreenState extends State<ImageSearchScreen>
                 'Vendor listings, real-time pricing and delivery — Phase 4.',
           ),
         ),
-        const SizedBox(height: 20),
+        SizedBox(height: 20),
       ],
     );
   }
@@ -394,9 +394,9 @@ class _ImageSearchScreenState extends State<ImageSearchScreen>
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const CircularProgressIndicator(
+            CircularProgressIndicator(
                 color: AppColors.cyan, strokeWidth: 2.5),
-            const SizedBox(height: 18),
+            SizedBox(height: 18),
             Text(
               'ANALYSING IMAGE…',
               style: AppTypography.label.copyWith(
@@ -471,7 +471,7 @@ class _FeatureCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(AppSpacing.rMd),
@@ -489,7 +489,7 @@ class _FeatureCard extends StatelessWidget {
             ),
             child: Icon(icon, color: iconColor, size: 22),
           ),
-          const SizedBox(width: 14),
+          SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -499,7 +499,7 @@ class _FeatureCard extends StatelessWidget {
                         color: Colors.white,
                         fontSize: 15,
                         fontWeight: FontWeight.w600)),
-                const SizedBox(height: 4),
+                SizedBox(height: 4),
                 Text(subtitle,
                     style: AppTypography.body.copyWith(
                         color: AppColors.textMuted, fontSize: 12, height: 1.4)),
@@ -528,7 +528,7 @@ class _ResultsSheet extends StatelessWidget {
       maxChildSize: 0.9,
       minChildSize: 0.35,
       builder: (_, scrollCtrl) => Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           color: AppColors.surface,
           borderRadius:
               BorderRadius.vertical(top: Radius.circular(26)),
@@ -536,14 +536,14 @@ class _ResultsSheet extends StatelessWidget {
         child: ListView(
           controller: scrollCtrl,
           padding:
-              const EdgeInsets.fromLTRB(24, 12, 24, 32),
+              EdgeInsets.fromLTRB(24, 12, 24, 32),
           children: [
             // Handle bar
             Center(
               child: Container(
                 width: 40,
                 height: 4,
-                margin: const EdgeInsets.only(bottom: 20),
+                margin: EdgeInsets.only(bottom: 20),
                 decoration: BoxDecoration(
                     color: Colors.grey[800],
                     borderRadius: BorderRadius.circular(10)),
@@ -555,7 +555,7 @@ class _ResultsSheet extends StatelessWidget {
               child: Hero(
                 tag: 'scan_results_hud',
                 child: Container(
-                  padding: const EdgeInsets.all(12),
+                  padding: EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: (hasError ? AppColors.error : AppColors.cyan).withValues(alpha: 0.1),
                     shape: BoxShape.circle,
@@ -568,14 +568,14 @@ class _ResultsSheet extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
 
             // ── Error state ──────────────────────────────────────────
             if (hasError) ...[
               Row(children: [
-                const Icon(Icons.error_outline,
+                Icon(Icons.error_outline,
                     color: AppColors.error, size: 26),
-                const SizedBox(width: 10),
+                SizedBox(width: 10),
                 Expanded(
                   child: Text('Analysis Result',
                       style: AppTypography.h2.copyWith(
@@ -584,7 +584,7 @@ class _ResultsSheet extends StatelessWidget {
                           fontWeight: FontWeight.bold)),
                 ),
               ]),
-              const SizedBox(height: 10),
+              SizedBox(height: 10),
               Text(result.error!,
                   style: AppTypography.body.copyWith(
                       color: AppColors.textSecondary, fontSize: 14, height: 1.5)),
@@ -606,12 +606,12 @@ class _ResultsSheet extends StatelessWidget {
                           height: 1.2),
                     ),
                   ),
-                  const SizedBox(width: 10),
+                  SizedBox(width: 10),
                   _ConfidenceBadge(
                       value: result.confidence),
                 ],
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: 12),
 
               // Animated Confidence Bar
               _ConfidenceProgressBar(
@@ -622,7 +622,7 @@ class _ResultsSheet extends StatelessWidget {
                         ? AppColors.warning
                         : AppColors.error,
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: 20),
 
               // Price card
               if (result.part!.averagePrice != null)
@@ -635,9 +635,9 @@ class _ResultsSheet extends StatelessWidget {
                 ),
 
               if (result.part!.description != null) ...[
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
                 _SectionLabel('DESCRIPTION'),
-                const SizedBox(height: 6),
+                SizedBox(height: 6),
                 Text(result.part!.description!,
                     style: AppTypography.body.copyWith(
                         color: AppColors.textSecondary,
@@ -646,9 +646,9 @@ class _ResultsSheet extends StatelessWidget {
               ],
 
               if (result.part!.compatibilityNotes != null) ...[
-                const SizedBox(height: 14),
+                SizedBox(height: 14),
                 _SectionLabel('COMPATIBILITY'),
-                const SizedBox(height: 6),
+                SizedBox(height: 6),
                 Text(result.part!.compatibilityNotes!,
                     style: AppTypography.body.copyWith(
                         color: AppColors.textSecondary,
@@ -660,9 +660,9 @@ class _ResultsSheet extends StatelessWidget {
             // ── All predictions (always show if present) ──────────────
             if (result.allPredictions != null &&
                 result.allPredictions!.isNotEmpty) ...[
-              const SizedBox(height: 20),
+              SizedBox(height: 20),
               _SectionLabel('ALL PREDICTIONS'),
-              const SizedBox(height: 12),
+              SizedBox(height: 12),
               ...result.allPredictions!.asMap().entries.map((e) {
                 final idx = e.key;
                 final p = e.value;
@@ -672,7 +672,7 @@ class _ResultsSheet extends StatelessWidget {
                 return StaggeredEntrance(
                   index: idx,
                   child: Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
+                    padding: EdgeInsets.only(bottom: 12),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -693,7 +693,7 @@ class _ResultsSheet extends StatelessWidget {
                                   fontWeight: FontWeight.w700,
                                 )),
                           ),
-                          const SizedBox(width: 10),
+                          SizedBox(width: 10),
                           Expanded(
                             child:
                                 Text(cls,
@@ -709,9 +709,9 @@ class _ResultsSheet extends StatelessWidget {
                                     : FontWeight.normal,
                               )),
                         ]),
-                        const SizedBox(height: 6),
+                        SizedBox(height: 6),
                         Padding(
-                          padding: const EdgeInsets.only(left: 32),
+                          padding: EdgeInsets.only(left: 32),
                           child: _ConfidenceProgressBar(
                             confidence: conf,
                             color: idx == 0 ? AppColors.cyan : AppColors.textMuted,
@@ -726,7 +726,7 @@ class _ResultsSheet extends StatelessWidget {
 
             // ── Inference time footer ─────────────────────────────────
             if (result.inferenceTimeMs != null) ...[
-              const SizedBox(height: 14),
+              SizedBox(height: 14),
               Align(
                 alignment: Alignment.centerRight,
                 child: Text(
@@ -755,7 +755,7 @@ class _ConfidenceBadge extends StatelessWidget {
             : AppColors.error;
     return Container(
       padding:
-          const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(20),
@@ -785,7 +785,7 @@ class _InfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: iconColor.withValues(alpha: 0.06),
         borderRadius: BorderRadius.circular(13),
@@ -793,7 +793,7 @@ class _InfoCard extends StatelessWidget {
       ),
       child: Row(children: [
         Icon(icon, color: iconColor, size: 20),
-        const SizedBox(width: 10),
+        SizedBox(width: 10),
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(label,
               style: AppTypography.caption.copyWith(
@@ -844,7 +844,7 @@ class _ConfidenceProgressBarState extends State<_ConfidenceProgressBar>
     super.initState();
     _animCtrl = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 800),
+      duration: Duration(milliseconds: 800),
     );
     _progressAnim = Tween<double>(begin: 0.0, end: widget.confidence / 100.0)
         .animate(CurvedAnimation(parent: _animCtrl, curve: Curves.easeOutCubic));

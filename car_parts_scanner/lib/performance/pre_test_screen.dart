@@ -53,7 +53,7 @@ class _PreTestScreenState extends State<PreTestScreen> with SingleTickerProvider
     super.initState();
     _pulseCtrl = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 600),
+      duration: Duration(milliseconds: 600),
     );
     _initServices();
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
@@ -85,7 +85,7 @@ class _PreTestScreenState extends State<PreTestScreen> with SingleTickerProvider
         
         _runService.attachStreams(
           speedStream: _obdService!.speedStream,
-          positionStream: const Stream.empty(),
+          positionStream: Stream.empty(),
         );
 
         if (mounted) {
@@ -100,7 +100,7 @@ class _PreTestScreenState extends State<PreTestScreen> with SingleTickerProvider
         _runService.sensorFusionRef = _gpsService;
         await _gpsService!.start();
         
-        _gpsPollingTimer = Timer.periodic(const Duration(milliseconds: 500), (t) {
+        _gpsPollingTimer = Timer.periodic(Duration(milliseconds: 500), (t) {
           if (!mounted) {
             t.cancel();
             return;
@@ -146,7 +146,7 @@ class _PreTestScreenState extends State<PreTestScreen> with SingleTickerProvider
       setState(() => _countdown = i);
       _pulseCtrl.forward(from: 0);
       HapticFeedback.heavyImpact();
-      await Future.delayed(const Duration(seconds: 1));
+      await Future.delayed(Duration(seconds: 1));
     }
 
     if (!mounted) return;
@@ -174,13 +174,13 @@ class _PreTestScreenState extends State<PreTestScreen> with SingleTickerProvider
         elevation: 0,
         leading: TappableScale(
           onTap: () => Navigator.pop(context),
-          child: const Icon(Icons.close_rounded, color: Colors.white70),
+          child: Icon(Icons.close_rounded, color: Colors.white70),
         ),
-        title: const Text('Pre-Test Check', style: TextStyle(color: Colors.white70, fontSize: 15)),
+        title: Text('Pre-Test Check', style: TextStyle(color: Colors.white70, fontSize: 15)),
       ),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
+          padding: EdgeInsets.symmetric(horizontal: 24),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -192,28 +192,28 @@ class _PreTestScreenState extends State<PreTestScreen> with SingleTickerProvider
                   color: AppColors.surface,
                   border: Border.all(color: AppColors.cyan.withValues(alpha: 0.3), width: 2),
                 ),
-                child: const Icon(Icons.phone_android_rounded,
+                child: Icon(Icons.phone_android_rounded,
                   color: AppColors.cyan, size: 60),
               ),
-              const SizedBox(height: 28),
+              SizedBox(height: 28),
 
-              const Text(
+              Text(
                 'Mount Your Phone Securely',
                 style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 12),
-              const Text(
+              SizedBox(height: 12),
+              Text(
                 'Place the phone in a fixed mount or wedge it firmly where it will NOT move during the test. Movement = inaccurate results.',
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.white60, fontSize: 13, height: 1.6),
               ),
 
-              const SizedBox(height: 40),
+              SizedBox(height: 40),
 
               // ── Sensor status box ────────────────────────────────────
               AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                duration: Duration(milliseconds: 300),
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                 decoration: BoxDecoration(
                   color: _sensorReady 
                       ? AppColors.success.withValues(alpha: 0.08) 
@@ -229,7 +229,7 @@ class _PreTestScreenState extends State<PreTestScreen> with SingleTickerProvider
                       _sensorReady ? Icons.check_circle_rounded : Icons.sensors_rounded,
                       color: _sensorReady ? AppColors.success : AppColors.cyan,
                     ),
-                    const SizedBox(width: 14),
+                    SizedBox(width: 14),
                     Expanded(
                       child: Text(
                         _statusMsg,
@@ -241,7 +241,7 @@ class _PreTestScreenState extends State<PreTestScreen> with SingleTickerProvider
                       ),
                     ),
                     if (!_sensorReady && !_isCountingDown)
-                      const SizedBox(
+                      SizedBox(
                         width: 16, height: 16,
                         child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.cyan),
                       )
@@ -249,7 +249,7 @@ class _PreTestScreenState extends State<PreTestScreen> with SingleTickerProvider
                 ),
               ),
 
-              const SizedBox(height: 56),
+              SizedBox(height: 56),
 
               // ── Action Button or Countdown ───────────────────────────
               if (_isCountingDown)
@@ -259,7 +259,7 @@ class _PreTestScreenState extends State<PreTestScreen> with SingleTickerProvider
                   ),
                   child: Text(
                     _countdown.toString(),
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: AppColors.cyan,
                       fontSize: 100,
                       fontWeight: FontWeight.w900,

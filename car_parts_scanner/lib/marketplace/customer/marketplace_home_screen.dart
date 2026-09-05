@@ -28,7 +28,7 @@ class _MarketplaceHomeScreenState extends State<MarketplaceHomeScreen> {
   String? _searchQuery;
   int _cartCount = 0;
 
-  static const _heroBanners = [
+  static final _heroBanners = [
     _HeroBanner('Precision Parts for Peak Performance',
         'Get up to 30% off German-engineered suspension kits this week.',
         kCyanGradient, Icons.car_repair_rounded),
@@ -44,7 +44,7 @@ class _MarketplaceHomeScreenState extends State<MarketplaceHomeScreen> {
         Icons.local_shipping_rounded),
   ];
 
-  static const _categoryList = [
+  static final _categoryList = [
     _CatData('Brakes',      Icons.disc_full_rounded,          Color(0xFFEF4444)),
     _CatData('Engine',      Icons.engineering_rounded,        Color(0xFFF59E0B)),
     _CatData('Filters',     Icons.filter_alt_rounded,          Color(0xFF4FC3F7)),
@@ -113,10 +113,10 @@ class _MarketplaceHomeScreenState extends State<MarketplaceHomeScreen> {
                         gradient: kCyanGradient,
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child: const Icon(Icons.directions_car_rounded,
+                      child: Icon(Icons.directions_car_rounded,
                           color: Colors.black, size: 18),
                     ),
-                    const SizedBox(width: 10),
+                    SizedBox(width: 10),
                     Text('OmniDrive', style: AppTypography.title.copyWith(
                       fontSize: 18, fontWeight: FontWeight.w800,
                       color: kTextPrimary, letterSpacing: -0.5)),
@@ -126,31 +126,31 @@ class _MarketplaceHomeScreenState extends State<MarketplaceHomeScreen> {
                   Stack(
                     children: [
                       IconButton(
-                        icon: const Icon(Icons.shopping_cart_checkout_rounded,
+                        icon: Icon(Icons.shopping_cart_checkout_rounded,
                             color: kTextSecondary),
                         onPressed: () => Navigator.push(context,
-                            MaterialPageRoute(builder: (_) => const CartScreen()))
+                            MaterialPageRoute(builder: (_) => CartScreen()))
                             .then((_) => _loadData()),
                       ),
                       if (_cartCount > 0) Positioned(
                         top: 8, right: 8,
                         child: Container(
                           width: 16, height: 16,
-                          decoration: const BoxDecoration(
+                          decoration: BoxDecoration(
                               color: kCyan, shape: BoxShape.circle),
                           child: Center(child: Text('$_cartCount',
-                            style: const TextStyle(fontSize: 9, color: Colors.black,
+                            style: TextStyle(fontSize: 9, color: Colors.black,
                                 fontWeight: FontWeight.w800))),
                         ),
                       ),
                     ],
                   ),
                   IconButton(
-                    icon: const Icon(Icons.notifications_none_rounded,
+                    icon: Icon(Icons.notifications_none_rounded,
                         color: kTextSecondary),
                     onPressed: () {},
                   ),
-                  const SizedBox(width: 4),
+                  SizedBox(width: 4),
                 ],
               ),
 
@@ -160,7 +160,7 @@ class _MarketplaceHomeScreenState extends State<MarketplaceHomeScreen> {
                   children: [
                     // ── Search bar ────────────────────────────────────────
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                      padding: EdgeInsets.fromLTRB(16, 8, 16, 16),
                       child: Container(
                         height: 48,
                         decoration: kGlassDeco(radius: 14),
@@ -174,11 +174,11 @@ class _MarketplaceHomeScreenState extends State<MarketplaceHomeScreen> {
                           decoration: InputDecoration(
                             hintText: 'Search auto parts, brands…',
                             hintStyle: kBody(13, color: kTextMuted),
-                            prefixIcon: const Icon(Icons.search_rounded,
+                            prefixIcon: Icon(Icons.search_rounded,
                                 color: kTextMuted, size: 20),
                             suffixIcon: _searchCtrl.text.isNotEmpty
                                 ? IconButton(
-                                    icon: const Icon(Icons.close_rounded,
+                                    icon: Icon(Icons.close_rounded,
                                         color: kTextMuted, size: 18),
                                     onPressed: () {
                                       _searchCtrl.clear();
@@ -187,7 +187,7 @@ class _MarketplaceHomeScreenState extends State<MarketplaceHomeScreen> {
                                     })
                                 : null,
                             border: InputBorder.none,
-                            contentPadding: const EdgeInsets.symmetric(vertical: 14),
+                            contentPadding: EdgeInsets.symmetric(vertical: 14),
                           ),
                         ),
                       ),
@@ -203,13 +203,13 @@ class _MarketplaceHomeScreenState extends State<MarketplaceHomeScreen> {
                         itemBuilder: (_, i) {
                           final b = _heroBanners[i];
                           return Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            padding: EdgeInsets.symmetric(horizontal: 16),
                             child: Container(
                               decoration: BoxDecoration(
                                 gradient: b.gradient,
                                 borderRadius: BorderRadius.circular(20),
                               ),
-                              padding: const EdgeInsets.all(20),
+                              padding: EdgeInsets.all(20),
                               child: Row(
                                 children: [
                                   Expanded(
@@ -220,14 +220,14 @@ class _MarketplaceHomeScreenState extends State<MarketplaceHomeScreen> {
                                         Text(b.title, style: GoogleFonts.inter(
                                           fontSize: 15, fontWeight: FontWeight.w800,
                                           color: Colors.white, height: 1.25)),
-                                        const SizedBox(height: 6),
+                                        SizedBox(height: 6),
                                         Text(b.subtitle, style: GoogleFonts.inter(
                                           fontSize: 11, color: Colors.white70)),
-                                        const SizedBox(height: 12),
+                                        SizedBox(height: 12),
                                         TappableScale(
                                           onTap: () {},
                                           child: Container(
-                                            padding: const EdgeInsets.symmetric(
+                                            padding: EdgeInsets.symmetric(
                                                 horizontal: 14, vertical: 6),
                                             decoration: BoxDecoration(
                                               color: Colors.white.withValues(alpha: 0.2),
@@ -253,13 +253,13 @@ class _MarketplaceHomeScreenState extends State<MarketplaceHomeScreen> {
                     ),
                     // Page dots
                     Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      padding: EdgeInsets.symmetric(vertical: 10),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: List.generate(_heroBanners.length, (i) =>
                           AnimatedContainer(
-                            duration: const Duration(milliseconds: 250),
-                            margin: const EdgeInsets.symmetric(horizontal: 3),
+                            duration: Duration(milliseconds: 250),
+                            margin: EdgeInsets.symmetric(horizontal: 3),
                             width: i == _heroBannerIndex ? 20 : 6,
                             height: 6,
                             decoration: BoxDecoration(
@@ -273,7 +273,7 @@ class _MarketplaceHomeScreenState extends State<MarketplaceHomeScreen> {
 
                     // ── Categories ────────────────────────────────────────
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+                      padding: EdgeInsets.fromLTRB(16, 8, 16, 12),
                       child: kSectionHeader('Browse by Category',
                           trailing: TextButton(
                             onPressed: () {},
@@ -285,7 +285,7 @@ class _MarketplaceHomeScreenState extends State<MarketplaceHomeScreen> {
                       height: 90,
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        padding: EdgeInsets.symmetric(horizontal: 12),
                         itemCount: _categoryList.length,
                         itemBuilder: (_, i) {
                           final cat = _categoryList[i];
@@ -306,7 +306,7 @@ class _MarketplaceHomeScreenState extends State<MarketplaceHomeScreen> {
                               },
                               child: Container(
                                 width: 72,
-                                margin: const EdgeInsets.symmetric(horizontal: 4),
+                                margin: EdgeInsets.symmetric(horizontal: 4),
                                 child: Column(
                                   children: [
                                     Container(
@@ -319,7 +319,7 @@ class _MarketplaceHomeScreenState extends State<MarketplaceHomeScreen> {
                                       ),
                                       child: Icon(cat.icon, color: cat.color, size: 24),
                                     ),
-                                    const SizedBox(height: 6),
+                                    SizedBox(height: 6),
                                     Text(cat.label, style: kBody(10, color: kTextSecondary),
                                       textAlign: TextAlign.center, maxLines: 1,
                                       overflow: TextOverflow.ellipsis),
@@ -332,12 +332,12 @@ class _MarketplaceHomeScreenState extends State<MarketplaceHomeScreen> {
                       ),
                     ),
 
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      padding: EdgeInsets.symmetric(horizontal: 16),
                       child: kSectionHeader('Featured Products'),
                     ),
-                    const SizedBox(height: 12),
+                    SizedBox(height: 12),
                   ],
                 ),
               ),
@@ -345,7 +345,7 @@ class _MarketplaceHomeScreenState extends State<MarketplaceHomeScreen> {
               // ── Products Grid ───────────────────────────────────────────────
               _loading
                   ? SliverPadding(
-                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
+                      padding: EdgeInsets.fromLTRB(16, 0, 16, 100),
                       sliver: SliverGrid(
                         delegate: SliverChildBuilderDelegate(
                           (_, index) => Shimmer.fromColors(
@@ -360,7 +360,7 @@ class _MarketplaceHomeScreenState extends State<MarketplaceHomeScreen> {
                           ),
                           childCount: 4,
                         ),
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
                           crossAxisSpacing: 12,
                           mainAxisSpacing: 12,
@@ -371,7 +371,7 @@ class _MarketplaceHomeScreenState extends State<MarketplaceHomeScreen> {
                   : _products.isEmpty
                       ? SliverFillRemaining(child: _EmptyState())
                       : SliverPadding(
-                          padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
+                          padding: EdgeInsets.fromLTRB(16, 0, 16, 100),
                           sliver: SliverGrid(
                             delegate: SliverChildBuilderDelegate(
                               (_, i) => StaggeredEntrance(
@@ -386,7 +386,7 @@ class _MarketplaceHomeScreenState extends State<MarketplaceHomeScreen> {
                               ),
                               childCount: _products.length,
                             ),
-                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2,
                               crossAxisSpacing: 12,
                               mainAxisSpacing: 12,
@@ -397,11 +397,11 @@ class _MarketplaceHomeScreenState extends State<MarketplaceHomeScreen> {
 
               // ── Vendor & AI Promo ───────────────────────────────────────────
               SliverToBoxAdapter(
-                child: _loading ? const SizedBox() : Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 120),
+                child: _loading ? SizedBox() : Padding(
+                  padding: EdgeInsets.fromLTRB(16, 0, 16, 120),
                   child: Column(
                     children: [
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16),
                       _PromoCard(
                         icon: Icons.storefront_rounded,
                         accent: kVendor,
@@ -410,7 +410,7 @@ class _MarketplaceHomeScreenState extends State<MarketplaceHomeScreen> {
                         label: 'Start Selling',
                         onTap: () {},
                       ),
-                      const SizedBox(height: 12),
+                      SizedBox(height: 12),
                       _PromoCard(
                         icon: Icons.document_scanner_rounded,
                         accent: kCyan,
@@ -451,7 +451,7 @@ class _ProductCard extends StatelessWidget {
             Hero(
               tag: 'product_image_${product.id}',
               child: ClipRRect(
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
                 child: AspectRatio(
                   aspectRatio: 1.2,
                   child: product.primaryImage.isNotEmpty
@@ -463,7 +463,7 @@ class _ProductCard extends StatelessWidget {
             ),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(10, 8, 10, 10),
+                padding: EdgeInsets.fromLTRB(10, 8, 10, 10),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -471,11 +471,11 @@ class _ProductCard extends StatelessWidget {
                       fontSize: 12, fontWeight: FontWeight.w600,
                       color: kTextPrimary, height: 1.3),
                       maxLines: 2, overflow: TextOverflow.ellipsis),
-                    const SizedBox(height: 4),
+                    SizedBox(height: 4),
                     if (product.vendorShopName != null)
                       Text(product.vendorShopName!, style: kLabel(10),
                         maxLines: 1, overflow: TextOverflow.ellipsis),
-                    const Spacer(),
+                    Spacer(),
                     Row(
                       children: [
                         Expanded(
@@ -501,12 +501,12 @@ class _ProductCard extends StatelessWidget {
                             gradient: kCyanGradient,
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          child: const Icon(Icons.add_rounded,
+                          child: Icon(Icons.add_rounded,
                               color: Colors.black, size: 18),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 6),
+                    SizedBox(height: 6),
                     Row(
                       children: [
                         Container(
@@ -516,7 +516,7 @@ class _ProductCard extends StatelessWidget {
                             shape: BoxShape.circle,
                           ),
                         ),
-                        const SizedBox(width: 5),
+                        SizedBox(width: 5),
                         Text(product.stockQuantity > 0 ? 'In Stock' : 'Out of Stock',
                           style: kLabel(9,
                             color: product.stockQuantity > 0 ? kSuccess : kError)),
@@ -537,7 +537,7 @@ class _PlaceholderImg extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
     color: kCard,
-    child: const Center(child: Icon(Icons.car_repair_rounded,
+    child: Center(child: Icon(Icons.car_repair_rounded,
         color: kBorder, size: 36)),
   );
 }
@@ -549,9 +549,9 @@ class _EmptyState extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Icon(Icons.inventory_2_outlined, size: 64, color: kBorder),
-        const SizedBox(height: 16),
+        SizedBox(height: 16),
         Text('No products found', style: kHeadline(16, color: kTextSecondary)),
-        const SizedBox(height: 8),
+        SizedBox(height: 8),
         Text('Try a different search or category', style: kBody(13)),
       ],
     ),
@@ -571,7 +571,7 @@ class _PromoCard extends StatelessWidget {
   Widget build(BuildContext context) => TappableScale(
     onTap: onTap,
     child: Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16),
       decoration: kGlowDeco(accent, radius: 16),
       child: Row(
         children: [
@@ -583,22 +583,22 @@ class _PromoCard extends StatelessWidget {
             ),
             child: Icon(icon, color: accent, size: 24),
           ),
-          const SizedBox(width: 14),
+          SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(title, style: AppTypography.title.copyWith(
                   fontSize: 14, fontWeight: FontWeight.w700, color: kTextPrimary)),
-                const SizedBox(height: 3),
+                SizedBox(height: 3),
                 Text(subtitle, style: kBody(11), maxLines: 2,
                     overflow: TextOverflow.ellipsis),
               ],
             ),
           ),
-          const SizedBox(width: 8),
+          SizedBox(width: 8),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
               color: accent.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(10),
@@ -616,12 +616,12 @@ class _HeroBanner {
   final String title, subtitle;
   final LinearGradient gradient;
   final IconData icon;
-  const _HeroBanner(this.title, this.subtitle, this.gradient, this.icon);
+  _HeroBanner(this.title, this.subtitle, this.gradient, this.icon);
 }
 
 class _CatData {
   final String label;
   final IconData icon;
   final Color color;
-  const _CatData(this.label, this.icon, this.color);
+  _CatData(this.label, this.icon, this.color);
 }

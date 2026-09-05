@@ -30,7 +30,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   @override
   void dispose() { _imgCtrl?.dispose(); super.dispose(); }
 
-  static const _specs = [
+  static final _specs = [
     ['Compatibility', 'OEM Verified'],
     ['Material', 'Premium Grade'],
     ['Warranty', '12 months'],
@@ -44,9 +44,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Row(children: [
-            const Icon(Icons.shopping_cart_checkout_rounded,
+            Icon(Icons.shopping_cart_checkout_rounded,
                 color: Colors.black, size: 18),
-            const SizedBox(width: 8),
+            SizedBox(width: 8),
             Text('Added to cart', style: AppTypography.label.copyWith(
               fontSize: 13, fontWeight: FontWeight.w600, color: Colors.black)),
           ]),
@@ -80,12 +80,12 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 leading: TappableScale(
                   onTap: () => Navigator.pop(context),
                   child: Container(
-                    margin: const EdgeInsets.all(8),
+                    margin: EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       color: Colors.black54,
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Icon(Icons.arrow_back_rounded,
+                    child: Icon(Icons.arrow_back_rounded,
                         color: kTextPrimary),
                   ),
                 ),
@@ -93,8 +93,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   TappableScale(
                     onTap: () => setState(() => _inWishlist = !_inWishlist),
                     child: Container(
-                      margin: const EdgeInsets.all(8),
-                      padding: const EdgeInsets.all(6),
+                      margin: EdgeInsets.all(8),
+                      padding: EdgeInsets.all(6),
                       decoration: BoxDecoration(
                         color: Colors.black54,
                         borderRadius: BorderRadius.circular(12),
@@ -105,7 +105,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         color: _inWishlist ? kError : kTextPrimary, size: 22),
                     ),
                   ),
-                  const SizedBox(width: 4),
+                  SizedBox(width: 4),
                 ],
                 flexibleSpace: FlexibleSpaceBar(
                   background: Stack(
@@ -128,8 +128,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: List.generate(images.length, (i) =>
                             AnimatedContainer(
-                              duration: const Duration(milliseconds: 200),
-                              margin: const EdgeInsets.symmetric(horizontal: 3),
+                              duration: Duration(milliseconds: 200),
+                              margin: EdgeInsets.symmetric(horizontal: 3),
                               width: i == _imageIdx ? 20 : 6,
                               height: 6,
                               decoration: BoxDecoration(
@@ -147,11 +147,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               // ── Product info ──────────────────────────────────────────────
               SliverToBoxAdapter(
                 child: Container(
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     color: kBg,
                     borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
                   ),
-                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 120),
+                  padding: EdgeInsets.fromLTRB(20, 20, 20, 120),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -169,7 +169,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                       fontWeight: FontWeight.w800, color: kCyan,
                                       letterSpacing: -0.5)),
                                   if (product.hasDiscount) ...[
-                                    const SizedBox(width: 8),
+                                    SizedBox(width: 8),
                                     Text('Rs ${product.comparePrice!.toStringAsFixed(0)}',
                                       style: kBody(14, color: kTextMuted).copyWith(
                                         decoration: TextDecoration.lineThrough)),
@@ -177,8 +177,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 ]),
                                 if (product.hasDiscount)
                                   Container(
-                                    margin: const EdgeInsets.only(top: 4),
-                                    padding: const EdgeInsets.symmetric(
+                                    margin: EdgeInsets.only(top: 4),
+                                    padding: EdgeInsets.symmetric(
                                         horizontal: 8, vertical: 3),
                                     decoration: BoxDecoration(
                                       color: kError.withValues(alpha: 0.15),
@@ -201,27 +201,27 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 12),
+                      SizedBox(height: 12),
                       Text(product.name, style: kHeadline(20)),
-                      const SizedBox(height: 6),
+                      SizedBox(height: 6),
                       if (product.vendorShopName != null)
                         Row(children: [
-                          const Icon(Icons.storefront_rounded, size: 14, color: kVendor),
-                          const SizedBox(width: 6),
+                          Icon(Icons.storefront_rounded, size: 14, color: kVendor),
+                          SizedBox(width: 6),
                           Text(product.vendorShopName!,
                             style: kBody(13, color: kVendor, fw: FontWeight.w600)),
                         ]),
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16),
 
                       // ── Specs grid ────────────────────────────────────────
                       _SpecsGrid(specs: _specs),
-                      const SizedBox(height: 20),
+                      SizedBox(height: 20),
 
                       // ── Description ───────────────────────────────────────
                       kSectionHeader('Description'),
-                      const SizedBox(height: 10),
+                      SizedBox(height: 10),
                       Container(
-                        padding: const EdgeInsets.all(14),
+                        padding: EdgeInsets.all(14),
                         decoration: kCardDeco(radius: 14),
                         child: Text(
                           product.description?.isNotEmpty == true
@@ -230,11 +230,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 'Designed for optimal performance and longevity.',
                           style: kBody(13, color: kTextSecondary).copyWith(height: 1.6)),
                       ),
-                      const SizedBox(height: 20),
+                      SizedBox(height: 20),
 
                       // ── Quantity selector ─────────────────────────────────
                       kSectionHeader('Quantity'),
-                      const SizedBox(height: 12),
+                      SizedBox(height: 12),
                       Row(children: [
                         Container(
                           decoration: kGlassDeco(radius: 14),
@@ -255,7 +255,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                             }),
                           ]),
                         ),
-                        const SizedBox(width: 12),
+                        SizedBox(width: 12),
                         Text('Rs ${(product.price * _qty).toStringAsFixed(0)} total',
                           style: kBody(14, color: kTextMuted)),
                       ]),
@@ -295,13 +295,13 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       color: _inWishlist ? kError : kTextMuted),
                   ),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: 12),
                 Expanded(
                   child: TappableScale(
                     onTap: product.stockQuantity > 0 && !_addingToCart
                         ? _addToCart : null,
                     child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
+                      duration: Duration(milliseconds: 200),
                       height: 52,
                       decoration: BoxDecoration(
                         gradient: product.stockQuantity > 0 ? kCyanGradient : null,
@@ -309,12 +309,12 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         borderRadius: BorderRadius.circular(14),
                         boxShadow: product.stockQuantity > 0
                             ? [BoxShadow(color: kCyan.withValues(alpha: 0.3),
-                                blurRadius: 16, offset: const Offset(0, 6))]
+                                blurRadius: 16, offset: Offset(0, 6))]
                             : [],
                       ),
                       child: Center(
                         child: _addingToCart
-                            ? const SizedBox(width: 20, height: 20,
+                            ? SizedBox(width: 20, height: 20,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2, color: Colors.black))
                             : Text(
@@ -341,7 +341,7 @@ class _ImgPlaceholder extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
     color: kSurface,
-    child: const Center(child: Icon(Icons.car_repair_rounded,
+    child: Center(child: Icon(Icons.car_repair_rounded,
         color: kBorder, size: 64)),
   );
 }
@@ -352,10 +352,10 @@ class _SpecsGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GridView.count(
-    crossAxisCount: 2, shrinkWrap: true, physics: const NeverScrollableScrollPhysics(),
+    crossAxisCount: 2, shrinkWrap: true, physics: NeverScrollableScrollPhysics(),
     childAspectRatio: 3.5, crossAxisSpacing: 8, mainAxisSpacing: 8,
     children: specs.map((s) => Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: kCardDeco(radius: 12),
       child: Row(children: [
         Expanded(child: Column(

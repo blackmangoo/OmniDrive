@@ -71,7 +71,7 @@ class _VendorDashboardScreenState extends State<VendorDashboardScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text('Welcome back 👋', style: kBody(13, color: kTextMuted)),
-                          const SizedBox(height: 4),
+                          SizedBox(height: 4),
                           Text(shopName, style: kHeadline(20)),
                         ],
                       ),
@@ -79,10 +79,10 @@ class _VendorDashboardScreenState extends State<VendorDashboardScreen> {
                     Row(children: [
                       TappableScale(
                         onTap: () {},
-                        child: const Icon(Icons.notifications_none_rounded,
+                        child: Icon(Icons.notifications_none_rounded,
                             color: kTextSecondary),
                       ),
-                      const SizedBox(width: 8),
+                      SizedBox(width: 8),
                       TappableScale(
                         onTap: () {},
                         child: Container(
@@ -108,11 +108,11 @@ class _VendorDashboardScreenState extends State<VendorDashboardScreen> {
               : Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 20),
+                    SizedBox(height: 20),
 
                     // ── Revenue stats row ─────────────────────────────────────
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      padding: EdgeInsets.symmetric(horizontal: 20),
                       child: Row(children: [
                         Expanded(child: StaggeredEntrance(
                           index: 0,
@@ -126,7 +126,7 @@ class _VendorDashboardScreenState extends State<VendorDashboardScreen> {
                             gradient: kVendorGradient,
                           ),
                         )),
-                        const SizedBox(width: 12),
+                        SizedBox(width: 12),
                         Expanded(child: StaggeredEntrance(
                           index: 1,
                           child: _StatCard(
@@ -139,9 +139,9 @@ class _VendorDashboardScreenState extends State<VendorDashboardScreen> {
                         )),
                       ]),
                     ),
-                    const SizedBox(height: 12),
+                    SizedBox(height: 12),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      padding: EdgeInsets.symmetric(horizontal: 20),
                       child: Row(children: [
                         Expanded(child: StaggeredEntrance(
                           index: 2,
@@ -153,7 +153,7 @@ class _VendorDashboardScreenState extends State<VendorDashboardScreen> {
                             accent: kWarning,
                           ),
                         )),
-                        const SizedBox(width: 12),
+                        SizedBox(width: 12),
                         Expanded(child: StaggeredEntrance(
                           index: 3,
                           child: _StatCard(
@@ -167,11 +167,11 @@ class _VendorDashboardScreenState extends State<VendorDashboardScreen> {
                       ]),
                     ),
 
-                    const SizedBox(height: 24),
+                    SizedBox(height: 24),
 
                     // ── Quick actions ─────────────────────────────────────────
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      padding: EdgeInsets.symmetric(horizontal: 20),
                       child: Row(children: [
                         _QuickAction(
                           icon: Icons.add_box_rounded,
@@ -179,10 +179,10 @@ class _VendorDashboardScreenState extends State<VendorDashboardScreen> {
                           accent: kVendor,
                           onTap: () => Navigator.push(context,
                             MaterialPageRoute(builder: (_) =>
-                              const AddEditProductScreen()))
+                              AddEditProductScreen()))
                             .then((_) => _load()),
                         ),
-                        const SizedBox(width: 12),
+                        SizedBox(width: 12),
                         _QuickAction(
                           icon: Icons.inventory_2_rounded,
                           label: 'Stock Manager',
@@ -191,7 +191,7 @@ class _VendorDashboardScreenState extends State<VendorDashboardScreen> {
                             context.findAncestorStateOfType<VendorShellState>()?.setIndex(1);
                           },
                         ),
-                        const SizedBox(width: 12),
+                        SizedBox(width: 12),
                         _QuickAction(
                           icon: Icons.bar_chart_rounded,
                           label: 'Analytics',
@@ -209,16 +209,16 @@ class _VendorDashboardScreenState extends State<VendorDashboardScreen> {
                       ]),
                     ),
 
-                    const SizedBox(height: 24),
+                    SizedBox(height: 24),
 
                     // ── Low Stock Alert ───────────────────────────────────────
                     if (_lowStockProducts.isNotEmpty) ...[
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        padding: EdgeInsets.symmetric(horizontal: 20),
                         child: kSectionHeader(
                           '⚠️  Low Stock Alert',
                           trailing: Container(
-                            padding: const EdgeInsets.symmetric(
+                            padding: EdgeInsets.symmetric(
                                 horizontal: 8, vertical: 3),
                             decoration: BoxDecoration(
                               color: kError.withValues(alpha: 0.15),
@@ -229,19 +229,19 @@ class _VendorDashboardScreenState extends State<VendorDashboardScreen> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 10),
+                      SizedBox(height: 10),
                       SizedBox(
                         height: 88,
                         child: ListView.builder(
                           scrollDirection: Axis.horizontal,
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          padding: EdgeInsets.symmetric(horizontal: 16),
                           itemCount: _lowStockProducts.length,
                           itemBuilder: (_, i) {
                             final p = _lowStockProducts[i];
                             return Container(
                               width: 180,
-                              margin: const EdgeInsets.symmetric(horizontal: 4),
-                              padding: const EdgeInsets.all(12),
+                              margin: EdgeInsets.symmetric(horizontal: 4),
+                              padding: EdgeInsets.all(12),
                               decoration: kGlowDeco(kError, radius: 14),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -250,11 +250,11 @@ class _VendorDashboardScreenState extends State<VendorDashboardScreen> {
                                   Text(p.name, style: kBody(11, color: kTextPrimary,
                                     fw: FontWeight.w600),
                                     maxLines: 1, overflow: TextOverflow.ellipsis),
-                                  const SizedBox(height: 4),
+                                  SizedBox(height: 4),
                                   Row(children: [
-                                    const Icon(Icons.inventory_2_rounded,
+                                    Icon(Icons.inventory_2_rounded,
                                         color: kError, size: 12),
-                                    const SizedBox(width: 4),
+                                    SizedBox(width: 4),
                                     Text('${p.stockQuantity} left',
                                       style: kBody(11, color: kError,
                                         fw: FontWeight.w600)),
@@ -265,12 +265,12 @@ class _VendorDashboardScreenState extends State<VendorDashboardScreen> {
                           },
                         ),
                       ),
-                      const SizedBox(height: 20),
+                      SizedBox(height: 20),
                     ],
 
                     // ── Pending Orders Preview ────────────────────────────────
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      padding: EdgeInsets.symmetric(horizontal: 20),
                       child: kSectionHeader('Pending Orders Preview',
                         trailing: TextButton(
                           onPressed: () {
@@ -280,10 +280,10 @@ class _VendorDashboardScreenState extends State<VendorDashboardScreen> {
                             fw: FontWeight.w600)),
                         )),
                     ),
-                    const SizedBox(height: 10),
+                    SizedBox(height: 10),
                     if (_pendingOrders.isEmpty)
                       Padding(
-                        padding: const EdgeInsets.all(20),
+                        padding: EdgeInsets.all(20),
                         child: Center(child: Text('No pending orders',
                           style: kBody(13, color: kTextMuted))),
                       )
@@ -297,7 +297,7 @@ class _VendorDashboardScreenState extends State<VendorDashboardScreen> {
                         );
                       }),
 
-                    const SizedBox(height: 100),
+                    SizedBox(height: 100),
                   ],
                 )),
           ],
@@ -311,35 +311,35 @@ class _VendorDashboardScreenState extends State<VendorDashboardScreen> {
       baseColor: AppColors.surface,
       highlightColor: AppColors.card,
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 20),
+            SizedBox(height: 20),
             Row(children: [
               Expanded(child: Container(height: 110, decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(16)))),
-              const SizedBox(width: 12),
+              SizedBox(width: 12),
               Expanded(child: Container(height: 110, decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(16)))),
             ]),
-            const SizedBox(height: 12),
+            SizedBox(height: 12),
             Row(children: [
               Expanded(child: Container(height: 110, decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(16)))),
-              const SizedBox(width: 12),
+              SizedBox(width: 12),
               Expanded(child: Container(height: 110, decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(16)))),
             ]),
-            const SizedBox(height: 24),
+            SizedBox(height: 24),
             Row(children: [
               Expanded(child: Container(height: 70, decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(14)))),
-              const SizedBox(width: 12),
+              SizedBox(width: 12),
               Expanded(child: Container(height: 70, decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(14)))),
-              const SizedBox(width: 12),
+              SizedBox(width: 12),
               Expanded(child: Container(height: 70, decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(14)))),
             ]),
-            const SizedBox(height: 32),
+            SizedBox(height: 32),
             Container(width: 150, height: 18, decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(4))),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             Container(height: 80, decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(14))),
-            const SizedBox(height: 12),
+            SizedBox(height: 12),
             Container(height: 80, decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(14))),
           ],
         ),
@@ -365,7 +365,7 @@ class _StatCard extends StatelessWidget {
       color: gradient != null ? Colors.black : kTextPrimary,
       letterSpacing: -0.5);
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
         gradient: gradient,
         color: gradient == null ? kCard : null,
@@ -388,7 +388,7 @@ class _StatCard extends StatelessWidget {
                 color: gradient != null ? Colors.white : accent, size: 18),
             ),
           ]),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           if (numericValue != null)
             MotionCounter(
               value: numericValue!,
@@ -397,7 +397,7 @@ class _StatCard extends StatelessWidget {
             )
           else
             Text(value, style: style),
-          const SizedBox(height: 2),
+          SizedBox(height: 2),
           Text(label, style: kBody(11,
             color: gradient != null ? Colors.black54 : kTextMuted)),
         ],
@@ -419,7 +419,7 @@ class _QuickAction extends StatelessWidget {
     child: TappableScale(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 14),
+        padding: EdgeInsets.symmetric(vertical: 14),
         decoration: BoxDecoration(
           color: accent.withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(14),
@@ -428,7 +428,7 @@ class _QuickAction extends StatelessWidget {
         child: Column(
           children: [
             Icon(icon, color: accent, size: 24),
-            const SizedBox(height: 6),
+            SizedBox(height: 6),
             Text(label, style: kBody(10, color: accent, fw: FontWeight.w600),
               textAlign: TextAlign.center),
           ],
@@ -445,8 +445,8 @@ class _PendingOrderRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-    margin: const EdgeInsets.fromLTRB(20, 0, 20, 10),
-    padding: const EdgeInsets.all(14),
+    margin: EdgeInsets.fromLTRB(20, 0, 20, 10),
+    padding: EdgeInsets.all(14),
     decoration: kGlowDeco(kWarning, radius: 14),
     child: Row(
       children: [
@@ -462,7 +462,7 @@ class _PendingOrderRow extends StatelessWidget {
             style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w800,
               color: kWarning))),
         ),
-        const SizedBox(width: 12),
+        SizedBox(width: 12),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -471,7 +471,7 @@ class _PendingOrderRow extends StatelessWidget {
                 color: kTextPrimary, fw: FontWeight.w600)),
               Text('Order #OD-${order.id.substring(0, 6).toUpperCase()} · '
                 '${order.items.length} items', style: kLabel(10)),
-              const SizedBox(height: 2),
+              SizedBox(height: 2),
               Text('Rs ${order.totalAmount.toStringAsFixed(0)}',
                 style: kBody(12, color: kVendor, fw: FontWeight.w700)),
             ],
@@ -479,14 +479,14 @@ class _PendingOrderRow extends StatelessWidget {
         ),
         Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
           kStatusPill(order.paymentMethod ?? 'COD', kCyan, fontSize: 10),
-          const SizedBox(height: 6),
+          SizedBox(height: 6),
           TappableScale(
             onTap: () async {
               await MarketplaceService.updateOrderStatus(order.id, 'confirmed');
               onAction();
             },
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               decoration: BoxDecoration(
                 color: kSuccess.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(8),

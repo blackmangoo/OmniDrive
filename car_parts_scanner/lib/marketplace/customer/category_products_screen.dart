@@ -38,7 +38,7 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
         backgroundColor: kBg,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white70, size: 20),
+          icon: Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white70, size: 20),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(widget.category.name,
@@ -54,9 +54,9 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
                   color: kAccent,
                   backgroundColor: kSurface,
                   child: GridView.builder(
-                    padding: const EdgeInsets.all(16),
+                    padding: EdgeInsets.all(16),
                     itemCount: _products.length,
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2, mainAxisSpacing: 12, crossAxisSpacing: 12, childAspectRatio: 0.72,
                     ),
                     itemBuilder: (_, i) {
@@ -71,7 +71,7 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
                             children: [
                               Expanded(
                                 child: ClipRRect(
-                                  borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                                  borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
                                   child: p.primaryImage.isNotEmpty
                                       ? CachedNetworkImage(imageUrl: p.primaryImage, fit: BoxFit.cover, width: double.infinity,
                                           errorWidget: (ctx, url, err) => _imgPlaceholder())
@@ -79,11 +79,11 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
                                 ),
                               ),
                               Padding(
-                                padding: const EdgeInsets.all(10),
+                                padding: EdgeInsets.all(10),
                                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                                   Text(p.name, maxLines: 2, overflow: TextOverflow.ellipsis,
                                       style: GoogleFonts.inter(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600)),
-                                  const SizedBox(height: 6),
+                                  SizedBox(height: 6),
                                   Text('Rs ${p.price.toStringAsFixed(0)}',
                                       style: GoogleFonts.inter(color: kAccent, fontSize: 14, fontWeight: FontWeight.bold)),
                                 ]),
@@ -98,13 +98,13 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
     );
   }
 
-  Widget _imgPlaceholder() => Container(color: kCard, child: const Icon(Icons.car_repair, color: Colors.white24, size: 40));
+  Widget _imgPlaceholder() => Container(color: kCard, child: Icon(Icons.car_repair, color: Colors.white24, size: 40));
 
   Widget _shimmer() => Shimmer.fromColors(
     baseColor: kSurface, highlightColor: kCard,
     child: GridView.builder(
-      padding: const EdgeInsets.all(16), itemCount: 6,
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, childAspectRatio: 0.72, crossAxisSpacing: 12, mainAxisSpacing: 12),
+      padding: EdgeInsets.all(16), itemCount: 6,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, childAspectRatio: 0.72, crossAxisSpacing: 12, mainAxisSpacing: 12),
       itemBuilder: (_, index) => Container(decoration: BoxDecoration(color: kSurface, borderRadius: BorderRadius.circular(16))),
     ),
   );

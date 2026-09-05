@@ -30,7 +30,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   Future<void> _placeOrder() async {
     if (_addrCtrl.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Please enter a delivery address'), backgroundColor: kError, behavior: SnackBarBehavior.floating));
       return;
     }
@@ -52,9 +52,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       if (!mounted) return;
       if (order != null) {
         Navigator.pushAndRemoveUntil(context,
-            MaterialPageRoute(builder: (_) => const OrdersScreen()),
+            MaterialPageRoute(builder: (_) => OrdersScreen()),
             (route) => route.isFirst);
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text('🎉 Order placed successfully!'), backgroundColor: kSuccess, behavior: SnackBarBehavior.floating));
       }
     } catch (e) {
@@ -74,7 +74,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         backgroundColor: kBg,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white70, size: 20),
+          icon: Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white70, size: 20),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text('Checkout', style: GoogleFonts.inter(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
@@ -83,15 +83,15 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         children: [
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(20),
+              padding: EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // ── Order Items summary ─────────────────────────────────
                   _sectionHeader('Order Summary'),
-                  const SizedBox(height: 12),
+                  SizedBox(height: 12),
                   ...widget.items.map((ci) => Padding(
-                    padding: const EdgeInsets.only(bottom: 8),
+                    padding: EdgeInsets.only(bottom: 8),
                     child: Row(children: [
                       Expanded(child: Text('${ci.product?.name ?? 'Item'} × ${ci.quantity}',
                           style: GoogleFonts.inter(color: Colors.white70, fontSize: 13), overflow: TextOverflow.ellipsis)),
@@ -103,7 +103,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
                   // ── Delivery Address ────────────────────────────────────
                   _sectionHeader('Delivery Address'),
-                  const SizedBox(height: 12),
+                  SizedBox(height: 12),
                   TextFormField(
                     controller: _addrCtrl,
                     maxLines: 3,
@@ -115,17 +115,17 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       hintStyle: GoogleFonts.inter(color: Colors.white24),
                       filled: true,
                       fillColor: kCard,
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: kBorder)),
-                      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: kBorder)),
-                      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: kAccent, width: 1.5)),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: kBorder)),
+                      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: kBorder)),
+                      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: kAccent, width: 1.5)),
                     ),
                   ),
 
-                  const SizedBox(height: 20),
+                  SizedBox(height: 20),
 
                   // ── Notes ──────────────────────────────────────────────
                   _sectionHeader('Notes for Vendor (Optional)'),
-                  const SizedBox(height: 12),
+                  SizedBox(height: 12),
                   TextFormField(
                     controller: _notesCtrl,
                     style: GoogleFonts.inter(color: Colors.white),
@@ -135,21 +135,21 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       hintStyle: GoogleFonts.inter(color: Colors.white24),
                       filled: true,
                       fillColor: kCard,
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: kBorder)),
-                      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: kBorder)),
-                      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: kAccent, width: 1.5)),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: kBorder)),
+                      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: kBorder)),
+                      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: kAccent, width: 1.5)),
                     ),
                   ),
 
-                  const SizedBox(height: 28),
+                  SizedBox(height: 28),
 
                   // ── Price Breakdown ────────────────────────────────────
                   Container(
-                    padding: const EdgeInsets.all(16),
+                    padding: EdgeInsets.all(16),
                     decoration: kCardDeco(),
                     child: Column(children: [
                       _priceRow('Subtotal', _subtotal),
-                      const SizedBox(height: 8),
+                      SizedBox(height: 8),
                       _priceRow('Delivery', widget.deliveryFee),
                       Divider(color: kBorder, height: 20),
                       _priceRow('Total', _total, accent: true),
@@ -162,15 +162,15 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
           // ── Place Order CTA ─────────────────────────────────────────────
           Container(
-            padding: const EdgeInsets.fromLTRB(20, 16, 20, 28),
+            padding: EdgeInsets.fromLTRB(20, 16, 20, 28),
             decoration: BoxDecoration(color: kSurface, border: Border(top: BorderSide(color: kBorder))),
             child: SizedBox(
               width: double.infinity, height: 54,
               child: ElevatedButton.icon(
                 onPressed: _loading ? null : _placeOrder,
                 icon: _loading
-                    ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.black, strokeWidth: 2))
-                    : const Icon(Icons.check_circle_rounded, size: 22),
+                    ? SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.black, strokeWidth: 2))
+                    : Icon(Icons.check_circle_rounded, size: 22),
                 label: Text('Place Order  •  Rs ${_total.toStringAsFixed(0)}',
                     style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.bold)),
                 style: ElevatedButton.styleFrom(
@@ -187,7 +187,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   Widget _sectionHeader(String t) => Row(children: [
     Container(width: 3, height: 18, decoration: BoxDecoration(color: kAccent, borderRadius: BorderRadius.circular(2))),
-    const SizedBox(width: 10),
+    SizedBox(width: 10),
     Text(t, style: GoogleFonts.inter(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w700)),
   ]);
 

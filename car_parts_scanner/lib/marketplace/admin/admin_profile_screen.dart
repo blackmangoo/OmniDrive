@@ -42,9 +42,9 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> {
         title: Text('Admin Panel', style: GoogleFonts.inter(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
       ),
       body: _loading
-          ? const Center(child: CircularProgressIndicator(color: kError))
+          ? Center(child: CircularProgressIndicator(color: kError))
           : SingleChildScrollView(
-              padding: const EdgeInsets.all(20),
+              padding: EdgeInsets.all(20),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Center(
                   child: Column(children: [
@@ -55,15 +55,15 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> {
                         color: kError.withValues(alpha: 0.15),
                         border: Border.all(color: kError.withValues(alpha: 0.4), width: 2),
                       ),
-                      child: const Icon(Icons.admin_panel_settings_rounded, color: kError, size: 44),
+                      child: Icon(Icons.admin_panel_settings_rounded, color: kError, size: 44),
                     ),
-                    const SizedBox(height: 14),
+                    SizedBox(height: 14),
                     Text(_user?.fullName ?? '—', style: GoogleFonts.inter(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 4),
+                    SizedBox(height: 4),
                     Text(_user?.email ?? '—', style: GoogleFonts.inter(color: Colors.white38, fontSize: 14)),
-                    const SizedBox(height: 8),
+                    SizedBox(height: 8),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
+                      padding: EdgeInsets.symmetric(horizontal: 14, vertical: 5),
                       decoration: BoxDecoration(
                         color: kError.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(20),
@@ -73,19 +73,19 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> {
                     ),
                   ]),
                 ),
-                const SizedBox(height: 40),
+                SizedBox(height: 40),
                 TappableScale(
                   onTap: () async => await Supabase.instance.client.auth.signOut(),
                   child: Container(
-                    padding: const EdgeInsets.all(16),
+                    padding: EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: kError.withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(14),
                       border: Border.all(color: kError.withValues(alpha: 0.3)),
                     ),
                     child: Row(children: [
-                      const Icon(Icons.logout_rounded, color: kError, size: 22),
-                      const SizedBox(width: 14),
+                      Icon(Icons.logout_rounded, color: kError, size: 22),
+                      SizedBox(width: 14),
                       Text('Sign Out', style: GoogleFonts.inter(color: kError, fontSize: 15, fontWeight: FontWeight.w600)),
                     ]),
                   ),

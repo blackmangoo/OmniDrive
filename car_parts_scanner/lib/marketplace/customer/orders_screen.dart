@@ -48,11 +48,11 @@ class _OrdersScreenState extends State<OrdersScreen> {
               baseColor: AppColors.surface,
               highlightColor: AppColors.card,
               child: ListView.builder(
-                padding: const EdgeInsets.all(16),
+                padding: EdgeInsets.all(16),
                 itemCount: 4,
                 itemBuilder: (_, index) => Container(
                   height: 104,
-                  margin: const EdgeInsets.only(bottom: 12),
+                  margin: EdgeInsets.only(bottom: 12),
                   decoration: BoxDecoration(
                     color: AppColors.surface,
                     borderRadius: BorderRadius.circular(14),
@@ -66,9 +66,9 @@ class _OrdersScreenState extends State<OrdersScreen> {
                   onRefresh: _load,
                   color: kAccent, backgroundColor: kSurface,
                   child: ListView.separated(
-                    padding: const EdgeInsets.all(16),
+                    padding: EdgeInsets.all(16),
                     itemCount: _orders.length,
-                    separatorBuilder: (_, index) => const SizedBox(height: 12),
+                    separatorBuilder: (_, index) => SizedBox(height: 12),
                     itemBuilder: (_, i) => StaggeredEntrance(
                       index: i,
                       child: _OrderTile(order: _orders[i]),
@@ -80,8 +80,8 @@ class _OrdersScreenState extends State<OrdersScreen> {
 
   Widget _empty() => Center(
     child: Column(mainAxisSize: MainAxisSize.min, children: [
-      const Icon(Icons.receipt_long_outlined, size: 72, color: Colors.white12),
-      const SizedBox(height: 16),
+      Icon(Icons.receipt_long_outlined, size: 72, color: Colors.white12),
+      SizedBox(height: 16),
       Text("No orders yet", style: AppTypography.body.copyWith(color: AppColors.textMuted, fontSize: 16)),
     ]),
   );
@@ -98,28 +98,28 @@ class _OrderTile extends StatelessWidget {
     return TappableScale(
       onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => OrderDetailScreen(order: order))),
       child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: kGlowCard(color),
+        padding: EdgeInsets.all(16),
+        decoration: kGlowCard(backgroundColor),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(children: [
             Text('Order #${order.id.substring(0, 8).toUpperCase()}',
                 style: GoogleFonts.inter(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold)),
-            const Spacer(),
+            Spacer(),
             _StatusPill(status: order.status),
           ]),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(order.vendorShopName ?? 'Vendor', style: AppTypography.body.copyWith(color: AppColors.textSecondary, fontSize: 12)),
-          const SizedBox(height: 6),
+          SizedBox(height: 6),
           Row(children: [
             Text('${order.items.length} item(s)', style: AppTypography.body.copyWith(color: AppColors.textMuted, fontSize: 12)),
-            const Spacer(),
+            Spacer(),
             MotionCounter(
               value: order.totalAmount,
               prefix: 'Rs ',
               style: GoogleFonts.inter(color: kAccent, fontSize: 15, fontWeight: FontWeight.bold),
             ),
           ]),
-          const SizedBox(height: 6),
+          SizedBox(height: 6),
           Text(date, style: AppTypography.caption.copyWith(color: AppColors.textMuted, fontSize: 11)),
         ]),
       ),
@@ -134,7 +134,7 @@ class _StatusPill extends StatelessWidget {
   Widget build(BuildContext context) {
     final color = statusColor(status);
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(20),

@@ -86,7 +86,7 @@ class _VendorSignupScreenState extends State<VendorSignupScreen> {
       backgroundColor: AppColors.background,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.lg),
+          padding: EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.lg),
           child: Form(
             key: _formKey,
             child: Column(
@@ -94,16 +94,16 @@ class _VendorSignupScreenState extends State<VendorSignupScreen> {
               children: [
                 IconButton(
                   onPressed: () => Navigator.pop(context),
-                  icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.textSecondary, size: 20),
+                  icon: Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.textSecondary, size: 20),
                   padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(),
+                  constraints: BoxConstraints(),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
 
                 Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(10),
+                      padding: EdgeInsets.all(10),
                       decoration: BoxDecoration(
                         color: _accentColor.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(AppSpacing.rLg),
@@ -111,7 +111,7 @@ class _VendorSignupScreenState extends State<VendorSignupScreen> {
                       ),
                       child: Icon(Icons.storefront_rounded, color: _accentColor, size: 28),
                     ),
-                    const SizedBox(width: 14),
+                    SizedBox(width: 14),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -122,20 +122,20 @@ class _VendorSignupScreenState extends State<VendorSignupScreen> {
                   ],
                 ),
 
-                const SizedBox(height: 32),
+                SizedBox(height: 32),
 
                 // ── Section: Personal Info ─────────────────────────────────
                 _sectionHeader('Personal Information'),
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
                 _Field(ctrl: _nameCtrl, label: 'Full Name', hint: 'John Smith', accentColor: _accentColor,
                     validator: (v) => (v?.trim().isEmpty ?? true) ? 'Required' : null),
-                const SizedBox(height: 14),
+                SizedBox(height: 14),
                 _Field(ctrl: _emailCtrl, label: 'Email', hint: 'vendor@example.com', keyboardType: TextInputType.emailAddress, accentColor: _accentColor,
                     validator: (v) => (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(v ?? '')) ? 'Enter a valid email' : null),
-                const SizedBox(height: 14),
+                SizedBox(height: 14),
                 _Field(ctrl: _phoneCtrl, label: 'Phone Number', hint: '+92 300 0000000', keyboardType: TextInputType.phone, accentColor: _accentColor,
                     validator: (v) => (v?.trim().isEmpty ?? true) ? 'Required' : null),
-                const SizedBox(height: 14),
+                SizedBox(height: 14),
                 _Field(
                   ctrl: _passCtrl, label: 'Password', hint: 'Min. 8 characters', obscureText: _obscure, accentColor: _accentColor,
                   suffixIcon: IconButton(
@@ -145,18 +145,18 @@ class _VendorSignupScreenState extends State<VendorSignupScreen> {
                   validator: (v) => (v?.length ?? 0) < 8 ? 'Min. 8 characters' : null,
                 ),
 
-                const SizedBox(height: 28),
+                SizedBox(height: 28),
 
                 // ── Section: Shop Info ─────────────────────────────────────
                 _sectionHeader('Shop Information'),
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
                 _Field(ctrl: _shopCtrl, label: 'Shop Name', hint: 'Ali Auto Parts', accentColor: _accentColor,
                     validator: (v) => (v?.trim().isEmpty ?? true) ? 'Required' : null),
-                const SizedBox(height: 14),
+                SizedBox(height: 14),
                 _Field(ctrl: _locCtrl, label: 'Shop Location / Area', hint: 'Model Town, Lahore', accentColor: _accentColor,
                     validator: (v) => (v?.trim().isEmpty ?? true) ? 'Required' : null),
 
-                const SizedBox(height: 36),
+                SizedBox(height: 36),
 
                 // ── Submit ──────────────────────────────────────────────────
                 SizedBox(
@@ -172,14 +172,14 @@ class _VendorSignupScreenState extends State<VendorSignupScreen> {
                       ),
                       child: Center(
                         child: _loading
-                            ? const SizedBox(width: 22, height: 22, child: CircularProgressIndicator(color: Colors.black, strokeWidth: 2.5))
+                            ? SizedBox(width: 22, height: 22, child: CircularProgressIndicator(color: Colors.black, strokeWidth: 2.5))
                             : Text('Create Vendor Account', style: AppTypography.label.copyWith(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black)),
                       ),
                     ),
                   ),
                 ),
 
-                const SizedBox(height: 20),
+                SizedBox(height: 20),
                 Center(
                   child: GestureDetector(
                     onTap: () => Navigator.pop(context),
@@ -187,7 +187,7 @@ class _VendorSignupScreenState extends State<VendorSignupScreen> {
                         style: AppTypography.body.copyWith(color: _accentColor, fontWeight: FontWeight.w600)),
                   ),
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: 24),
               ],
             ),
           ),
@@ -199,7 +199,7 @@ class _VendorSignupScreenState extends State<VendorSignupScreen> {
   Widget _sectionHeader(String title) => Row(
     children: [
       Container(width: 3, height: 18, decoration: BoxDecoration(color: _accentColor, borderRadius: BorderRadius.circular(2))),
-      const SizedBox(width: 10),
+      SizedBox(width: 10),
       Text(title, style: AppTypography.label.copyWith(color: AppColors.textPrimary, letterSpacing: 0.5)),
     ],
   );
@@ -230,7 +230,7 @@ class _Field extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Text(label, style: AppTypography.label.copyWith(color: AppColors.textSecondary)),
-      const SizedBox(height: 8),
+      SizedBox(height: 8),
       TextFormField(
         controller: ctrl,
         obscureText: obscureText,
@@ -243,12 +243,12 @@ class _Field extends StatelessWidget {
           suffixIcon: suffixIcon,
           filled: true,
           fillColor: AppColors.surface,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.rLg), borderSide: const BorderSide(color: AppColors.border)),
-          enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.rLg), borderSide: const BorderSide(color: AppColors.border)),
+          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.rLg), borderSide: BorderSide(color: AppColors.border)),
+          enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.rLg), borderSide: BorderSide(color: AppColors.border)),
           focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.rLg), borderSide: BorderSide(color: accentColor, width: 1.5)),
-          errorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.rLg), borderSide: const BorderSide(color: AppColors.error)),
-          focusedErrorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.rLg), borderSide: const BorderSide(color: AppColors.error)),
+          errorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.rLg), borderSide: BorderSide(color: AppColors.error)),
+          focusedErrorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.rLg), borderSide: BorderSide(color: AppColors.error)),
         ),
       ),
     ]);

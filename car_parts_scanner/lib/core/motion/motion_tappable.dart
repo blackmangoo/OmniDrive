@@ -12,7 +12,7 @@ class TappableScale extends StatefulWidget {
     required this.child,
     this.onTap,
     this.scaleDownTo = 0.97,
-    this.duration = const Duration(milliseconds: 100),
+    this.duration = Duration(milliseconds: 100),
   });
 
   @override

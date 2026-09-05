@@ -12,8 +12,8 @@ class PremiumPageRoute<T> extends PageRouteBuilder<T> {
               return child;
             }
 
-            const beginScale = 0.96;
-            const endScale = 1.0;
+            beginScale = 0.96;
+            endScale = 1.0;
             final scaleCurve = CurveTween(curve: Curves.easeOutCubic);
             final scaleAnimation = animation.drive(Tween(begin: beginScale, end: endScale).chain(scaleCurve));
 
@@ -28,7 +28,7 @@ class PremiumPageRoute<T> extends PageRouteBuilder<T> {
               ),
             );
           },
-          transitionDuration: const Duration(milliseconds: 300),
-          reverseTransitionDuration: const Duration(milliseconds: 250),
+          transitionDuration: Duration(milliseconds: 300),
+          reverseTransitionDuration: Duration(milliseconds: 250),
         );
 }

@@ -26,7 +26,7 @@ class ResultsScreen extends StatelessWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         automaticallyImplyLeading: false,
-        title: const Text('Test Results',
+        title: Text('Test Results',
           style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
         actions: [
           TappableScale(
@@ -34,11 +34,11 @@ class ResultsScreen extends StatelessWidget {
               Navigator.of(context).popUntil((route) => route.isFirst);
             },
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Row(
                 children: [
-                  const Icon(Icons.home_rounded, color: AppColors.cyan, size: 18),
-                  const SizedBox(width: 6),
+                  Icon(Icons.home_rounded, color: AppColors.cyan, size: 18),
+                  SizedBox(width: 6),
                   Text('Garage', style: GoogleFonts.inter(color: AppColors.cyan, fontWeight: FontWeight.bold)),
                 ],
               ),
@@ -48,25 +48,25 @@ class ResultsScreen extends StatelessWidget {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(20, 0, 20, 40),
+          padding: EdgeInsets.fromLTRB(20, 0, 20, 40),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // ── Summary header ────────────────────────────────────────
               Row(
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.satellite_alt_rounded,
                     color: AppColors.cyan, size: 16,
                   ),
-                  const SizedBox(width: 6),
+                  SizedBox(width: 6),
                   Text(
                     result.sensorMode == 'obd2' ? 'OBD-II (WiFi)' : 'GPS + Phone IMU',
-                    style: const TextStyle(color: Colors.white54, fontSize: 13),
+                    style: TextStyle(color: Colors.white54, fontSize: 13),
                   ),
-                  const Spacer(),
+                  Spacer(),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
                       color: AppColors.warning.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(8),
@@ -75,11 +75,11 @@ class ResultsScreen extends StatelessWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.speed_rounded, color: AppColors.warning, size: 14),
-                        const SizedBox(width: 4),
+                        Icon(Icons.speed_rounded, color: AppColors.warning, size: 14),
+                        SizedBox(width: 4),
                         Text(
                           'Top: ${result.topSpeedKmh.toStringAsFixed(1)} km/h',
-                          style: const TextStyle(
+                          style: TextStyle(
                               color: AppColors.warning, fontSize: 12, fontWeight: FontWeight.bold),
                         ),
                       ],
@@ -88,13 +88,13 @@ class ResultsScreen extends StatelessWidget {
                 ],
               ),
 
-              const SizedBox(height: 24),
+              SizedBox(height: 24),
 
               // ── Result Cards ──────────────────────────────────────────
               GridView.builder(
                 shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                physics: NeverScrollableScrollPhysics(),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   crossAxisSpacing: 14,
                   mainAxisSpacing: 14,
@@ -116,19 +116,19 @@ class ResultsScreen extends StatelessWidget {
                 },
               ),
 
-              const SizedBox(height: 36),
+              SizedBox(height: 36),
 
               // ── Telemetry header ──────────────────────────────────────
               Row(
                 children: [
-                  const Text('Telemetry',
+                  Text('Telemetry',
                     style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
-                  const SizedBox(width: 8),
+                  SizedBox(width: 8),
                   Text('(${result.dataPoints.length} pts)',
-                    style: const TextStyle(color: Colors.white38, fontSize: 13)),
+                    style: TextStyle(color: Colors.white38, fontSize: 13)),
                 ],
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
 
               // ── Speed/Time Graph ──────────────────────────────────────
               if (result.dataPoints.isEmpty)
@@ -139,7 +139,7 @@ class ResultsScreen extends StatelessWidget {
                     color: AppColors.surface,
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  child: const Text('No telemetry data recorded.',
+                  child: Text('No telemetry data recorded.',
                     style: TextStyle(color: Colors.white38)),
                 )
               else
@@ -150,14 +150,14 @@ class ResultsScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
                   ),
-                  padding: const EdgeInsets.only(right: 20, left: 8, top: 24, bottom: 8),
+                  padding: EdgeInsets.only(right: 20, left: 8, top: 24, bottom: 8),
                   child: LineChart(
                     LineChartData(
                       minX: 0,
                       maxX: result.dataPoints.last.timeS,
                       minY: 0,
                       maxY: chartMaxY,
-                      clipData: const FlClipData.all(),
+                      clipData: FlClipData.all(),
                       lineBarsData: [
                         LineChartBarData(
                           spots: result.dataPoints
@@ -166,7 +166,7 @@ class ResultsScreen extends StatelessWidget {
                           isCurved: true,
                           color: AppColors.cyan,
                           barWidth: 2.5,
-                          dotData: const FlDotData(show: false),
+                          dotData: FlDotData(show: false),
                           belowBarData: BarAreaData(
                             show: true,
                             gradient: LinearGradient(
@@ -190,10 +190,10 @@ class ResultsScreen extends StatelessWidget {
                             FlLine(color: Colors.white.withValues(alpha: 0.04), strokeWidth: 1),
                       ),
                       titlesData: FlTitlesData(
-                        rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                        topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                        rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                        topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
                         bottomTitles: AxisTitles(
-                          axisNameWidget: const Padding(
+                          axisNameWidget: Padding(
                             padding: EdgeInsets.only(top: 4),
                             child: Text('Time (s)',
                               style: TextStyle(color: Colors.white38, fontSize: 10)),
@@ -202,14 +202,14 @@ class ResultsScreen extends StatelessWidget {
                             showTitles: true,
                             reservedSize: 26,
                             getTitlesWidget: (v, m) => Padding(
-                              padding: const EdgeInsets.only(top: 6),
+                              padding: EdgeInsets.only(top: 6),
                               child: Text('${v.toInt()}s',
-                                style: const TextStyle(color: Colors.white38, fontSize: 10)),
+                                style: TextStyle(color: Colors.white38, fontSize: 10)),
                             ),
                           ),
                         ),
                         leftTitles: AxisTitles(
-                          axisNameWidget: const Padding(
+                          axisNameWidget: Padding(
                             padding: EdgeInsets.only(right: 4),
                             child: Text('km/h',
                               style: TextStyle(color: Colors.white38, fontSize: 10)),
@@ -220,7 +220,7 @@ class ResultsScreen extends StatelessWidget {
                             interval: chartMaxY / 4,
                             getTitlesWidget: (v, m) => Text(
                               '${v.toInt()}',
-                              style: const TextStyle(color: Colors.white54, fontSize: 10)),
+                              style: TextStyle(color: Colors.white54, fontSize: 10)),
                           ),
                         ),
                       ),
@@ -246,7 +246,7 @@ class _ResultCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(16),
@@ -260,8 +260,8 @@ class _ResultCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(metric.shortName,
-            style: const TextStyle(color: Colors.white54, fontSize: 13, fontWeight: FontWeight.w600)),
-          const Spacer(),
+            style: TextStyle(color: Colors.white54, fontSize: 13, fontWeight: FontWeight.w600)),
+          Spacer(),
           if (timeS != null)
             Row(
               crossAxisAlignment: CrossAxisAlignment.baseline,
@@ -270,25 +270,25 @@ class _ResultCard extends StatelessWidget {
                 MotionCounter(
                   value: timeS!,
                   decimals: 2,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.success,
                     fontSize: 30,
                     fontWeight: FontWeight.bold,
                     height: 1,
                   ),
                 ),
-                const Text(' s', style: TextStyle(color: Colors.white38, fontSize: 14)),
+                Text(' s', style: TextStyle(color: Colors.white38, fontSize: 14)),
               ],
             )
           else
-            const Text('--', style: TextStyle(color: Colors.white24, fontSize: 30)),
+            Text('--', style: TextStyle(color: Colors.white24, fontSize: 30)),
 
           if (trapSpeed != null)
             Padding(
-              padding: const EdgeInsets.only(top: 4),
+              padding: EdgeInsets.only(top: 4),
               child: Text(
                 '@ ${trapSpeed!.toStringAsFixed(1)} km/h',
-                style: const TextStyle(color: AppColors.cyan, fontSize: 11),
+                style: TextStyle(color: AppColors.cyan, fontSize: 11),
               ),
             ),
         ],

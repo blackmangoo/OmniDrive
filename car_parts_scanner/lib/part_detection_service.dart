@@ -26,9 +26,9 @@ class PartDetectionResult {
 class PartDetectionService {
   // ─── API Configuration ───────────────────────────────────────────────────
   // Update this to your PC's local WiFi IP (run `ipconfig` to find it)
-  static const String _baseUrl = 'https://blackmangoo-omni-drive-api.hf.space';
-  static const String _predictUrl = '$_baseUrl/predict';
-  static const String _storageBucket = 'scan_images';
+  static final String _baseUrl = 'https://blackmangoo-omni-drive-api.hf.space';
+  static final String _predictUrl = '$_baseUrl/predict';
+  static final String _storageBucket = 'scan_images';
   // ─────────────────────────────────────────────────────────────────────────
 
   Future<bool> checkApiHealth() async {
@@ -36,7 +36,7 @@ class PartDetectionService {
       print('[API Health Check] Querying $_baseUrl ...');
       final resp = await http
           .get(Uri.parse(_baseUrl))
-          .timeout(const Duration(seconds: 12));
+          .timeout(Duration(seconds: 12));
       print('[API Health Check] Response code: ${resp.statusCode}');
       if (resp.statusCode == 200) {
         final json = jsonDecode(resp.body);
@@ -70,7 +70,7 @@ class PartDetectionService {
             fileName,
             imageBytes,
             fileOptions:
-                const FileOptions(contentType: 'image/jpeg', upsert: false),
+                FileOptions(contentType: 'image/jpeg', upsert: false),
           );
 
       // Get the public URL

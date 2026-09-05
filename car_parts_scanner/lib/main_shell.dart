@@ -3,9 +3,9 @@ import 'main.dart' show cameras;
 import 'image_search_screen.dart';
 import 'performance/performance_home_screen.dart';
 
-const _kBg = Color(0xFF0A0A0F);
-const _kAccent = Color(0xFF4FC3F7);
-const _kNavBg = Color(0xFF0E0E18);
+_kBg = Color(0xFF0A0A0F);
+_kAccent = Color(0xFF4FC3F7);
+_kNavBg = Color(0xFF0E0E18);
 
 /// The main app shell after successful login — hosts the bottom nav bar.
 class MainShell extends StatefulWidget {
@@ -22,7 +22,7 @@ class _MainShellState extends State<MainShell> {
   Widget build(BuildContext context) {
     final screens = [
       ImageSearchScreen(cameras: cameras),
-      const PerformanceHomeScreen(),
+      PerformanceHomeScreen(),
     ];
 
     return Scaffold(
@@ -35,16 +35,16 @@ class _MainShellState extends State<MainShell> {
         decoration: BoxDecoration(
           color: _kNavBg,
           border: Border(
-            top: BorderSide(color: Colors.white.withOpacity(0.06)),
+            top: BorderSide(color: Colors.white.withValues(alpha: 0.06)),
           ),
         ),
         child: NavigationBar(
           backgroundColor: Colors.transparent,
-          indicatorColor: _kAccent.withOpacity(0.15),
+          indicatorColor: _kAccent.withValues(alpha: 0.15),
           selectedIndex: _currentIndex,
           onDestinationSelected: (i) => setState(() => _currentIndex = i),
           labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-          destinations: const [
+          destinations: [
             NavigationDestination(
               icon: Icon(Icons.search_rounded, color: Colors.white38),
               selectedIcon: Icon(Icons.search_rounded, color: _kAccent),

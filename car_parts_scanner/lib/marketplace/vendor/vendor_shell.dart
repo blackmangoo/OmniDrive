@@ -25,10 +25,10 @@ class VendorShellState extends State<VendorShell> {
   }
 
   List<Widget> get _screens => [
-        const VendorDashboardScreen(),
-        const VendorCatalogueScreen(),
-        const VendorOrdersScreen(),
-        const VendorProfileScreen(),
+        VendorDashboardScreen(),
+        VendorCatalogueScreen(),
+        VendorOrdersScreen(),
+        VendorProfileScreen(),
       ];
 
   @override
@@ -48,12 +48,12 @@ class VendorShellState extends State<VendorShell> {
           onDestinationSelected: (i) => setState(() => _idx = i),
           labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
           destinations: [
-            const NavigationDestination(
+            NavigationDestination(
               icon: Icon(Icons.dashboard_outlined, color: Colors.white38),
               selectedIcon: Icon(Icons.dashboard_rounded, color: kVendor),
               label: 'Dashboard',
             ),
-            const NavigationDestination(
+            NavigationDestination(
               icon: Icon(Icons.inventory_2_outlined, color: Colors.white38),
               selectedIcon: Icon(Icons.inventory_2_rounded, color: kVendor),
               label: 'Catalogue',
@@ -61,19 +61,19 @@ class VendorShellState extends State<VendorShell> {
             NavigationDestination(
               icon: badges.Badge(
                 showBadge: _pendingOrders > 0,
-                badgeContent: Text('$_pendingOrders', style: const TextStyle(color: Colors.white, fontSize: 10)),
-                badgeStyle: const badges.BadgeStyle(badgeColor: kError),
-                child: const Icon(Icons.receipt_outlined, color: Colors.white38),
+                badgeContent: Text('$_pendingOrders', style: TextStyle(color: Colors.white, fontSize: 10)),
+                badgeStyle: badges.BadgeStyle(badgeColor: kError),
+                child: Icon(Icons.receipt_outlined, color: Colors.white38),
               ),
               selectedIcon: badges.Badge(
                 showBadge: _pendingOrders > 0,
-                badgeContent: Text('$_pendingOrders', style: const TextStyle(color: Colors.white, fontSize: 10)),
-                badgeStyle: const badges.BadgeStyle(badgeColor: kError),
-                child: const Icon(Icons.receipt_rounded, color: kVendor),
+                badgeContent: Text('$_pendingOrders', style: TextStyle(color: Colors.white, fontSize: 10)),
+                badgeStyle: badges.BadgeStyle(badgeColor: kError),
+                child: Icon(Icons.receipt_rounded, color: kVendor),
               ),
               label: 'Orders',
             ),
-            const NavigationDestination(
+            NavigationDestination(
               icon: Icon(Icons.person_outline_rounded, color: Colors.white38),
               selectedIcon: Icon(Icons.person_rounded, color: kVendor),
               label: 'Profile',

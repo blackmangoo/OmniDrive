@@ -13,7 +13,7 @@ class AdminShell extends StatefulWidget {
 class _AdminShellState extends State<AdminShell> {
   int _idx = 0;
 
-  final List<Widget> _screens = const [
+  final List<Widget> _screens = [
     AdminOrdersScreen(),
     AdminApprovalsScreen(),
     AdminProfileScreen(),
@@ -35,7 +35,7 @@ class _AdminShellState extends State<AdminShell> {
           selectedIndex: _idx,
           onDestinationSelected: (i) => setState(() => _idx = i),
           labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-          destinations: const [
+          destinations: [
             NavigationDestination(
               icon: Icon(Icons.admin_panel_settings_outlined, color: Colors.white38),
               selectedIcon: Icon(Icons.admin_panel_settings_rounded, color: kError),

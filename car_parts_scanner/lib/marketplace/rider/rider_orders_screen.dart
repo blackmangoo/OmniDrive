@@ -81,7 +81,7 @@ class _RiderOrdersScreenState extends State<RiderOrdersScreen>
         actions: [
           TappableScale(
             onTap: _load,
-            child: const Padding(
+            child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 16),
               child: Icon(Icons.refresh_rounded, color: kRider),
             ),
@@ -100,7 +100,7 @@ class _RiderOrdersScreenState extends State<RiderOrdersScreen>
         ),
       ),
       body: _loading
-          ? const Center(child: CircularProgressIndicator(color: kRider))
+          ? Center(child: CircularProgressIndicator(color: kRider))
           : TabBarView(
               controller: _tab,
               children: [
@@ -119,9 +119,9 @@ class _RiderOrdersScreenState extends State<RiderOrdersScreen>
       onRefresh: _load,
       color: kRider, backgroundColor: kSurface,
       child: ListView.separated(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(16),
         itemCount: list.length,
-        separatorBuilder: (context, i) => const SizedBox(height: 12),
+        separatorBuilder: (context, i) => SizedBox(height: 12),
         itemBuilder: (context, i) => StaggeredEntrance(
           index: i,
           child: _RiderOrderCard(
@@ -143,7 +143,7 @@ class _RiderOrdersScreenState extends State<RiderOrdersScreen>
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          padding: const EdgeInsets.all(20),
+          padding: EdgeInsets.all(20),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: kSurface,
@@ -158,12 +158,12 @@ class _RiderOrdersScreenState extends State<RiderOrdersScreen>
         .animate()
         .scaleXY(begin: 0.8, end: 1.0, duration: 600.ms, curve: Curves.easeOutBack)
         .fadeIn(duration: 500.ms),
-        const SizedBox(height: 16),
+        SizedBox(height: 16),
         Text(
           isClaimed ? 'No deliveries assigned yet' : 'No available deliveries',
           style: GoogleFonts.inter(color: Colors.white38, fontSize: 16),
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: 8),
         Text(
           isClaimed ? 'Check the available tab to claim' : 'Check back later',
           style: GoogleFonts.inter(color: Colors.white24, fontSize: 13),
@@ -197,19 +197,19 @@ class _RiderOrderCardState extends State<_RiderOrderCard> {
     final date  = DateFormat('d MMM, hh:mm a').format(o.createdAt.toLocal());
 
     return AnimatedContainer(
-      duration: const Duration(milliseconds: 200),
-      decoration: kGlowCard(color),
+      duration: Duration(milliseconds: 200),
+      decoration: kGlowCard(backgroundColor),
       child: Column(
         children: [
           // ── Header ──────────────────────────────────────────────────────
           TappableScale(
             onTap: () => setState(() => _expanded = !_expanded),
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(16),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Row(children: [
-                  Text(statusIcon(o.status), style: const TextStyle(fontSize: 22)),
-                  const SizedBox(width: 10),
+                  Text(statusIcon(o.status), style: TextStyle(fontSize: 22)),
+                  SizedBox(width: 10),
                   Expanded(
                     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                       Text('Order #${o.id.substring(0, 8).toUpperCase()}',
@@ -221,18 +221,18 @@ class _RiderOrderCardState extends State<_RiderOrderCard> {
                   Icon(_expanded ? Icons.keyboard_arrow_up_rounded : Icons.keyboard_arrow_down_rounded,
                       color: Colors.white38),
                 ]),
-                const SizedBox(height: 10),
+                SizedBox(height: 10),
                 // Delivery address prominent
                 Row(children: [
-                  const Icon(Icons.location_on_rounded, color: kRider, size: 16),
-                  const SizedBox(width: 6),
+                  Icon(Icons.location_on_rounded, color: kRider, size: 16),
+                  SizedBox(width: 6),
                   Expanded(
                     child: Text(o.deliveryAddress,
                         maxLines: 2, overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.inter(color: Colors.white70, fontSize: 13)),
                   ),
                 ]),
-                const SizedBox(height: 6),
+                SizedBox(height: 6),
                 Text(date, style: GoogleFonts.inter(color: Colors.white24, fontSize: 11)),
               ]),
             ),
@@ -242,7 +242,7 @@ class _RiderOrderCardState extends State<_RiderOrderCard> {
           if (_expanded) ...[
             Divider(color: kBorder, height: 1),
             Padding(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(16),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
 
                 // ── Vendor info ─────────────────────────────────────────
@@ -252,7 +252,7 @@ class _RiderOrderCardState extends State<_RiderOrderCard> {
                   if (o.vendorPhone != null) _detailRow('Phone', o.vendorPhone!),
                 ]),
 
-                const SizedBox(height: 14),
+                SizedBox(height: 14),
 
                 // ── Customer info ───────────────────────────────────────
                 _detailSection('👤 Customer / Deliver To', [
@@ -261,12 +261,12 @@ class _RiderOrderCardState extends State<_RiderOrderCard> {
                   _detailRow('Address', o.deliveryAddress),
                 ]),
 
-                const SizedBox(height: 14),
+                SizedBox(height: 14),
 
                 // ── Order items ─────────────────────────────────────────
                 _detailSection('🛒 Items (${o.items.length})', [
                   ...o.items.map((item) => Padding(
-                    padding: const EdgeInsets.only(bottom: 4),
+                    padding: EdgeInsets.only(bottom: 4),
                     child: Row(children: [
                       Expanded(child: Text('${item.productName} × ${item.quantity}',
                           style: GoogleFonts.inter(color: Colors.white60, fontSize: 12))),
@@ -277,7 +277,7 @@ class _RiderOrderCardState extends State<_RiderOrderCard> {
                       ),
                     ]),
                   )),
-                  const SizedBox(height: 4),
+                  SizedBox(height: 4),
                   Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                     Text('Total', style: GoogleFonts.inter(color: Colors.white38, fontSize: 13)),
                     MotionCounter(
@@ -290,7 +290,7 @@ class _RiderOrderCardState extends State<_RiderOrderCard> {
 
                 // ── Mark Delivered Button ───────────────────────────────
                 if (widget.onMarkDelivered != null) ...[
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16),
                   SizedBox(
                     width: double.infinity, height: 48,
                     child: TappableScale(
@@ -304,8 +304,8 @@ class _RiderOrderCardState extends State<_RiderOrderCard> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(Icons.check_circle_rounded, size: 20, color: Colors.white),
-                            const SizedBox(width: 8),
+                            Icon(Icons.check_circle_rounded, size: 20, color: Colors.white),
+                            SizedBox(width: 8),
                             Text('Mark as Delivered', style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white)),
                           ],
                         ),
@@ -316,7 +316,7 @@ class _RiderOrderCardState extends State<_RiderOrderCard> {
 
                 // ── Accept Delivery Button ───────────────────────────────
                 if (widget.onAcceptDelivery != null) ...[
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16),
                   SizedBox(
                     width: double.infinity, height: 48,
                     child: TappableScale(
@@ -330,8 +330,8 @@ class _RiderOrderCardState extends State<_RiderOrderCard> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(Icons.check_circle_rounded, size: 20, color: Colors.black),
-                            const SizedBox(width: 8),
+                            Icon(Icons.check_circle_rounded, size: 20, color: Colors.black),
+                            SizedBox(width: 8),
                             Text('Accept Delivery', style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black)),
                           ],
                         ),
@@ -351,9 +351,9 @@ class _RiderOrderCardState extends State<_RiderOrderCard> {
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Text(title, style: GoogleFonts.inter(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w700)),
-      const SizedBox(height: 8),
+      SizedBox(height: 8),
       Container(
-        padding: const EdgeInsets.all(12),
+        padding: EdgeInsets.all(12),
         decoration: kCardDeco(radius: 12),
         child: Column(children: children),
       ),
@@ -361,7 +361,7 @@ class _RiderOrderCardState extends State<_RiderOrderCard> {
   );
 
   Widget _detailRow(String label, String value) => Padding(
-    padding: const EdgeInsets.symmetric(vertical: 3),
+    padding: EdgeInsets.symmetric(vertical: 3),
     child: Row(children: [
       SizedBox(width: 70, child: Text(label, style: GoogleFonts.inter(color: Colors.white38, fontSize: 12))),
       Expanded(child: Text(value, style: GoogleFonts.inter(color: Colors.white70, fontSize: 12))),

@@ -51,7 +51,7 @@ class _AuthGateState extends State<AuthGate> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         Navigator.of(context).push(
-          MaterialPageRoute(builder: (_) => const UpdatePasswordScreen()),
+          MaterialPageRoute(builder: (_) => UpdatePasswordScreen()),
         ).then((_) => _recoveryHandled = false);
       }
     });
@@ -180,7 +180,7 @@ class _AuthGateState extends State<AuthGate> {
               priority: Priority.high,
               icon: '@mipmap/ic_launcher',
             ),
-            iOS: const DarwinNotificationDetails(
+            iOS: DarwinNotificationDetails(
               presentAlert: true,
               presentBadge: true,
               presentSound: true,
@@ -207,7 +207,7 @@ class _AuthGateState extends State<AuthGate> {
       stream: Supabase.instance.client.auth.onAuthStateChange,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const _Splash();
+          return _Splash();
         }
 
         final session = snapshot.data?.session
@@ -216,7 +216,7 @@ class _AuthGateState extends State<AuthGate> {
         if (session == null) {
           _needsMfa = false;
           _isPendingApproval = false;
-          return const LoginScreen();
+          return LoginScreen();
         }
 
         // If email is not confirmed, always show verify screen.
@@ -229,12 +229,12 @@ class _AuthGateState extends State<AuthGate> {
         if (_role == null && !_loadingRole) {
           _loadingRole = true; // Set directly to avoid setState during build
           _fetchRole();
-          return const _Splash(); // show spinner while role loads
+          return _Splash(); // show spinner while role loads
         }
-        if (_loadingRole) return const _Splash();
+        if (_loadingRole) return _Splash();
 
         if (_role == 'admin' && _needsMfa) {
-          return const AdminMfaScreen();
+          return AdminMfaScreen();
         }
 
         if (_isPendingApproval) {
@@ -252,10 +252,10 @@ class _AuthGateState extends State<AuthGate> {
         }
 
         switch (_role) {
-          case 'vendor': return const VendorShell();
-          case 'rider':  return const RiderShell();
-          case 'admin':  return const AdminShell();
-          default:       return const CustomerShell();
+          case 'vendor': return VendorShell();
+          case 'rider':  return RiderShell();
+          case 'admin':  return AdminShell();
+          default:       return CustomerShell();
         }
       },
     );
@@ -265,7 +265,7 @@ class _AuthGateState extends State<AuthGate> {
 class _Splash extends StatelessWidget {
   const _Splash();
   @override
-  Widget build(BuildContext context) => const Scaffold(
+  Widget build(BuildContext context) => Scaffold(
     backgroundColor: AppColors.background,
     body: Center(child: CircularProgressIndicator(color: AppColors.cyan)),
   );

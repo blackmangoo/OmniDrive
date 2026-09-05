@@ -94,7 +94,7 @@ class SensorFusionService {
     await _ensurePermissions();
 
     // GPS: request highest accuracy, up to 10 Hz on Android
-    final locationSettings = const LocationSettings(
+    final locationSettings = LocationSettings(
       accuracy: LocationAccuracy.best,
       distanceFilter: 0,
     );
@@ -106,7 +106,7 @@ class SensorFusionService {
     // User accelerometer at ~50 Hz — gravity is removed by device sensor
     // fusion (gyro + accel), giving true linear acceleration.
     _accelSub = userAccelerometerEventStream(
-      samplingPeriod: const Duration(milliseconds: 20),
+      samplingPeriod: Duration(milliseconds: 20),
     ).listen(_onAccel);
   }
 
