@@ -6,6 +6,12 @@ import io
 import os
 import time
 from PIL import Image
+import requests
+from pydantic import BaseModel
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 app = FastAPI(title="Car Parts Classification API", version="1.0.0")
 
@@ -26,9 +32,15 @@ try:
     print("Model loaded successfully!")
 except Exception as e:
     print(f"Error loading model: {e}")
-    model = None
+    try:
+        model = YOLO("car_parts_large_v1.pt")
+        print("Model loaded from root dir!")
+    except:
+        model = None
 
 @app.get("/")
+@app.post("/health")
+@app.get("/health")
 def read_root():
     return {
         "status": "online",
@@ -101,6 +113,45 @@ async def predict_car_part(file: UploadFile = File(...)):
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error processing image: {str(e)}")
+
+# ── RAG Chatbot Endpoint ──
+from supabase import create_client, Client
+
+SUPABASE_URL = os.environ.get("SUPABASE_URL", "https://cqeubytgsrxdkfejxvan.supabase.co")
+SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
+supabase_client = create_client(SUPABASE_URL, SUPABASE_KEY) if SUPABASE_KEY else None
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
+
+class ChatRequest(BaseModel):
+    query: str
+
+@app.post("/chat")
+async def chat_with_rag(request: ChatRequest):
+    if not supabase_client or not GEMINI_API_KEY:
+        raise HTTPException(status_code=500, detail="Missing API keys")
+
+    try:
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:embedContent?key={GEMINI_API_KEY}"
+        res = requests.post(url, json={"model": "models/gemini-embedding-2", "content": {"parts": [{"text": request.query}]}, "outputDimensionality": 768}).json()
+        query_embedding = res["embedding"]["values"]
+
+        response = supabase_client.rpc("match_documents", {"query_embedding": query_embedding, "match_threshold": 0.7, "match_count": 3}).execute()
+        docs = response.data
+        context_text = "\n\n".join([doc['content'] for doc in docs]) if docs else "No specific DIY documentation found."
+
+        prompt = f"You are a helpful AI mechanic. Answer based on this docs:\n{context_text}\n\nQuestion: {request.query}"
+        chat_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key={GEMINI_API_KEY}"
+        chat_res = requests.post(chat_url, json={"contents": [{"parts": [{"text": prompt}]}]}).json()
+        
+        return {"success": True, "answer": chat_res["candidates"][0]["content"]["parts"][0]["text"], "retrieved_docs": len(docs)}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/ingest_data")
+def trigger_ingestion():
+    import subprocess
+    result = subprocess.run(["python", "rag_ingest.py"], capture_output=True, text=True)
+    return {"success": result.returncode == 0, "logs": result.stdout if result.returncode == 0 else result.stderr}
 
 # This allows running the file directly with Python
 if __name__ == "__main__":

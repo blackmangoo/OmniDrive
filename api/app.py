@@ -37,6 +37,7 @@ except Exception as e:
     except:
         yolo_model = None
 
+@app.get("/")
 @app.post("/health")
 @app.get("/health")
 def health_check():
