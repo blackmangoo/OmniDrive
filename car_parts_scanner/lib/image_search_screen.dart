@@ -5,11 +5,12 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'camera_preview_screen.dart';
 import 'part_detection_service.dart';
-import 'core/theme/app_colors.dart';
 import 'core/theme/app_spacing.dart';
 import 'core/theme/app_typography.dart';
 import 'core/motion/motion_stagger.dart';
 import 'core/motion/motion_tappable.dart';
+import 'package:car_parts_scanner/core/theme/app_colors.dart';
+
 
 class ImageSearchScreen extends StatefulWidget {
   final List<CameraDescription> cameras;
@@ -185,7 +186,7 @@ class _ImageSearchScreenState extends State<ImageSearchScreen>
               Text(
                 'OmniDrive AI',
                 style: AppTypography.h2.copyWith(
-                  color: Colors.white,
+                  color: AppColors.textPrimary,
                   fontSize: 22,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 0.4,
@@ -476,7 +477,7 @@ class _FeatureCard extends StatelessWidget {
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(AppSpacing.rMd),
         border:
-            Border.all(color: Colors.white.withValues(alpha: 0.05)),
+            Border.all(color: AppColors.textPrimary.withValues(alpha: 0.05)),
       ),
       child: Row(
         children: [
@@ -496,7 +497,7 @@ class _FeatureCard extends StatelessWidget {
               children: [
                 Text(title,
                     style: AppTypography.title.copyWith(
-                        color: Colors.white,
+                        color: AppColors.textPrimary,
                         fontSize: 15,
                         fontWeight: FontWeight.w600)),
                 SizedBox(height: 4),
@@ -545,7 +546,7 @@ class _ResultsSheet extends StatelessWidget {
                 height: 4,
                 margin: EdgeInsets.only(bottom: 20),
                 decoration: BoxDecoration(
-                    color: Colors.grey[800],
+                    color: AppColors.textMuted.withValues(alpha: 0.4),
                     borderRadius: BorderRadius.circular(10)),
               ),
             ),
@@ -579,7 +580,7 @@ class _ResultsSheet extends StatelessWidget {
                 Expanded(
                   child: Text('Analysis Result',
                       style: AppTypography.h2.copyWith(
-                          color: Colors.white,
+                          color: AppColors.textPrimary,
                           fontSize: 20,
                           fontWeight: FontWeight.bold)),
                 ),
@@ -600,7 +601,7 @@ class _ResultsSheet extends StatelessWidget {
                     child: Text(
                       result.part!.className,
                       style: AppTypography.h1.copyWith(
-                          color: Colors.white,
+                          color: AppColors.textPrimary,
                           fontSize: 24,
                           fontWeight: FontWeight.w800,
                           height: 1.2),
@@ -657,69 +658,47 @@ class _ResultsSheet extends StatelessWidget {
               ],
             ],
 
-            // ── All predictions (always show if present) ──────────────
-            if (result.allPredictions != null &&
-                result.allPredictions!.isNotEmpty) ...[
-              SizedBox(height: 20),
-              _SectionLabel('ALL PREDICTIONS'),
-              SizedBox(height: 12),
-              ...result.allPredictions!.asMap().entries.map((e) {
-                final idx = e.key;
-                final p = e.value;
-                final cls = p['class'] as String;
-                final conf =
-                    (p['confidence'] as num).toDouble();
-                return StaggeredEntrance(
-                  index: idx,
-                  child: Padding(
-                    padding: EdgeInsets.only(bottom: 12),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(children: [
-                          Container(
-                            width: 22,
-                            height: 22,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: (idx == 0 ? AppColors.cyan : AppColors.textMuted)
-                                  .withValues(alpha: 0.15),
-                              borderRadius: BorderRadius.circular(6),
+            // ── Other possibilities (only show significant ones > 5%) ──────
+            if (hasPart && result.allPredictions != null &&
+                result.allPredictions!.length > 1) ...[
+              // Filter to only show alternatives above 5% confidence
+              Builder(builder: (_) {
+                final alternatives = result.allPredictions!
+                    .skip(1) // Skip the top prediction (already shown above)
+                    .where((p) => (p['confidence'] as num).toDouble() > 5.0)
+                    .toList();
+                if (alternatives.isEmpty) return SizedBox.shrink();
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 20),
+                    _SectionLabel('OTHER POSSIBILITIES'),
+                    SizedBox(height: 12),
+                    ...alternatives.asMap().entries.map((e) {
+                      final idx = e.key;
+                      final p = e.value;
+                      final cls = p['class'] as String;
+                      final conf = (p['confidence'] as num).toDouble();
+                      return StaggeredEntrance(
+                        index: idx,
+                        child: Padding(
+                          padding: EdgeInsets.only(bottom: 10),
+                          child: Row(children: [
+                            Expanded(
+                              child: Text(cls,
+                                  style: AppTypography.body.copyWith(
+                                      color: AppColors.textSecondary, fontSize: 13)),
                             ),
-                            child: Text('${idx + 1}',
-                                style: TextStyle(
-                                  color: idx == 0 ? AppColors.cyan : AppColors.textMuted,
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w700,
+                            Text('${conf.toStringAsFixed(1)}%',
+                                style: AppTypography.body.copyWith(
+                                  color: AppColors.textMuted,
+                                  fontSize: 13,
                                 )),
-                          ),
-                          SizedBox(width: 10),
-                          Expanded(
-                            child:
-                                Text(cls,
-                                    style: AppTypography.body.copyWith(
-                                        color: Colors.white, fontSize: 13)),
-                          ),
-                          Text('${conf.toStringAsFixed(1)}%',
-                              style: AppTypography.body.copyWith(
-                                color: idx == 0 ? AppColors.cyan : AppColors.textMuted,
-                                fontSize: 13,
-                                fontWeight: idx == 0
-                                    ? FontWeight.w700
-                                    : FontWeight.normal,
-                              )),
-                        ]),
-                        SizedBox(height: 6),
-                        Padding(
-                          padding: EdgeInsets.only(left: 32),
-                          child: _ConfidenceProgressBar(
-                            confidence: conf,
-                            color: idx == 0 ? AppColors.cyan : AppColors.textMuted,
-                          ),
+                          ]),
                         ),
-                      ],
-                    ),
-                  ),
+                      );
+                    }),
+                  ],
                 );
               }),
             ],

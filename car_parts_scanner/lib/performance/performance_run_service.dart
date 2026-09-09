@@ -10,7 +10,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'performance_models.dart';
 import 'sensor_fusion_service.dart';
 
-const _kPendingRunsKey = 'omnidrive_pending_runs';
+const String _kPendingRunsKey = 'omnidrive_pending_runs';
 
 /// Orchestrates a performance test run.
 ///

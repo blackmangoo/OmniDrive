@@ -6,10 +6,11 @@ import 'pre_test_screen.dart';
 import 'run_history_screen.dart';
 import 'results_screen.dart';
 import 'performance_models.dart';
-import '../core/theme/app_colors.dart';
 import '../core/motion/motion_stagger.dart';
 import '../core/motion/motion_tappable.dart';
 import '../core/motion/motion_counter.dart';
+import 'package:car_parts_scanner/core/theme/app_colors.dart';
+
 
 /// Entry screen for the Performance Metrics module.
 /// Shows the user's cars, lets them start a new test, and shows recent runs.
@@ -136,7 +137,7 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
               pinned: true,
               title: Text('Performance',
                   style: TextStyle(
-                      color: Colors.white,
+                      color: AppColors.textPrimary,
                       fontWeight: FontWeight.bold,
                       fontSize: 22)),
               actions: [
@@ -144,7 +145,7 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
                   onTap: _signOut,
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16),
-                    child: Icon(Icons.logout_rounded, color: Colors.white54, size: 22),
+                    child: Icon(Icons.logout_rounded, color: AppColors.textMuted, size: 22),
                   ),
                 ),
               ],
@@ -157,7 +158,7 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
                     EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                 child: Text(
                   'Welcome, ${user?.userMetadata?['full_name'] ?? 'Driver'} 👋',
-                  style: TextStyle(color: Colors.white54, fontSize: 14),
+                  style: TextStyle(color: AppColors.textMuted, fontSize: 14),
                 ),
               ),
             ),
@@ -171,7 +172,7 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
                   children: [
                     Text('My Cars',
                         style: TextStyle(
-                            color: Colors.white,
+                            color: AppColors.textPrimary,
                             fontSize: 18,
                             fontWeight: FontWeight.w700)),
                     TappableScale(
@@ -230,7 +231,7 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
                   children: [
                     Text('Recent Runs',
                         style: TextStyle(
-                            color: Colors.white,
+                            color: AppColors.textPrimary,
                             fontSize: 18,
                             fontWeight: FontWeight.w700)),
                     if (_cars.isNotEmpty && _recentRuns.isNotEmpty)
@@ -270,13 +271,13 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
                           ),
                           child: Column(
                             children: [
-                              Icon(Icons.speed_rounded, color: Colors.white24, size: 48),
+                              Icon(Icons.speed_rounded, color: (AppColors.textMuted.withValues(alpha: 0.5)), size: 48),
                               SizedBox(height: 12),
                               Text('No runs yet',
-                                  style: TextStyle(color: Colors.white38, fontSize: 15)),
+                                  style: TextStyle(color: AppColors.textMuted, fontSize: 15)),
                               SizedBox(height: 6),
                               Text('Choose a car, then start your first test!',
-                                  style: TextStyle(color: Colors.white24, fontSize: 12)),
+                                  style: TextStyle(color: (AppColors.textMuted.withValues(alpha: 0.5)), fontSize: 12)),
                             ],
                           ),
                         ),
@@ -349,14 +350,14 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
                                             children: [
                                               Text(topMetric,
                                                   style: TextStyle(
-                                                    color: Colors.white,
+                                                    color: AppColors.textPrimary,
                                                     fontWeight: FontWeight.bold,
                                                     fontSize: 16,
                                                   )),
                                               SizedBox(height: 3),
                                               Text(
                                                 '$dateStr  •  ${isObd ? 'OBD-II' : 'GPS'}',
-                                                style: TextStyle(color: Colors.white38, fontSize: 12),
+                                                style: TextStyle(color: AppColors.textMuted, fontSize: 12),
                                               ),
                                             ],
                                           ),
@@ -375,7 +376,7 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
                                         else
                                           Text('--', style: TextStyle(color: AppColors.cyan, fontWeight: FontWeight.w900, fontSize: 18)),
                                         SizedBox(width: 6),
-                                        Icon(Icons.chevron_right_rounded, color: Colors.white24),
+                                        Icon(Icons.chevron_right_rounded, color: (AppColors.textMuted.withValues(alpha: 0.5))),
                                       ],
                                     ),
                                   ),
@@ -451,7 +452,7 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
             children: [
               Text('Add Car',
                   style: TextStyle(
-                      color: Colors.white,
+                      color: AppColors.textPrimary,
                       fontSize: 20,
                       fontWeight: FontWeight.bold)),
               SizedBox(height: 20),
@@ -479,10 +480,10 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
               DropdownButtonFormField<String>(
                 initialValue: fuel,
                 dropdownColor: AppColors.surface,
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(color: AppColors.textPrimary),
                 decoration: InputDecoration(
                   labelText: 'Fuel Type',
-                  labelStyle: TextStyle(color: Colors.white38),
+                  labelStyle: TextStyle(color: AppColors.textMuted),
                   filled: true,
                   fillColor: AppColors.card,
                   border: OutlineInputBorder(
@@ -581,7 +582,7 @@ class _CarCard extends StatelessWidget {
               children: [
                 Text('${car['make']} ${car['model']}',
                     style: TextStyle(
-                        color: Colors.white,
+                        color: AppColors.textPrimary,
                         fontWeight: FontWeight.w600,
                         fontSize: 15)),
                 SizedBox(height: 3),
@@ -594,7 +595,7 @@ class _CarCard extends StatelessWidget {
                           (car['fuel_type'] as String).substring(1),
                   ].join(' · '),
                   style:
-                      TextStyle(color: Colors.white38, fontSize: 12),
+                      TextStyle(color: AppColors.textMuted, fontSize: 12),
                 ),
                 if (car['mods'] != null && car['mods'].toString().isNotEmpty)
                   Padding(
@@ -609,7 +610,7 @@ class _CarCard extends StatelessWidget {
             ),
           ),
           Icon(Icons.chevron_right_rounded,
-              color: Colors.white24, size: 20),
+              color: (AppColors.textMuted.withValues(alpha: 0.5)), size: 20),
         ],
       ),
     );
@@ -642,13 +643,13 @@ class _EmptyCarPrompt extends StatelessWidget {
               SizedBox(height: 12),
               Text('Add your first car',
                   style: TextStyle(
-                      color: Colors.white,
+                      color: AppColors.textPrimary,
                       fontSize: 16,
                       fontWeight: FontWeight.w600)),
               SizedBox(height: 6),
               Text('Tap here to add a car and start measuring performance',
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.white38, fontSize: 12)),
+                  style: TextStyle(color: AppColors.textMuted, fontSize: 12)),
             ],
           ),
         ),
@@ -676,10 +677,10 @@ class _DialogField extends StatelessWidget {
       controller: ctrl,
       keyboardType: keyboardType,
       maxLines: maxLines,
-      style: TextStyle(color: Colors.white, fontSize: 14),
+      style: TextStyle(color: AppColors.textPrimary, fontSize: 14),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: TextStyle(color: Colors.white24, fontSize: 13),
+        hintStyle: TextStyle(color: (AppColors.textMuted.withValues(alpha: 0.5)), fontSize: 13),
         filled: true,
         fillColor: AppColors.card,
         contentPadding:

@@ -6,6 +6,9 @@ import '../marketplace_models.dart';
 import '../marketplace_service.dart';
 import '../../core/motion/motion_tappable.dart';
 import '../../core/motion/motion_counter.dart';
+import 'package:car_parts_scanner/core/theme/app_colors.dart';
+
+
 
 class VendorProfileScreen extends StatefulWidget {
   const VendorProfileScreen({super.key});
@@ -43,7 +46,7 @@ class _VendorProfileScreenState extends State<VendorProfileScreen> {
       backgroundColor: kBg,
       appBar: AppBar(
         backgroundColor: kBg, automaticallyImplyLeading: false,
-        title: Text('Shop Profile', style: GoogleFonts.inter(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+        title: Text('Shop Profile', style: GoogleFonts.inter(color: AppColors.textPrimary, fontSize: 20, fontWeight: FontWeight.bold)),
       ),
       body: _loading
           ? Center(child: CircularProgressIndicator(color: kVendor))
@@ -67,10 +70,10 @@ class _VendorProfileScreenState extends State<VendorProfileScreen> {
                     ),
                     SizedBox(height: 12),
                     Text(_vendor?.shopName ?? 'Your Shop',
-                        style: GoogleFonts.inter(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+                        style: GoogleFonts.inter(color: AppColors.textPrimary, fontSize: 20, fontWeight: FontWeight.bold)),
                     if (_vendor?.location != null) ...[
                       SizedBox(height: 4),
-                      Text('📍 ${_vendor!.location!}', style: GoogleFonts.inter(color: Colors.white38, fontSize: 13)),
+                      Text('📍 ${_vendor!.location!}', style: GoogleFonts.inter(color: AppColors.textMuted, fontSize: 13)),
                     ],
                     SizedBox(height: 12),
                     Row(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -136,12 +139,12 @@ class _VendorProfileScreenState extends State<VendorProfileScreen> {
   Widget _statChip(Widget child, String label) => Column(children: [
     child,
     SizedBox(height: 4),
-    Text(label, style: GoogleFonts.inter(color: Colors.white38, fontSize: 11)),
+    Text(label, style: GoogleFonts.inter(color: AppColors.textMuted, fontSize: 11)),
   ]);
 
   Widget _sectionHeader(String t) => Padding(
     padding: EdgeInsets.only(bottom: 12),
-    child: Text(t, style: GoogleFonts.inter(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w700)),
+    child: Text(t, style: GoogleFonts.inter(color: AppColors.textPrimary, fontSize: 14, fontWeight: FontWeight.w700)),
   );
 
   Widget _infoRow(IconData icon, String label, String value) => Container(
@@ -153,9 +156,9 @@ class _VendorProfileScreenState extends State<VendorProfileScreen> {
       SizedBox(width: 14),
       Expanded(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(label, style: GoogleFonts.inter(color: Colors.white38, fontSize: 11)),
+          Text(label, style: GoogleFonts.inter(color: AppColors.textMuted, fontSize: 11)),
           SizedBox(height: 2),
-          Text(value, style: GoogleFonts.inter(color: Colors.white, fontSize: 13), overflow: TextOverflow.ellipsis, maxLines: 3),
+          Text(value, style: GoogleFonts.inter(color: AppColors.textPrimary, fontSize: 13), overflow: TextOverflow.ellipsis, maxLines: 3),
         ]),
       ),
     ]),

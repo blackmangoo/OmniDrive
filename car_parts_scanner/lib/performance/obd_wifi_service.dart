@@ -10,11 +10,11 @@ import 'dart:io';
 /// Default IP: 192.168.0.10  Port: 35000
 /// (same for most ELM327 WiFi clones — Veepeak, Vgate, ScanTool, etc.)
 class ObdWifiService {
-  static String _defaultHost = '192.168.0.10';
+  static const String _defaultHost = '192.168.0.10';
   static const int    _defaultPort = 35000;
-  static Duration _connectTimeout  = Duration(seconds: 5);
-  static Duration _commandTimeout  = Duration(milliseconds: 500);
-  static Duration _pollInterval    = Duration(milliseconds: 200); // ~5 Hz (realistic ELM327 throughput)
+  static const Duration _connectTimeout  = Duration(seconds: 5);
+  static const Duration _commandTimeout  = Duration(milliseconds: 500);
+  static const Duration _pollInterval    = Duration(milliseconds: 200); // ~5 Hz (realistic ELM327 throughput)
 
   Socket? _socket;
   Timer?  _pollTimer;

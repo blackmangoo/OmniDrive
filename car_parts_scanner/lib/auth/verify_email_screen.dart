@@ -4,11 +4,12 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'login_screen.dart';
 import 'auth_gate.dart';
-import '../core/theme/app_colors.dart';
 import '../core/theme/app_spacing.dart';
 import '../core/theme/app_typography.dart';
 import '../core/theme/app_shadows.dart';
 import '../core/motion/motion_tappable.dart';
+import 'package:car_parts_scanner/core/theme/app_colors.dart';
+
 
 class VerifyEmailScreen extends StatefulWidget {
   final String email;
@@ -143,14 +144,17 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-          child: AnimatedSwitcher(
-            duration: Duration(milliseconds: 400),
-            child: _verified ? _buildVerified() : _buildWaiting(),
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        body: SafeArea(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+            child: AnimatedSwitcher(
+              duration: Duration(milliseconds: 400),
+              child: _verified ? _buildVerified() : _buildWaiting(),
+            ),
           ),
         ),
       ),

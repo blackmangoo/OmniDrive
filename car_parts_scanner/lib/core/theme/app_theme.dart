@@ -12,7 +12,7 @@ class AppTheme {
     ),
   );
 
-  static final _textTheme = TextTheme(
+  static TextTheme get _textTheme => TextTheme(
     displayLarge: AppTypography.display,
     headlineLarge: AppTypography.h1,
     headlineMedium: AppTypography.h2,
@@ -27,39 +27,39 @@ class AppTheme {
       useMaterial3: true,
       brightness: Brightness.light,
       colorScheme: ColorScheme.fromSeed(
-        seedColor: const Color(0xFF2563EB),
+        seedColor: const Color(0xFF5A4ED1),
         brightness: Brightness.light,
         surface: const Color(0xFFFFFFFF),
-        primary: const Color(0xFF2563EB),
-        secondary: const Color(0xFF6366F1),
-        error: const Color(0xFFEF4444),
+        primary: const Color(0xFF5A4ED1),
+        secondary: const Color(0xFF7C3AED),
+        error: const Color(0xFFDC2626),
       ),
-      scaffoldBackgroundColor: const Color(0xFFF9FAFB),
+      scaffoldBackgroundColor: const Color(0xFFF7F7F5),
       cardTheme: _cardTheme,
       textTheme: _textTheme,
-      dividerTheme: const DividerThemeData(color: Color(0xFFE5E7EB), thickness: 1),
+      dividerTheme: const DividerThemeData(color: Color(0xFFE5E5E3), thickness: 1),
       appBarTheme: const AppBarTheme(
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: false,
-        iconTheme: IconThemeData(color: Color(0xFF111827)),
+        iconTheme: IconThemeData(color: Color(0xFF1C1917)),
         titleTextStyle: TextStyle(
-          color: Color(0xFF111827),
+          color: Color(0xFF1C1917),
           fontSize: 18,
           fontWeight: FontWeight.bold,
         ),
       ),
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: const Color(0xFFFFFFFF),
-        indicatorColor: const Color(0xFF2563EB).withValues(alpha: 0.15),
+        indicatorColor: const Color(0xFF5A4ED1).withValues(alpha: 0.12),
         iconTheme: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
-            return const IconThemeData(color: Color(0xFF2563EB));
+            return const IconThemeData(color: Color(0xFF5A4ED1));
           }
-          return const IconThemeData(color: Color(0xFF9CA3AF));
+          return const IconThemeData(color: Color(0xFFA8A29E));
         }),
       ),
-      elevatedButtonTheme: _elevatedButtonTheme(const Color(0xFF2563EB), Colors.white),
+      elevatedButtonTheme: _elevatedButtonTheme(const Color(0xFF5A4ED1), Colors.white),
       inputDecorationTheme: _inputDecorationTheme(Brightness.light),
     );
   }
@@ -69,39 +69,39 @@ class AppTheme {
       useMaterial3: true,
       brightness: Brightness.dark,
       colorScheme: ColorScheme.fromSeed(
-        seedColor: const Color(0xFF3B82F6),
+        seedColor: const Color(0xFF7C6EF6),
         brightness: Brightness.dark,
-        surface: const Color(0xFF1E1E2C),
-        primary: const Color(0xFF3B82F6),
-        secondary: const Color(0xFF8B5CF6),
-        error: const Color(0xFFEF4444),
+        surface: const Color(0xFF1C1C1E),
+        primary: const Color(0xFF7C6EF6),
+        secondary: const Color(0xFFA78BFA),
+        error: const Color(0xFFDC2626),
       ),
-      scaffoldBackgroundColor: const Color(0xFF12121A),
+      scaffoldBackgroundColor: const Color(0xFF111113),
       cardTheme: _cardTheme,
       textTheme: _textTheme,
-      dividerTheme: const DividerThemeData(color: Color(0xFF2A2A3C), thickness: 1),
+      dividerTheme: const DividerThemeData(color: Color(0xFF2C2C2E), thickness: 1),
       appBarTheme: const AppBarTheme(
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: false,
-        iconTheme: IconThemeData(color: Color(0xFFF9FAFB)),
+        iconTheme: IconThemeData(color: Color(0xFFF5F5F4)),
         titleTextStyle: TextStyle(
-          color: Color(0xFFF9FAFB),
+          color: Color(0xFFF5F5F4),
           fontSize: 18,
           fontWeight: FontWeight.bold,
         ),
       ),
       navigationBarTheme: NavigationBarThemeData(
-        backgroundColor: const Color(0xFF1E1E2C),
-        indicatorColor: const Color(0xFF3B82F6).withValues(alpha: 0.2),
+        backgroundColor: const Color(0xFF1C1C1E),
+        indicatorColor: const Color(0xFF7C6EF6).withValues(alpha: 0.15),
         iconTheme: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
-            return const IconThemeData(color: Color(0xFF3B82F6));
+            return const IconThemeData(color: Color(0xFF7C6EF6));
           }
-          return const IconThemeData(color: Color(0xFF6B7280));
+          return const IconThemeData(color: Color(0xFF78716C));
         }),
       ),
-      elevatedButtonTheme: _elevatedButtonTheme(const Color(0xFF3B82F6), Colors.white),
+      elevatedButtonTheme: _elevatedButtonTheme(const Color(0xFF7C6EF6), Colors.white),
       inputDecorationTheme: _inputDecorationTheme(Brightness.dark),
     );
   }
@@ -122,14 +122,14 @@ class AppTheme {
 
   static InputDecorationTheme _inputDecorationTheme(Brightness brightness) {
     final isDark = brightness == Brightness.dark;
-    final fillColor = isDark ? const Color(0xFF1E1E2C) : const Color(0xFFF3F4F6);
-    final borderColor = isDark ? const Color(0xFF2A2A3C) : const Color(0xFFE5E7EB);
-    final focusColor = isDark ? const Color(0xFF3B82F6) : const Color(0xFF2563EB);
+    final fillColor = isDark ? const Color(0xFF1C1C1E) : const Color(0xFFF7F7F5);
+    final borderColor = isDark ? const Color(0xFF2C2C2E) : const Color(0xFFE5E5E3);
+    final focusColor = isDark ? const Color(0xFF7C6EF6) : const Color(0xFF5A4ED1);
 
     return InputDecorationTheme(
       filled: true,
       fillColor: fillColor,
-      contentPadding: const EdgeInsets.symmetric(
+      contentPadding: EdgeInsets.symmetric(
         horizontal: AppSpacing.md,
         vertical: AppSpacing.md,
       ),
@@ -147,7 +147,7 @@ class AppTheme {
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(AppSpacing.rMd),
-        borderSide: const BorderSide(color: Color(0xFFEF4444)),
+        borderSide: const BorderSide(color: Color(0xFFDC2626)),
       ),
     );
   }

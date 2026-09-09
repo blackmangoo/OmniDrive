@@ -7,11 +7,12 @@ import 'vendor_signup_screen.dart';
 import 'forgot_password_screen.dart';
 import 'verify_email_screen.dart';
 import '../marketplace/marketplace_service.dart';
-import '../core/theme/app_colors.dart';
 import '../core/theme/app_spacing.dart';
 import '../core/theme/app_typography.dart';
 import '../core/theme/app_shadows.dart';
 import '../core/motion/motion_tappable.dart';
+import 'package:car_parts_scanner/core/theme/app_colors.dart';
+
 
 class LoginScreen extends StatefulWidget {
   final int preselectedRole;
@@ -175,7 +176,7 @@ class _LoginScreenState extends State<LoginScreen>
                         TextSpan(text: 'Drive', style: TextStyle(color: _accentColor)),
                         TextSpan(
                             text: ' AI',
-                            style: TextStyle(color: Colors.white38, fontSize: 20)),
+                            style: TextStyle(color: AppColors.textMuted, fontSize: 20)),
                       ],
                     ),
                   ),

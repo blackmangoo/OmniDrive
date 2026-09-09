@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'main.dart' show cameras;
 import 'image_search_screen.dart';
 import 'performance/performance_home_screen.dart';
+import 'package:car_parts_scanner/core/theme/app_colors.dart';
 
-_kBg = Color(0xFF0A0A0F);
-_kAccent = Color(0xFF4FC3F7);
-_kNavBg = Color(0xFF0E0E18);
+
+
+Color get _kBg => AppColors.background;
+Color get _kAccent => AppColors.cyan;
+Color get _kNavBg => AppColors.surface;
 
 /// The main app shell after successful login — hosts the bottom nav bar.
 class MainShell extends StatefulWidget {
@@ -35,7 +38,7 @@ class _MainShellState extends State<MainShell> {
         decoration: BoxDecoration(
           color: _kNavBg,
           border: Border(
-            top: BorderSide(color: Colors.white.withValues(alpha: 0.06)),
+            top: BorderSide(color: AppColors.textPrimary.withValues(alpha: 0.06)),
           ),
         ),
         child: NavigationBar(
@@ -46,12 +49,12 @@ class _MainShellState extends State<MainShell> {
           labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
           destinations: [
             NavigationDestination(
-              icon: Icon(Icons.search_rounded, color: Colors.white38),
+              icon: Icon(Icons.search_rounded, color: AppColors.textMuted),
               selectedIcon: Icon(Icons.search_rounded, color: _kAccent),
               label: 'Scanner',
             ),
             NavigationDestination(
-              icon: Icon(Icons.speed_rounded, color: Colors.white38),
+              icon: Icon(Icons.speed_rounded, color: AppColors.textMuted),
               selectedIcon: Icon(Icons.speed_rounded, color: _kAccent),
               label: 'Performance',
             ),

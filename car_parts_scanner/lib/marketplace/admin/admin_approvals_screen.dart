@@ -5,6 +5,9 @@ import '../marketplace_constants.dart';
 import '../marketplace_service.dart';
 import '../../core/motion/motion_stagger.dart';
 import '../../core/motion/motion_tappable.dart';
+import 'package:car_parts_scanner/core/theme/app_colors.dart';
+
+
 
 class AdminApprovalsScreen extends StatefulWidget {
   const AdminApprovalsScreen({super.key});
@@ -87,7 +90,7 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen> {
         ),
         title: Text(
           'Reject Registration?',
-          style: kHeadline(18, color: Colors.white),
+          style: kHeadline(18, color: AppColors.textPrimary),
         ),
         content: Text(
           'Are you sure you want to reject and permanently block this registration? This will delete the user account.',
@@ -109,7 +112,7 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen> {
                 color: kError,
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: Text('Reject & Block', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
+              child: Text('Reject & Block', style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 13)),
             ),
           ),
         ],
@@ -163,14 +166,14 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen> {
         centerTitle: false,
         title: Text(
           'Registration Approvals',
-          style: kHeadline(22, color: Colors.white),
+          style: kHeadline(22, color: AppColors.textPrimary),
         ),
         actions: [
           TappableScale(
             onTap: _loadApprovals,
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 16),
-              child: Icon(Icons.refresh_rounded, color: Colors.white70),
+              child: Icon(Icons.refresh_rounded, color: AppColors.textSecondary),
             ),
           ),
         ],
@@ -225,7 +228,7 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen> {
               SizedBox(height: 20),
               Text(
                 'All Caught Up!',
-                style: kHeadline(18, color: Colors.white),
+                style: kHeadline(18, color: AppColors.textPrimary),
               ),
               SizedBox(height: 6),
               Text(
@@ -277,7 +280,7 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen> {
                       SizedBox(width: 8),
                       Text(
                         isVendor ? (shopName ?? 'Vendor Shop') : 'Rider Account',
-                        style: kHeadline(15, color: Colors.white),
+                        style: kHeadline(15, color: AppColors.textPrimary),
                       ),
                     ],
                   ),
@@ -449,7 +452,7 @@ class _SuccessFeedbackDialog extends StatelessWidget {
             SizedBox(height: 24),
             Text(
               'User Approved!',
-              style: kHeadline(18, color: Colors.white),
+              style: kHeadline(18, color: AppColors.textPrimary),
             ),
             SizedBox(height: 8),
             Text(

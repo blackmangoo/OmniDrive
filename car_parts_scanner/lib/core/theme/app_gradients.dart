@@ -1,51 +1,50 @@
 import 'package:flutter/material.dart';
-import 'app_colors.dart';
+import 'package:car_parts_scanner/core/theme/app_colors.dart';
 
 class AppGradients {
-  static const primary = LinearGradient(
-    colors: [AppColors.cyan, AppColors.cyanDark],
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-  );
+  static LinearGradient get primary => LinearGradient(
+        colors: [AppColors.cyan, AppColors.cyanDark],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      );
 
-  static const secondary = LinearGradient(
-    colors: [AppColors.violet, AppColors.violetDark],
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-  );
+  static LinearGradient get secondary => LinearGradient(
+        colors: [AppColors.violet, AppColors.violetDark],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      );
 
-  // Role Gradients
-  static const customer = LinearGradient(
-    colors: [AppColors.customer, AppColors.customerDark],
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-  );
+  static LinearGradient get customer => LinearGradient(
+        colors: [AppColors.customer, AppColors.customerDark],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      );
 
-  static const vendor = LinearGradient(
-    colors: [AppColors.vendor, AppColors.vendorDark],
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-  );
+  static LinearGradient get vendor => LinearGradient(
+        colors: [AppColors.vendor, AppColors.vendorDark],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      );
 
-  static const rider = LinearGradient(
-    colors: [AppColors.rider, AppColors.riderDark],
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-  );
+  static LinearGradient get rider => LinearGradient(
+        colors: [AppColors.rider, AppColors.riderDark],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      );
 
-  static const admin = LinearGradient(
-    colors: [AppColors.admin, AppColors.adminDark],
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-  );
+  static LinearGradient get admin => LinearGradient(
+        colors: [AppColors.admin, AppColors.adminDark],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      );
 
-  static const mesh = RadialGradient(
-    center: Alignment(-0.5, -0.6),
-    radius: 1.2,
-    colors: [
-      Color(0x1F22D3EE), // Cyan glow
-      Color(0x0A8B5CF6), // Violet glow
-      Color(0x00000000),
-    ],
-  );
+  static LinearGradient get mesh => const LinearGradient(
+        colors: [
+          Color(0x0A8B5CF6), // Subtle violet tint
+          Color(0x053B82F6), // Subtle blue tint
+          Color(0x00000000), 
+        ],
+        begin: Alignment.topRight,
+        end: Alignment.bottomLeft,
+      );
 }

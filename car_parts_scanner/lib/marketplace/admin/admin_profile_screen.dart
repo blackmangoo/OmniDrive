@@ -5,6 +5,9 @@ import '../marketplace_constants.dart';
 import '../marketplace_models.dart';
 import '../marketplace_service.dart';
 import '../../core/motion/motion_tappable.dart';
+import 'package:car_parts_scanner/core/theme/app_colors.dart';
+
+
 
 class AdminProfileScreen extends StatefulWidget {
   const AdminProfileScreen({super.key});
@@ -39,7 +42,7 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> {
       backgroundColor: kBg,
       appBar: AppBar(
         backgroundColor: kBg, automaticallyImplyLeading: false,
-        title: Text('Admin Panel', style: GoogleFonts.inter(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+        title: Text('Admin Panel', style: GoogleFonts.inter(color: AppColors.textPrimary, fontSize: 20, fontWeight: FontWeight.bold)),
       ),
       body: _loading
           ? Center(child: CircularProgressIndicator(color: kError))
@@ -58,9 +61,9 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> {
                       child: Icon(Icons.admin_panel_settings_rounded, color: kError, size: 44),
                     ),
                     SizedBox(height: 14),
-                    Text(_user?.fullName ?? '—', style: GoogleFonts.inter(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+                    Text(_user?.fullName ?? '—', style: GoogleFonts.inter(color: AppColors.textPrimary, fontSize: 20, fontWeight: FontWeight.bold)),
                     SizedBox(height: 4),
-                    Text(_user?.email ?? '—', style: GoogleFonts.inter(color: Colors.white38, fontSize: 14)),
+                    Text(_user?.email ?? '—', style: GoogleFonts.inter(color: AppColors.textMuted, fontSize: 14)),
                     SizedBox(height: 8),
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: 14, vertical: 5),

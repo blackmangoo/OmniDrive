@@ -3,9 +3,10 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'part_detection_service.dart';
-import 'core/theme/app_colors.dart';
 import 'core/theme/app_spacing.dart';
 import 'core/theme/app_typography.dart';
+import 'package:car_parts_scanner/core/theme/app_colors.dart';
+
 
 class CameraPreviewScreen extends StatefulWidget {
   final List<CameraDescription> cameras;
@@ -142,7 +143,7 @@ class _CameraPreviewScreenState extends State<CameraPreviewScreen>
                         child: Padding(
                           padding: EdgeInsets.all(10),
                           child: Icon(Icons.arrow_back_ios_new_rounded,
-                              color: Colors.white, size: 20),
+                              color: AppColors.textPrimary, size: 20),
                         ),
                       ),
                     ),
@@ -256,7 +257,7 @@ class _CameraPreviewScreenState extends State<CameraPreviewScreen>
                                   ),
                                   child: Icon(
                                       Icons.camera_alt_rounded,
-                                      color: Colors.white,
+                                      color: AppColors.textPrimary,
                                       size: 28),
                                 ),
                               ),
@@ -341,7 +342,7 @@ class _ScanReticleState extends State<_ScanReticle>
         height: 240,
         child: CustomPaint(
           painter: _ReticlePainter(
-            color: widget.scanning ? Colors.white : AppColors.cyan,
+            color: widget.scanning ? AppColors.textPrimary : AppColors.cyan,
           ),
         ),
       );
@@ -356,7 +357,7 @@ class _ScanReticleState extends State<_ScanReticle>
           height: 240,
           child: CustomPaint(
             painter: _ReticlePainter(
-              color: widget.scanning ? Colors.white : AppColors.cyan,
+              color: widget.scanning ? AppColors.textPrimary : AppColors.cyan,
             ),
           ),
         ),
@@ -377,8 +378,8 @@ class _ReticlePainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
 
-    r = 24.0; // corner radius
-    l = 40.0; // corner length
+    double r = 24.0; // corner radius
+    double l = 40.0; // corner length
 
     final corners = [
       // top-left

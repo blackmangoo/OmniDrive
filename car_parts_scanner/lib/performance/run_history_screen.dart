@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'performance_models.dart';
 import 'results_screen.dart';
-import '../core/theme/app_colors.dart';
 import '../core/motion/motion_stagger.dart';
 import '../core/motion/motion_tappable.dart';
 import '../core/motion/motion_counter.dart';
+import 'package:car_parts_scanner/core/theme/app_colors.dart';
+
 
 class RunHistoryScreen extends StatefulWidget {
   final Map<String, dynamic> car;
@@ -67,13 +68,13 @@ class _RunHistoryScreenState extends State<RunHistoryScreen> {
       appBar: AppBar(
         title: Text(
           '${widget.car['make']} ${widget.car['model']}',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
         ),
         backgroundColor: AppColors.background,
         elevation: 0,
         leading: TappableScale(
           onTap: () => Navigator.pop(context),
-          child: Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white70, size: 20),
+          child: Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.textSecondary, size: 20),
         ),
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(1),
@@ -87,13 +88,13 @@ class _RunHistoryScreenState extends State<RunHistoryScreen> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.timer_outlined, color: Colors.white24, size: 56),
+                      Icon(Icons.timer_outlined, color: (AppColors.textMuted.withValues(alpha: 0.5)), size: 56),
                       SizedBox(height: 16),
                       Text('No runs recorded yet.',
-                        style: TextStyle(color: Colors.white38, fontSize: 16)),
+                        style: TextStyle(color: AppColors.textMuted, fontSize: 16)),
                       SizedBox(height: 6),
                       Text('Head to the garage and start your first test!',
-                        style: TextStyle(color: Colors.white24, fontSize: 13), textAlign: TextAlign.center),
+                        style: TextStyle(color: (AppColors.textMuted.withValues(alpha: 0.5)), fontSize: 13), textAlign: TextAlign.center),
                     ],
                   ),
                 )
@@ -158,14 +159,14 @@ class _RunHistoryScreenState extends State<RunHistoryScreen> {
                                   children: [
                                     Text(topMetric,
                                       style: TextStyle(
-                                        color: Colors.white,
+                                        color: AppColors.textPrimary,
                                         fontWeight: FontWeight.bold,
                                         fontSize: 16,
                                       )),
                                     SizedBox(height: 3),
                                     Text(
                                       '$dateStr  •  ${isObd ? 'OBD-II' : 'GPS'}',
-                                      style: TextStyle(color: Colors.white38, fontSize: 12),
+                                      style: TextStyle(color: AppColors.textMuted, fontSize: 12),
                                     ),
                                   ],
                                 ),
@@ -184,7 +185,7 @@ class _RunHistoryScreenState extends State<RunHistoryScreen> {
                               else
                                 Text('--', style: TextStyle(color: AppColors.cyan, fontWeight: FontWeight.w900, fontSize: 18)),
                               SizedBox(width: 6),
-                              Icon(Icons.chevron_right_rounded, color: Colors.white24),
+                              Icon(Icons.chevron_right_rounded, color: (AppColors.textMuted.withValues(alpha: 0.5))),
                             ],
                           ),
                         ),

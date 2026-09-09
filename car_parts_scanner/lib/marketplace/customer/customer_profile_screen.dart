@@ -5,6 +5,9 @@ import '../marketplace_constants.dart';
 import '../marketplace_models.dart';
 import '../marketplace_service.dart';
 import 'orders_screen.dart';
+import 'package:car_parts_scanner/core/theme/app_colors.dart';
+
+
 
 class CustomerProfileScreen extends StatefulWidget {
   const CustomerProfileScreen({super.key});
@@ -39,7 +42,7 @@ class _CustomerProfileScreenState extends State<CustomerProfileScreen> {
       appBar: AppBar(
         backgroundColor: kBg,
         automaticallyImplyLeading: false,
-        title: Text('My Profile', style: GoogleFonts.inter(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+        title: Text('My Profile', style: GoogleFonts.inter(color: AppColors.textPrimary, fontSize: 20, fontWeight: FontWeight.bold)),
       ),
       body: _loading
           ? Center(child: CircularProgressIndicator(color: kAccent))
@@ -60,9 +63,9 @@ class _CustomerProfileScreenState extends State<CustomerProfileScreen> {
                     ),
                     SizedBox(height: 14),
                     Text(_user?.fullName ?? '—',
-                        style: GoogleFonts.inter(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+                        style: GoogleFonts.inter(color: AppColors.textPrimary, fontSize: 20, fontWeight: FontWeight.bold)),
                     SizedBox(height: 4),
-                    Text(_user?.email ?? '—', style: GoogleFonts.inter(color: Colors.white38, fontSize: 14)),
+                    Text(_user?.email ?? '—', style: GoogleFonts.inter(color: AppColors.textMuted, fontSize: 14)),
                     SizedBox(height: 6),
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
@@ -120,8 +123,8 @@ class _CustomerProfileScreenState extends State<CustomerProfileScreen> {
           child: Row(children: [
             Icon(icon, color: kAccent, size: 22),
             SizedBox(width: 14),
-            Expanded(child: Text(label, style: GoogleFonts.inter(color: Colors.white, fontSize: 15))),
-            Icon(Icons.chevron_right_rounded, color: Colors.white24),
+            Expanded(child: Text(label, style: GoogleFonts.inter(color: AppColors.textPrimary, fontSize: 15))),
+            Icon(Icons.chevron_right_rounded, color: (AppColors.textMuted.withValues(alpha: 0.5))),
           ]),
         ),
       );

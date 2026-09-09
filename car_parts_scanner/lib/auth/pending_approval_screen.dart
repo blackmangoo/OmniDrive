@@ -3,11 +3,12 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../marketplace/marketplace_service.dart';
 import 'auth_gate.dart';
-import '../core/theme/app_colors.dart';
 import '../core/theme/app_spacing.dart';
 import '../core/theme/app_typography.dart';
 import '../core/theme/app_shadows.dart';
 import '../core/motion/motion_tappable.dart';
+import 'package:car_parts_scanner/core/theme/app_colors.dart';
+
 
 class PendingApprovalScreen extends StatefulWidget {
   final String? role;
@@ -46,7 +47,7 @@ class _PendingApprovalScreenState extends State<PendingApprovalScreen> {
           SnackBar(
             content: Text(
               'Your account is still under review.',
-              style: AppTypography.body.copyWith(color: Colors.white),
+              style: AppTypography.body.copyWith(color: AppColors.textPrimary),
             ),
             backgroundColor: AppColors.surface,
             behavior: SnackBarBehavior.floating,

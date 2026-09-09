@@ -12,8 +12,8 @@ class PremiumPageRoute<T> extends PageRouteBuilder<T> {
               return child;
             }
 
-            beginScale = 0.96;
-            endScale = 1.0;
+            final double beginScale = 0.96;
+            final double endScale = 1.0;
             final scaleCurve = CurveTween(curve: Curves.easeOutCubic);
             final scaleAnimation = animation.drive(Tween(begin: beginScale, end: endScale).chain(scaleCurve));
 

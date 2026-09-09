@@ -10,7 +10,7 @@ class StaggeredEntrance extends StatelessWidget {
     super.key,
     required this.child,
     required this.index,
-    this.delayStep = Duration(milliseconds: 40),
+    this.delayStep = const Duration(milliseconds: 40),
   });
 
   @override

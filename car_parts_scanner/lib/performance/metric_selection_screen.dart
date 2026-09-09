@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'performance_models.dart';
-import '../core/theme/app_colors.dart';
 import '../core/motion/motion_tappable.dart';
+import 'package:car_parts_scanner/core/theme/app_colors.dart';
+
 
 /// Screen where the user selects:
 ///  • Test type (ACCELERATION or BRAKING) — segmented toggle
@@ -63,11 +64,11 @@ class _MetricSelectionScreenState extends State<MetricSelectionScreen>
         backgroundColor: AppColors.background,
         leading: TappableScale(
           onTap: () => Navigator.pop(context),
-          child: Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white70, size: 20),
+          child: Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.textSecondary, size: 20),
         ),
         title: Text('Configure Test',
             style: TextStyle(
-                color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20)),
+                color: AppColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 20)),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -115,7 +116,7 @@ class _MetricSelectionScreenState extends State<MetricSelectionScreen>
                   ),
                 ],
                 labelColor: AppColors.cyan,
-                unselectedLabelColor: Colors.white38,
+                unselectedLabelColor: AppColors.textMuted,
               ),
             ),
           ),
@@ -168,7 +169,7 @@ class _MetricSelectionScreenState extends State<MetricSelectionScreen>
               children: [
                 Text('Sensor Mode',
                     style: TextStyle(
-                        color: Colors.white70,
+                        color: AppColors.textSecondary,
                         fontSize: 13,
                         fontWeight: FontWeight.w600)),
                 SizedBox(height: 12),
@@ -212,19 +213,19 @@ class _MetricSelectionScreenState extends State<MetricSelectionScreen>
                 child: Container(
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: _canProceed ? AppColors.cyan : Colors.white12,
+                    color: _canProceed ? AppColors.cyan : (AppColors.textMuted.withValues(alpha: 0.2)),
                     borderRadius: BorderRadius.circular(14),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.play_arrow_rounded, color: _canProceed ? Colors.black : Colors.white24),
+                      Icon(Icons.play_arrow_rounded, color: _canProceed ? Colors.black : (AppColors.textMuted.withValues(alpha: 0.5))),
                       SizedBox(width: 8),
                       Text('Configure & Continue',
                           style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
-                              color: _canProceed ? Colors.black : Colors.white24)),
+                              color: _canProceed ? Colors.black : (AppColors.textMuted.withValues(alpha: 0.5)))),
                     ],
                   ),
                 ),
@@ -334,7 +335,7 @@ class _MetricTile extends StatelessWidget {
                 shape: BoxShape.circle,
                 color: selected ? AppColors.cyan : Colors.transparent,
                 border: Border.all(
-                    color: selected ? AppColors.cyan : Colors.white24, width: 1.5),
+                    color: selected ? AppColors.cyan : (AppColors.textMuted.withValues(alpha: 0.5)), width: 1.5),
               ),
               child: selected
                   ? Icon(Icons.check_rounded,
@@ -348,12 +349,12 @@ class _MetricTile extends StatelessWidget {
                 children: [
                   Text(metric.displayName,
                       style: TextStyle(
-                          color: selected ? Colors.white : Colors.white70,
+                          color: selected ? AppColors.textPrimary : AppColors.textSecondary,
                           fontWeight: FontWeight.w600,
                           fontSize: 15)),
                   SizedBox(height: 2),
                   Text(_metricSubtitle(metric),
-                      style: TextStyle(color: Colors.white38, fontSize: 12)),
+                      style: TextStyle(color: AppColors.textMuted, fontSize: 12)),
                 ],
               ),
             ),
@@ -433,15 +434,15 @@ class _ModeChip extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(icon, color: selected ? AppColors.cyan : Colors.white38, size: 20),
+              Icon(icon, color: selected ? AppColors.cyan : AppColors.textMuted, size: 20),
               SizedBox(height: 8),
               Text(label,
                   style: TextStyle(
-                      color: selected ? Colors.white : Colors.white54,
+                      color: selected ? AppColors.textPrimary : AppColors.textMuted,
                       fontWeight: FontWeight.w600, fontSize: 13)),
               SizedBox(height: 3),
               Text(description,
-                  style: TextStyle(color: Colors.white24, fontSize: 10)),
+                  style: TextStyle(color: (AppColors.textMuted.withValues(alpha: 0.5)), fontSize: 10)),
             ],
           ),
         ),

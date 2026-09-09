@@ -8,6 +8,9 @@ import '../marketplace_service.dart';
 import '../../core/motion/motion_stagger.dart';
 import '../../core/motion/motion_tappable.dart';
 import '../../core/motion/motion_counter.dart';
+import 'package:car_parts_scanner/core/theme/app_colors.dart';
+
+
 
 class AdminOrdersScreen extends StatefulWidget {
   const AdminOrdersScreen({super.key});
@@ -44,7 +47,7 @@ class _AdminOrdersScreenState extends State<AdminOrdersScreen> {
         backgroundColor: kBg, automaticallyImplyLeading: false,
         title: Row(
           children: [
-            Text('All Orders', style: GoogleFonts.inter(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+            Text('All Orders', style: GoogleFonts.inter(color: AppColors.textPrimary, fontSize: 18, fontWeight: FontWeight.bold)),
             SizedBox(width: 8),
             Container(
               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
@@ -108,7 +111,7 @@ class _AdminOrdersScreenState extends State<AdminOrdersScreen> {
         .scaleXY(begin: 0.8, end: 1.0, duration: 600.ms, curve: Curves.easeOutBack)
         .fadeIn(duration: 500.ms),
         SizedBox(height: 16),
-        Text('No orders yet', style: GoogleFonts.inter(color: Colors.white38, fontSize: 16)),
+        Text('No orders yet', style: GoogleFonts.inter(color: AppColors.textMuted, fontSize: 16)),
       ],
     ),
   );
@@ -125,14 +128,14 @@ class _AdminOrderTile extends StatelessWidget {
 
     return Container(
       padding: EdgeInsets.all(14),
-      decoration: kGlowCard(backgroundColor),
+      decoration: kGlowCard(color),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
           Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text('Order #${order.id.substring(0, 8).toUpperCase()}',
-                style: GoogleFonts.inter(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold)),
+                style: GoogleFonts.inter(color: AppColors.textPrimary, fontSize: 13, fontWeight: FontWeight.bold)),
             Text('${order.vendorShopName ?? "Vendor"}  →  ${order.customerName ?? "Customer"}',
-                style: GoogleFonts.inter(color: Colors.white38, fontSize: 11)),
+                style: GoogleFonts.inter(color: AppColors.textMuted, fontSize: 11)),
           ])),
           Container(
             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
@@ -149,7 +152,7 @@ class _AdminOrderTile extends StatelessWidget {
             style: GoogleFonts.inter(color: kCyan, fontSize: 13, fontWeight: FontWeight.bold),
           ),
           SizedBox(width: 12),
-          Text(date, style: GoogleFonts.inter(color: Colors.white24, fontSize: 11)),
+          Text(date, style: GoogleFonts.inter(color: (AppColors.textMuted.withValues(alpha: 0.5)), fontSize: 11)),
         ]),
         if (order.riderId != null) Padding(
           padding: EdgeInsets.only(top: 6),

@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import '../marketplace_constants.dart';
 import 'rider_orders_screen.dart';
 import 'rider_profile_screen.dart';
+import 'package:car_parts_scanner/core/theme/app_colors.dart';
+
+
 
 class RiderShell extends StatefulWidget {
   const RiderShell({super.key});
@@ -25,7 +28,7 @@ class _RiderShellState extends State<RiderShell> {
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: kSurface,
-          border: Border(top: BorderSide(color: Colors.white.withValues(alpha: 0.06))),
+          border: Border(top: BorderSide(color: AppColors.textPrimary.withValues(alpha: 0.06))),
         ),
         child: NavigationBar(
           backgroundColor: Colors.transparent,
@@ -35,12 +38,12 @@ class _RiderShellState extends State<RiderShell> {
           labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
           destinations: [
             NavigationDestination(
-              icon: Icon(Icons.delivery_dining_outlined, color: Colors.white38),
+              icon: Icon(Icons.delivery_dining_outlined, color: AppColors.textMuted),
               selectedIcon: Icon(Icons.delivery_dining_rounded, color: kRider),
               label: 'My Deliveries',
             ),
             NavigationDestination(
-              icon: Icon(Icons.person_outline_rounded, color: Colors.white38),
+              icon: Icon(Icons.person_outline_rounded, color: AppColors.textMuted),
               selectedIcon: Icon(Icons.person_rounded, color: kRider),
               label: 'Profile',
             ),

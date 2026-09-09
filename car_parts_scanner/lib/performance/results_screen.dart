@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'performance_models.dart';
-import '../core/theme/app_colors.dart';
 import '../core/motion/motion_stagger.dart';
 import '../core/motion/motion_tappable.dart';
 import '../core/motion/motion_counter.dart';
+import 'package:car_parts_scanner/core/theme/app_colors.dart';
+
 
 class ResultsScreen extends StatelessWidget {
   final PerformanceRunData result;
@@ -27,7 +28,7 @@ class ResultsScreen extends StatelessWidget {
         elevation: 0,
         automaticallyImplyLeading: false,
         title: Text('Test Results',
-          style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
+          style: TextStyle(color: AppColors.textPrimary, fontSize: 22, fontWeight: FontWeight.bold)),
         actions: [
           TappableScale(
             onTap: () {
@@ -62,7 +63,7 @@ class ResultsScreen extends StatelessWidget {
                   SizedBox(width: 6),
                   Text(
                     result.sensorMode == 'obd2' ? 'OBD-II (WiFi)' : 'GPS + Phone IMU',
-                    style: TextStyle(color: Colors.white54, fontSize: 13),
+                    style: TextStyle(color: AppColors.textMuted, fontSize: 13),
                   ),
                   Spacer(),
                   Container(
@@ -122,10 +123,10 @@ class ResultsScreen extends StatelessWidget {
               Row(
                 children: [
                   Text('Telemetry',
-                    style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+                    style: TextStyle(color: AppColors.textPrimary, fontSize: 18, fontWeight: FontWeight.bold)),
                   SizedBox(width: 8),
                   Text('(${result.dataPoints.length} pts)',
-                    style: TextStyle(color: Colors.white38, fontSize: 13)),
+                    style: TextStyle(color: AppColors.textMuted, fontSize: 13)),
                 ],
               ),
               SizedBox(height: 16),
@@ -140,7 +141,7 @@ class ResultsScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Text('No telemetry data recorded.',
-                    style: TextStyle(color: Colors.white38)),
+                    style: TextStyle(color: AppColors.textMuted)),
                 )
               else
                 Container(
@@ -148,7 +149,7 @@ class ResultsScreen extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: AppColors.surface,
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+                    border: Border.all(color: AppColors.textPrimary.withValues(alpha: 0.05)),
                   ),
                   padding: EdgeInsets.only(right: 20, left: 8, top: 24, bottom: 8),
                   child: LineChart(
@@ -185,9 +186,9 @@ class ResultsScreen extends StatelessWidget {
                         drawVerticalLine: true,
                         horizontalInterval: chartMaxY / 4,
                         getDrawingHorizontalLine: (_) =>
-                            FlLine(color: Colors.white.withValues(alpha: 0.07), strokeWidth: 1, dashArray: [4, 4]),
+                            FlLine(color: AppColors.textPrimary.withValues(alpha: 0.07), strokeWidth: 1, dashArray: [4, 4]),
                         getDrawingVerticalLine: (_) =>
-                            FlLine(color: Colors.white.withValues(alpha: 0.04), strokeWidth: 1),
+                            FlLine(color: AppColors.textPrimary.withValues(alpha: 0.04), strokeWidth: 1),
                       ),
                       titlesData: FlTitlesData(
                         rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
@@ -196,7 +197,7 @@ class ResultsScreen extends StatelessWidget {
                           axisNameWidget: Padding(
                             padding: EdgeInsets.only(top: 4),
                             child: Text('Time (s)',
-                              style: TextStyle(color: Colors.white38, fontSize: 10)),
+                              style: TextStyle(color: AppColors.textMuted, fontSize: 10)),
                           ),
                           sideTitles: SideTitles(
                             showTitles: true,
@@ -204,7 +205,7 @@ class ResultsScreen extends StatelessWidget {
                             getTitlesWidget: (v, m) => Padding(
                               padding: EdgeInsets.only(top: 6),
                               child: Text('${v.toInt()}s',
-                                style: TextStyle(color: Colors.white38, fontSize: 10)),
+                                style: TextStyle(color: AppColors.textMuted, fontSize: 10)),
                             ),
                           ),
                         ),
@@ -212,7 +213,7 @@ class ResultsScreen extends StatelessWidget {
                           axisNameWidget: Padding(
                             padding: EdgeInsets.only(right: 4),
                             child: Text('km/h',
-                              style: TextStyle(color: Colors.white38, fontSize: 10)),
+                              style: TextStyle(color: AppColors.textMuted, fontSize: 10)),
                           ),
                           sideTitles: SideTitles(
                             showTitles: true,
@@ -220,7 +221,7 @@ class ResultsScreen extends StatelessWidget {
                             interval: chartMaxY / 4,
                             getTitlesWidget: (v, m) => Text(
                               '${v.toInt()}',
-                              style: TextStyle(color: Colors.white54, fontSize: 10)),
+                              style: TextStyle(color: AppColors.textMuted, fontSize: 10)),
                           ),
                         ),
                       ),
@@ -253,14 +254,14 @@ class _ResultCard extends StatelessWidget {
         border: Border.all(
           color: timeS != null
               ? AppColors.success.withValues(alpha: 0.3)
-              : Colors.white.withValues(alpha: 0.07),
+              : AppColors.textPrimary.withValues(alpha: 0.07),
         ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(metric.shortName,
-            style: TextStyle(color: Colors.white54, fontSize: 13, fontWeight: FontWeight.w600)),
+            style: TextStyle(color: AppColors.textMuted, fontSize: 13, fontWeight: FontWeight.w600)),
           Spacer(),
           if (timeS != null)
             Row(
@@ -277,11 +278,11 @@ class _ResultCard extends StatelessWidget {
                     height: 1,
                   ),
                 ),
-                Text(' s', style: TextStyle(color: Colors.white38, fontSize: 14)),
+                Text(' s', style: TextStyle(color: AppColors.textMuted, fontSize: 14)),
               ],
             )
           else
-            Text('--', style: TextStyle(color: Colors.white24, fontSize: 30)),
+            Text('--', style: TextStyle(color: (AppColors.textMuted.withValues(alpha: 0.5)), fontSize: 30)),
 
           if (trapSpeed != null)
             Padding(
