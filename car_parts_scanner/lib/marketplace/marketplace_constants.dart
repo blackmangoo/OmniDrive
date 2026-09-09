@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../core/theme/app_colors.dart';
 import '../core/theme/app_gradients.dart';
+import 'package:car_parts_scanner/core/theme/app_colors.dart';
 
-// ── Color Tokens ──────────────────────────────────────────────────────────────
+
+// ── Color Tokens ──────────────────────────────────────────────────────────
 Color get kBg      => AppColors.background;
 Color get kSurface => AppColors.surface;
 Color get kCard    => AppColors.card;
@@ -12,11 +13,11 @@ Color get kBorder2 => AppColors.border;
 
 // Role accents
 Color get kCyan    => AppColors.customer;
-Color kVendor  = AppColors.vendor;
+Color get kVendor  => AppColors.vendor;
 Color get kRider   => AppColors.rider;
 Color get kAdmin   => AppColors.admin;
 
-// Legacy alias (used by pre-refactor screens)
+// Legacy alias
 Color get kAccent  => kCyan;
 
 // Status colours
@@ -30,70 +31,110 @@ Color get kTextPrimary   => AppColors.textPrimary;
 Color get kTextSecondary => AppColors.textSecondary;
 Color get kTextMuted     => AppColors.textMuted;
 
-// ── Typography ────────────────────────────────────────────────────────────────
-TextStyle kHeadline(double size, {Color color = kTextPrimary, FontWeight fw = FontWeight.bold}) =>
-    GoogleFonts.inter(fontSize: size, fontWeight: fw, color: color, letterSpacing: -0.5);
+// ── Typography ──────────────────────────────────────────────────────────────
+TextStyle kHeadline(double size, {Color? color, FontWeight fw = FontWeight.bold}) =>
+    GoogleFonts.inter(fontSize: size, fontWeight: fw, color: color ?? kTextPrimary, letterSpacing: -0.5);
 
-TextStyle kBody(double size, {Color color = kTextSecondary, FontWeight fw = FontWeight.normal}) =>
-    GoogleFonts.inter(fontSize: size, fontWeight: fw, color: color);
+TextStyle kBody(double size, {Color? color, FontWeight fw = FontWeight.normal}) =>
+    GoogleFonts.inter(fontSize: size, fontWeight: fw, color: color ?? kTextSecondary);
 
-TextStyle kLabel(double size, {Color color = kTextMuted, FontWeight fw = FontWeight.w500}) =>
-    GoogleFonts.inter(fontSize: size, fontWeight: fw, color: color, letterSpacing: 0.3);
+TextStyle kLabel(double size, {Color? color, FontWeight fw = FontWeight.w500}) =>
+    GoogleFonts.inter(fontSize: size, fontWeight: fw, color: color ?? kTextMuted, letterSpacing: 0.3);
 
-// ── Gradients ─────────────────────────────────────────────────────────────────
-LinearGradient kCyanGradient = AppGradients.customer;
-LinearGradient kVendorGradient = AppGradients.vendor;
-LinearGradient kRiderGradient = AppGradients.rider;
-LinearGradient kBgGradient = LinearGradient(
+// ── Gradients ───────────────────────────────────────────────────────────────
+LinearGradient get kCyanGradient => AppGradients.customer;
+LinearGradient get kVendorGradient => AppGradients.vendor;
+LinearGradient get kRiderGradient => AppGradients.rider;
+LinearGradient get kBgGradient => LinearGradient(
   colors: [AppColors.surface, AppColors.background],
   begin: Alignment.topCenter, end: Alignment.bottomCenter,
 );
 
-// ── Card decoration ───────────────────────────────────────────────────────────
-BoxDecoration kCardDeco({Color? accent, double radius = 16}) => BoxDecoration(
+// ── Card decoration ─────────────────────────────────────────────────────────
+BoxDecoration kCardDeco({Color? accent, double radius = 14}) => BoxDecoration(
   color: kCard,
   borderRadius: BorderRadius.circular(radius),
-  border: Border.all(color: accent?.withValues(alpha: 0.3) ?? kBorder, width: 1),
+  border: Border.all(color: accent != null ? accent.withValues(alpha: 0.25) : kBorder, width: 1),
+  boxShadow: [
+    BoxShadow(
+      color: Colors.black.withValues(alpha: 0.04),
+      blurRadius: 8,
+      offset: const Offset(0, 2),
+    ),
+  ],
 );
 
-BoxDecoration kGlassDeco({double radius = 16}) => BoxDecoration(
-  color: kSurface.withValues(alpha: 0.85),
+BoxDecoration kGlassDeco({double radius = 14}) => BoxDecoration(
+  color: kSurface.withValues(alpha: 0.92),
   borderRadius: BorderRadius.circular(radius),
   border: Border.all(color: kBorder, width: 1),
-  boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.4), blurRadius: 20, offset: Offset(0, 8))],
+  boxShadow: [
+    BoxShadow(
+      color: Colors.black.withValues(alpha: 0.06),
+      blurRadius: 12,
+      offset: const Offset(0, 4),
+    ),
+  ],
 );
 
-BoxDecoration kGlowDeco(Color accent, {double radius = 16}) => BoxDecoration(
+BoxDecoration kGlowDeco(Color accent, {double radius = 14}) => BoxDecoration(
   color: kCard,
   borderRadius: BorderRadius.circular(radius),
-  border: Border.all(color: accent.withValues(alpha: 0.45), width: 1),
-  boxShadow: [BoxShadow(color: accent.withValues(alpha: 0.12), blurRadius: 16, spreadRadius: 0)],
+  border: Border.all(color: accent.withValues(alpha: 0.35), width: 1.2),
+  boxShadow: [
+    BoxShadow(
+      color: accent.withValues(alpha: 0.08),
+      blurRadius: 10,
+      offset: const Offset(0, 3),
+    ),
+  ],
 );
 
-// ── Legacy decorator aliases ─────────────────────────────────────────────────
-/// Backwards-compat alias for kGlowDeco used by older screens.
-BoxDecoration kGlowCard(Color accent, {double radius = 14}) =>
-    kGlowDeco(accent, radius: radius);
+// ── Legacy decorator aliases ────────────────────────────────────────────────
+BoxDecoration kGlowCard(Color accent, {double radius = 14}) => kGlowDeco(accent, radius: radius);
 
-// ── Shared helpers ────────────────────────────────────────────────────────────
+// ── Shared helpers ──────────────────────────────────────────────────────────
 Widget kStatusPill(String label, Color color, {double fontSize = 11}) => Container(
-  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+  padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3.5),
   decoration: BoxDecoration(
-    color: color.withValues(alpha: 0.15),
-    borderRadius: BorderRadius.circular(20),
-    border: Border.all(color: color.withValues(alpha: 0.4)),
+    color: color.withValues(alpha: 0.12),
+    borderRadius: BorderRadius.circular(8),
+    border: Border.all(color: color.withValues(alpha: 0.25), width: 1),
   ),
-  child: Text(label, style: GoogleFonts.inter(fontSize: fontSize, color: color, fontWeight: FontWeight.w600)),
+  child: Text(
+    label,
+    style: GoogleFonts.inter(
+      fontSize: fontSize,
+      color: color,
+      fontWeight: FontWeight.w600,
+      letterSpacing: -0.2,
+    ),
+  ),
 );
 
 Widget kSectionHeader(String title, {Widget? trailing}) => Row(
   children: [
-    Container(width: 3, height: 18, decoration: BoxDecoration(
-      gradient: kCyanGradient, borderRadius: BorderRadius.circular(2))),
-    SizedBox(width: 10),
-    Expanded(child: Text(title, style: GoogleFonts.inter(
-      fontSize: 15, fontWeight: FontWeight.w700, color: kTextPrimary))),
-    trailing ?? SizedBox.shrink(),
+    Container(
+      width: 3,
+      height: 16,
+      decoration: BoxDecoration(
+        color: kCyan,
+        borderRadius: BorderRadius.circular(2),
+      ),
+    ),
+    const SizedBox(width: 8),
+    Expanded(
+      child: Text(
+        title,
+        style: GoogleFonts.inter(
+          fontSize: 15,
+          fontWeight: FontWeight.w700,
+          color: kTextPrimary,
+          letterSpacing: -0.3,
+        ),
+      ),
+    ),
+    ?trailing,
   ],
 );
 

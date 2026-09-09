@@ -1,5 +1,5 @@
 name: car_parts_scanner
-description: "A new Flutter project."
+description: "OmniDrive AI — An End-to-End Intelligent Automotive Platform with Computer Vision, Sensor Fusion, and Smart Marketplace"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -43,7 +43,6 @@ dependencies:
   sensors_plus: ^7.0.0
   fl_chart: ^1.1.1
   permission_handler: ^12.0.1
-  audioplayers: ^6.6.0
   connectivity_plus: ^7.0.0
   shared_preferences: ^2.5.4
   http_parser: ^4.1.2
@@ -57,8 +56,8 @@ dependencies:
   intl: ^0.20.2
   flutter_image_compress: ^2.4.0
   flutter_animate: ^4.5.2
-  lottie: ^3.1.2
   app_links: ^6.4.1
+  flutter_markdown: ^0.7.7+1
 
 dev_dependencies:
   flutter_test:
