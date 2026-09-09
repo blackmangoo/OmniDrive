@@ -9,16 +9,16 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'auth/auth_gate.dart';
 import 'core/theme/app_theme.dart';
-import 'core/theme/app_colors.dart';
 import 'core/theme/app_typography.dart';
 import 'core/theme/app_gradients.dart';
 import 'core/theme/app_shadows.dart';
+import 'package:car_parts_scanner/core/theme/app_colors.dart';
+import 'core/config/app_config.dart';
 
 List<CameraDescription> cameras = [];
 
-String _supabaseUrl     = 'https://cqeubytgsrxdkfejxvan.supabase.co';
-String _supabaseAnonKey =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNxZXVieXRnc3J4ZGtmZWp4dmFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwNzMwMTMsImV4cCI6MjA4ODY0OTAxM30.iTL7KvhVxLEJFZFO50OvkgNWAyKfhM8Q51wkbZZTuPk';
+String _supabaseUrl     = AppConfig.supabaseUrl;
+String _supabaseAnonKey = AppConfig.supabaseAnonKey;
 
 // ── Local notifications plugin ───────────────────────────────────────────────
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -64,8 +64,8 @@ Future<void> main() async {
         ?.createNotificationChannel(fcmChannel);
 
     // Initialize local notifications
-    android = AndroidInitializationSettings('@mipmap/ic_launcher');
-    ios = DarwinInitializationSettings();
+    final android = AndroidInitializationSettings('@mipmap/ic_launcher');
+    final ios = DarwinInitializationSettings();
     await flutterLocalNotificationsPlugin
         .initialize(settings: InitializationSettings(android: android, iOS: ios));
 

@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'car_part.dart';
+import 'core/config/app_config.dart';
 
 class PartDetectionResult {
   final CarPart? part;
@@ -25,28 +27,27 @@ class PartDetectionResult {
 
 class PartDetectionService {
   // ─── API Configuration ───────────────────────────────────────────────────
-  // Update this to your PC's local WiFi IP (run `ipconfig` to find it)
-  static final String _baseUrl = 'https://blackmangoo-omni-drive-api.hf.space';
-  static final String _predictUrl = '$_baseUrl/predict';
-  static final String _storageBucket = 'scan_images';
+  static final String _baseUrl = AppConfig.apiBaseUrl;
+  static final String _predictUrl = AppConfig.predictUrl;
+  static const String _storageBucket = 'scan_images';
   // ─────────────────────────────────────────────────────────────────────────
 
   Future<bool> checkApiHealth() async {
     try {
-      print('[API Health Check] Querying $_baseUrl ...');
+      debugPrint('[API Health Check] Querying $_baseUrl ...');
       final resp = await http
-          .get(Uri.parse(_baseUrl))
-          .timeout(Duration(seconds: 12));
-      print('[API Health Check] Response code: ${resp.statusCode}');
+          .post(Uri.parse('$_baseUrl/health'))
+          .timeout(Duration(seconds: 45));
+      debugPrint('[API Health Check] Response code: ${resp.statusCode}');
       if (resp.statusCode == 200) {
         final json = jsonDecode(resp.body);
         final isLoaded = json['model_loaded'] == true;
-        print('[API Health Check] Model loaded status: $isLoaded');
+        debugPrint('[API Health Check] Model loaded status: $isLoaded');
         return isLoaded;
       }
       return false;
     } catch (e) {
-      print('[API Health Check] Exception encountered: $e');
+      debugPrint('[API Health Check] Exception encountered: $e');
       return false;
     }
   }
@@ -77,13 +78,13 @@ class PartDetectionService {
       final imageUrl =
           supabase.storage.from(_storageBucket).getPublicUrl(fileName);
 
-      // Insert record to scan_history
+      // Insert record to scan_history with authenticated user reference
       await supabase.from('scan_history').insert({
         'image_url': imageUrl,
         'predicted_class': predictedClass,
         'confidence': confidence,
         'inference_time_ms': inferenceTimeMs,
-        // 'user_id' left null until Phase 1.5 auth is added
+        'user_id': supabase.auth.currentUser?.id,
       });
 
       return imageUrl;
@@ -134,14 +135,19 @@ class PartDetectionService {
               .toList();
 
       // ── Confidence gate ────────────────────────────────────────────────
-      // Reject predictions below 60% — saves Supabase quota + avoids bad data
-      if (confidence < 60.0) {
+      // Reject predictions below 65% — prevents false identifications
+      if (confidence < 65.0) {
         return PartDetectionResult(
           confidence: confidence,
           allPredictions: allPredictions,
           inferenceTimeMs: inferenceMs,
-          error: 'Low confidence (${confidence.toStringAsFixed(1)}%) — '
-              'fill the frame with the part, ensure good lighting, and hold steady.',
+          error: 'No car part detected.\n\n'
+              'The AI could not confidently identify a car part in this image '
+              '(best match: $predictedClass at ${confidence.toStringAsFixed(1)}%).\n\n'
+              'Tips:\n'
+              '• Make sure the car part fills most of the frame\n'
+              '• Use good lighting (avoid dark or blurry images)\n'
+              '• Only scan real automotive components',
         );
       }
 
