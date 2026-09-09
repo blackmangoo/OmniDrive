@@ -139,16 +139,39 @@ async def chat_with_rag(request: ChatRequest):
         docs = response.data
         context_text = "\n\n".join([doc['content'] for doc in docs]) if docs else "No specific DIY documentation found."
 
-        prompt = f"You are a helpful AI mechanic. Answer based on this docs:\n{context_text}\n\nQuestion: {request.query}"
+        prompt = (
+            "You are OmniDrive's expert AI Master Mechanic. Your role is to provide accurate, "
+            "step-by-step automotive guidance, diagnostics, and maintenance advice.\n\n"
+            "Reference the verified technical documentation below to answer the inquiry. "
+            "If the documentation does not directly answer the inquiry, provide helpful automotive "
+            "best practices and emphasize workshop safety.\n\n"
+            f"<technical_documentation>\n{context_text}\n</technical_documentation>\n\n"
+            f"<user_question>\n{request.query}\n</user_question>"
+        )
         chat_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key={GEMINI_API_KEY}"
         chat_res = requests.post(chat_url, json={"contents": [{"parts": [{"text": prompt}]}]}).json()
-        
-        return {"success": True, "answer": chat_res["candidates"][0]["content"]["parts"][0]["text"], "retrieved_docs": len(docs)}
+
+        if "error" in chat_res:
+            error_msg = chat_res["error"].get("message", "Gemini API error")
+            raise HTTPException(status_code=502, detail=f"AI model error: {error_msg}")
+
+        candidates = chat_res.get("candidates", [])
+        if not candidates or "content" not in candidates[0]:
+            return {"success": True, "answer": "I could not generate a response for that inquiry. Please try rephrasing.", "retrieved_docs": len(docs)}
+
+        answer_text = candidates[0]["content"]["parts"][0]["text"]
+        return {"success": True, "answer": answer_text, "retrieved_docs": len(docs)}
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/ingest_data")
-def trigger_ingestion():
+@app.post("/ingest_data")
+def trigger_ingestion(token: str = ""):
+    expected = os.environ.get("INGEST_SECRET", "")
+    if expected and token != expected:
+        raise HTTPException(status_code=403, detail="Invalid ingestion token")
     import subprocess
     result = subprocess.run(["python", "rag_ingest.py"], capture_output=True, text=True)
     return {"success": result.returncode == 0, "logs": result.stdout if result.returncode == 0 else result.stderr}
