@@ -557,13 +557,24 @@ class MarketplaceService {
     }
   }
 
-  /// Let a rider accept/claim an available ready order
+  /// Let a rider accept/claim an available ready order atomically.
+  /// Protects against race conditions if multiple riders tap simultaneously.
   static Future<void> claimOrder(String orderId) async {
-    await _sb.from('orders').update({
-      'rider_id': currentUserId,
-      'status': 'dispatched',
-      'updated_at': DateTime.now().toIso8601String(),
-    }).eq('id', orderId);
+    final updated = await _sb
+        .from('orders')
+        .update({
+          'rider_id': currentUserId,
+          'status': 'dispatched',
+          'updated_at': DateTime.now().toIso8601String(),
+        })
+        .eq('id', orderId)
+        .isFilter('rider_id', null)
+        .eq('status', 'ready')
+        .select();
+
+    if (updated.isEmpty) {
+      throw Exception('This order was just claimed by another rider.');
+    }
 
     try {
       final order = await _sb.from('orders').select('customer_id, vendor_id').eq('id', orderId).single();
