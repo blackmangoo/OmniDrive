@@ -1,3 +1,4 @@
+import '../../../chatbot/chat_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -8,11 +9,16 @@ import '../marketplace_service.dart';
 import 'product_detail_screen.dart';
 import 'cart_screen.dart';
 import 'category_products_screen.dart';
-import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/motion/motion_stagger.dart';
 import '../../core/motion/motion_tappable.dart';
 import '../../core/motion/motion_counter.dart';
+import 'package:car_parts_scanner/core/theme/app_colors.dart';
+import '../../image_search_screen.dart';
+import '../../main.dart' show cameras;
+import '../vendor/vendor_shell.dart';
+import '../../auth/vendor_signup_screen.dart';
+
 
 class MarketplaceHomeScreen extends StatefulWidget {
   const MarketplaceHomeScreen({super.key});
@@ -29,31 +35,72 @@ class _MarketplaceHomeScreenState extends State<MarketplaceHomeScreen> {
   int _cartCount = 0;
 
   static final _heroBanners = [
-    _HeroBanner('Precision Parts for Peak Performance',
-        'Get up to 30% off German-engineered suspension kits this week.',
-        kCyanGradient, Icons.car_repair_rounded),
-    _HeroBanner('New Arrivals: Engine Components',
-        'OEM-quality engine parts from verified vendors.',
-        LinearGradient(colors: [Color(0xFF059669), Color(0xFF047857)],
-            begin: Alignment.topLeft, end: Alignment.bottomRight),
-        Icons.build_circle_rounded),
-    _HeroBanner('Free Delivery on Orders over Rs 2,000',
-        'More savings, faster to your doorstep.',
-        LinearGradient(colors: [Color(0xFF7C3AED), Color(0xFF5B21B6)],
-            begin: Alignment.topLeft, end: Alignment.bottomRight),
-        Icons.local_shipping_rounded),
+    _HeroBanner(
+      'German-Engineered Suspension & Handling',
+      'Precision coilovers, sway bars, and bush kits tested for peak stability.',
+      const LinearGradient(
+        colors: [Color(0xFF1A1D24), Color(0xFF101217)],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      Icons.tune_rounded,
+      const Color(0xFF7C6EF6),
+    ),
+    _HeroBanner(
+      'OEM Powertrain & Engine Components',
+      'Certified fuel injectors, turbochargers, and timing systems from verified vendors.',
+      const LinearGradient(
+        colors: [Color(0xFF141F1A), Color(0xFF0D1411)],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      Icons.engineering_rounded,
+      const Color(0xFF10B981),
+    ),
+    _HeroBanner(
+      'Express Delivery on Track & Street Spares',
+      'Live GPS rider dispatch straight to your workshop or pit lane.',
+      const LinearGradient(
+        colors: [Color(0xFF221A28), Color(0xFF140F19)],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      Icons.local_shipping_outlined,
+      const Color(0xFFA78BFA),
+    ),
   ];
 
-  static final _categoryList = [
-    _CatData('Brakes',      Icons.disc_full_rounded,          Color(0xFFEF4444)),
-    _CatData('Engine',      Icons.engineering_rounded,        Color(0xFFF59E0B)),
-    _CatData('Filters',     Icons.filter_alt_rounded,          Color(0xFF4FC3F7)),
-    _CatData('Lights',      Icons.light_mode_rounded,          Color(0xFFFBBF24)),
-    _CatData('Suspension',  Icons.directions_car_rounded,     Color(0xFF10B981)),
-    _CatData('Tyres',       Icons.radio_button_unchecked,     Color(0xFF6B7280)),
-    _CatData('Body Parts',  Icons.car_crash_rounded,          Color(0xFFA78BFA)),
-    _CatData('Electrical',  Icons.electrical_services_rounded, Color(0xFF60A5FA)),
-  ];
+  static IconData _iconForCategory(String name) {
+    final lower = name.toLowerCase();
+    if (lower.contains('brake')) return Icons.disc_full_rounded;
+    if (lower.contains('engine') || lower.contains('motor')) return Icons.engineering_rounded;
+    if (lower.contains('filter')) return Icons.filter_alt_rounded;
+    if (lower.contains('light')) return Icons.light_mode_rounded;
+    if (lower.contains('suspension')) return Icons.directions_car_rounded;
+    if (lower.contains('tyre') || lower.contains('tire') || lower.contains('wheel')) return Icons.radio_button_unchecked;
+    if (lower.contains('body')) return Icons.car_crash_rounded;
+    if (lower.contains('electr')) return Icons.electrical_services_rounded;
+    return Icons.build_circle_outlined;
+  }
+
+  static Color _colorForCategory(String name, String? colorHex) {
+    if (colorHex != null && colorHex.isNotEmpty) {
+      try {
+        final hex = colorHex.replaceAll('#', '');
+        return Color(int.parse('FF$hex', radix: 16));
+      } catch (_) {}
+    }
+    final lower = name.toLowerCase();
+    if (lower.contains('brake')) return const Color(0xFFEF4444);
+    if (lower.contains('engine')) return const Color(0xFFF59E0B);
+    if (lower.contains('filter')) return const Color(0xFF38BDF8);
+    if (lower.contains('light')) return const Color(0xFFFBBF24);
+    if (lower.contains('suspension')) return const Color(0xFF10B981);
+    if (lower.contains('tyre') || lower.contains('wheel')) return const Color(0xFF94A3B8);
+    if (lower.contains('body')) return const Color(0xFFA78BFA);
+    if (lower.contains('electr')) return const Color(0xFF60A5FA);
+    return AppColors.cyan;
+  }
 
   int _heroBannerIndex = 0;
   PageController? _pageCtrl;
@@ -70,6 +117,17 @@ class _MarketplaceHomeScreenState extends State<MarketplaceHomeScreen> {
     _searchCtrl.dispose();
     _pageCtrl?.dispose();
     super.dispose();
+  }
+
+  Future<void> _openVendorPortal() async {
+    final role = await MarketplaceService.getUserRole();
+    if (!mounted) return;
+    final nav = Navigator.of(context);
+    if (role == 'vendor') {
+      nav.push(MaterialPageRoute(builder: (_) => const VendorShell()));
+    } else {
+      nav.push(MaterialPageRoute(builder: (_) => const VendorSignupScreen()));
+    }
   }
 
   Future<void> _loadData() async {
@@ -146,6 +204,11 @@ class _MarketplaceHomeScreenState extends State<MarketplaceHomeScreen> {
                     ],
                   ),
                   IconButton(
+                    icon: Icon(Icons.support_agent_rounded, color: kCyan),
+                    onPressed: () => Navigator.push(context,
+                        MaterialPageRoute(builder: (_) => ChatScreen())),
+                  ),
+                  IconButton(
                     icon: Icon(Icons.notifications_none_rounded,
                         color: kTextSecondary),
                     onPressed: () {},
@@ -207,9 +270,17 @@ class _MarketplaceHomeScreenState extends State<MarketplaceHomeScreen> {
                             child: Container(
                               decoration: BoxDecoration(
                                 gradient: b.gradient,
-                                borderRadius: BorderRadius.circular(20),
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(color: b.accent.withValues(alpha: 0.3), width: 1),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.15),
+                                    blurRadius: 12,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
                               ),
-                              padding: EdgeInsets.all(20),
+                              padding: const EdgeInsets.all(20),
                               child: Row(
                                 children: [
                                   Expanded(
@@ -218,32 +289,37 @@ class _MarketplaceHomeScreenState extends State<MarketplaceHomeScreen> {
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
                                         Text(b.title, style: GoogleFonts.inter(
-                                          fontSize: 15, fontWeight: FontWeight.w800,
-                                          color: Colors.white, height: 1.25)),
-                                        SizedBox(height: 6),
+                                          fontSize: 14, fontWeight: FontWeight.w700,
+                                          color: AppColors.textPrimary, height: 1.25, letterSpacing: -0.3)),
+                                        const SizedBox(height: 6),
                                         Text(b.subtitle, style: GoogleFonts.inter(
-                                          fontSize: 11, color: Colors.white70)),
-                                        SizedBox(height: 12),
-                                        TappableScale(
-                                          onTap: () {},
-                                          child: Container(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 14, vertical: 6),
-                                            decoration: BoxDecoration(
-                                              color: Colors.white.withValues(alpha: 0.2),
-                                              borderRadius: BorderRadius.circular(20),
-                                            ),
-                                            child: Text('Shop Now',
-                                              style: GoogleFonts.inter(fontSize: 11,
-                                                fontWeight: FontWeight.w700,
-                                                color: Colors.white)),
+                                          fontSize: 11, color: AppColors.textSecondary, height: 1.3)),
+                                        const SizedBox(height: 12),
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 12, vertical: 6),
+                                          decoration: BoxDecoration(
+                                            color: b.accent.withValues(alpha: 0.18),
+                                            borderRadius: BorderRadius.circular(8),
+                                            border: Border.all(color: b.accent.withValues(alpha: 0.4), width: 1),
+                                          ),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Text('Explore Spares',
+                                                style: GoogleFonts.inter(fontSize: 11,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: AppColors.textPrimary, letterSpacing: -0.2)),
+                                              const SizedBox(width: 4),
+                                              Icon(Icons.arrow_forward_rounded, size: 12, color: AppColors.textPrimary),
+                                            ],
                                           ),
                                         ),
                                       ],
                                     ),
                                   ),
                                   Icon(b.icon, size: 64,
-                                      color: Colors.white.withValues(alpha: 0.25)),
+                                      color: AppColors.textPrimary.withValues(alpha: 0.25)),
                                 ],
                               ),
                             ),
@@ -282,54 +358,95 @@ class _MarketplaceHomeScreenState extends State<MarketplaceHomeScreen> {
                           )),
                     ),
                     SizedBox(
-                      height: 90,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        padding: EdgeInsets.symmetric(horizontal: 12),
-                        itemCount: _categoryList.length,
-                        itemBuilder: (_, i) {
-                          final cat = _categoryList[i];
-                          return StaggeredEntrance(
-                            index: i,
-                            child: TappableScale(
-                              onTap: () {
-                                final dbCat = _categories.firstWhere(
-                                  (c) => c.name.toLowerCase() == cat.label.toLowerCase(),
-                                  orElse: () => Category(id: '', name: cat.label),
-                                );
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => CategoryProductsScreen(category: dbCat),
-                                  ),
-                                ).then((_) => _loadData());
-                              },
-                              child: Container(
+                      height: 94,
+                      child: _loading && _categories.isEmpty
+                          ? ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              padding: const EdgeInsets.symmetric(horizontal: 12),
+                              itemCount: 6,
+                              itemBuilder: (_, i) => Container(
                                 width: 72,
-                                margin: EdgeInsets.symmetric(horizontal: 4),
+                                margin: const EdgeInsets.symmetric(horizontal: 4),
                                 child: Column(
                                   children: [
                                     Container(
-                                      width: 52, height: 52,
+                                      width: 52,
+                                      height: 52,
                                       decoration: BoxDecoration(
-                                        color: cat.color.withValues(alpha: 0.12),
-                                        borderRadius: BorderRadius.circular(16),
-                                        border: Border.all(
-                                            color: cat.color.withValues(alpha: 0.3)),
+                                        color: kCard,
+                                        borderRadius: BorderRadius.circular(14),
+                                        border: Border.all(color: kBorder),
                                       ),
-                                      child: Icon(cat.icon, color: cat.color, size: 24),
                                     ),
-                                    SizedBox(height: 6),
-                                    Text(cat.label, style: kBody(10, color: kTextSecondary),
-                                      textAlign: TextAlign.center, maxLines: 1,
-                                      overflow: TextOverflow.ellipsis),
+                                    const SizedBox(height: 6),
+                                    Container(
+                                      width: 44,
+                                      height: 10,
+                                      decoration: BoxDecoration(
+                                        color: kCard,
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
+                            )
+                          : ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              padding: const EdgeInsets.symmetric(horizontal: 12),
+                              itemCount: _categories.length,
+                              itemBuilder: (_, i) {
+                                final cat = _categories[i];
+                                final icon = _iconForCategory(cat.name);
+                                final color = _colorForCategory(cat.name, cat.color);
+                                return StaggeredEntrance(
+                                  index: i,
+                                  child: TappableScale(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => CategoryProductsScreen(category: cat),
+                                        ),
+                                      ).then((_) => _loadData());
+                                    },
+                                    child: Container(
+                                      width: 72,
+                                      margin: const EdgeInsets.symmetric(horizontal: 4),
+                                      child: Column(
+                                        children: [
+                                          Container(
+                                            width: 52,
+                                            height: 52,
+                                            decoration: BoxDecoration(
+                                              color: color.withValues(alpha: 0.12),
+                                              borderRadius: BorderRadius.circular(14),
+                                              border: Border.all(
+                                                color: color.withValues(alpha: 0.25),
+                                                width: 1,
+                                              ),
+                                            ),
+                                            child: Icon(icon, color: color, size: 24),
+                                          ),
+                                          const SizedBox(height: 6),
+                                          Text(
+                                            cat.name,
+                                            style: GoogleFonts.inter(
+                                              fontSize: 11,
+                                              fontWeight: FontWeight.w500,
+                                              color: kTextSecondary,
+                                            ),
+                                            textAlign: TextAlign.center,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
                             ),
-                          );
-                        },
-                      ),
                     ),
 
                     SizedBox(height: 16),
@@ -406,18 +523,25 @@ class _MarketplaceHomeScreenState extends State<MarketplaceHomeScreen> {
                         icon: Icons.storefront_rounded,
                         accent: kVendor,
                         title: 'Vendor Portal',
-                        subtitle: 'Start selling your auto parts to thousands of customers.',
-                        label: 'Start Selling',
-                        onTap: () {},
+                        subtitle: 'List spare parts, manage catalog inventory, and track live shop orders.',
+                        label: 'Open Portal',
+                        onTap: _openVendorPortal,
                       ),
-                      SizedBox(height: 12),
+                      const SizedBox(height: 12),
                       _PromoCard(
                         icon: Icons.document_scanner_rounded,
                         accent: kCyan,
-                        title: 'AI Diagnostics',
-                        subtitle: 'Scan your dashboard lights to identify the right part.',
-                        label: 'Scan Now',
-                        onTap: () {},
+                        title: 'AI Visual Diagnostics',
+                        subtitle: 'Identify 50+ mechanical parts instantly using our YOLO11 vision engine.',
+                        label: 'Scan Part',
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => ImageSearchScreen(cameras: cameras),
+                            ),
+                          );
+                        },
                       ),
                     ],
                   ),
@@ -616,12 +740,6 @@ class _HeroBanner {
   final String title, subtitle;
   final LinearGradient gradient;
   final IconData icon;
-  _HeroBanner(this.title, this.subtitle, this.gradient, this.icon);
-}
-
-class _CatData {
-  final String label;
-  final IconData icon;
-  final Color color;
-  _CatData(this.label, this.icon, this.color);
+  final Color accent;
+  _HeroBanner(this.title, this.subtitle, this.gradient, this.icon, [this.accent = const Color(0xFF7C6EF6)]);
 }
