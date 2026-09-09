@@ -8,6 +8,9 @@ import '../marketplace_service.dart';
 import 'marketplace_home_screen.dart';
 import 'cart_screen.dart';
 import 'customer_profile_screen.dart';
+import 'package:car_parts_scanner/core/theme/app_colors.dart';
+
+
 
 class CustomerShell extends StatefulWidget {
   const CustomerShell({super.key});
@@ -54,7 +57,7 @@ class _CustomerShellState extends State<CustomerShell> {
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: kSurface,
-          border: Border(top: BorderSide(color: Colors.white.withValues(alpha: 0.06))),
+          border: Border(top: BorderSide(color: AppColors.textPrimary.withValues(alpha: 0.06))),
         ),
         child: NavigationBar(
           backgroundColor: Colors.transparent,
@@ -72,37 +75,37 @@ class _CustomerShellState extends State<CustomerShell> {
           labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
           destinations: [
             NavigationDestination(
-              icon: Icon(Icons.storefront_outlined, color: Colors.white38),
+              icon: Icon(Icons.storefront_outlined, color: AppColors.textMuted),
               selectedIcon: Icon(Icons.storefront_rounded, color: kAccent),
               label: 'Market',
             ),
             NavigationDestination(
-              icon: Icon(Icons.document_scanner_outlined, color: Colors.white38),
+              icon: Icon(Icons.document_scanner_outlined, color: AppColors.textMuted),
               selectedIcon: Icon(Icons.document_scanner_rounded, color: kAccent),
               label: 'Scanner',
             ),
             NavigationDestination(
               icon: badges.Badge(
                 showBadge: _cartCount > 0,
-                badgeContent: Text('$_cartCount', style: TextStyle(color: Colors.white, fontSize: 10)),
+                badgeContent: Text('$_cartCount', style: TextStyle(color: AppColors.textPrimary, fontSize: 10)),
                 badgeStyle: badges.BadgeStyle(badgeColor: kError),
-                child: Icon(Icons.shopping_cart_outlined, color: Colors.white38),
+                child: Icon(Icons.shopping_cart_outlined, color: AppColors.textMuted),
               ),
               selectedIcon: badges.Badge(
                 showBadge: _cartCount > 0,
-                badgeContent: Text('$_cartCount', style: TextStyle(color: Colors.white, fontSize: 10)),
+                badgeContent: Text('$_cartCount', style: TextStyle(color: AppColors.textPrimary, fontSize: 10)),
                 badgeStyle: badges.BadgeStyle(badgeColor: kError),
                 child: Icon(Icons.shopping_cart_rounded, color: kAccent),
               ),
               label: 'Cart',
             ),
             NavigationDestination(
-              icon: Icon(Icons.speed_outlined, color: Colors.white38),
+              icon: Icon(Icons.speed_outlined, color: AppColors.textMuted),
               selectedIcon: Icon(Icons.speed_rounded, color: kAccent),
               label: 'Speed',
             ),
             NavigationDestination(
-              icon: Icon(Icons.person_outline_rounded, color: Colors.white38),
+              icon: Icon(Icons.person_outline_rounded, color: AppColors.textMuted),
               selectedIcon: Icon(Icons.person_rounded, color: kAccent),
               label: 'Profile',
             ),

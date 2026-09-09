@@ -3,11 +3,12 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'auth_gate.dart';
-import '../core/theme/app_colors.dart';
 import '../core/theme/app_spacing.dart';
 import '../core/theme/app_typography.dart';
 import '../core/motion/motion_tappable.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:car_parts_scanner/core/theme/app_colors.dart';
+
 
 class AdminMfaScreen extends StatefulWidget {
   const AdminMfaScreen({super.key});
@@ -157,7 +158,7 @@ class _AdminMfaScreenState extends State<AdminMfaScreen> {
       SnackBar(
         content: Text(
           message,
-          style: GoogleFonts.inter(color: Colors.white, fontWeight: FontWeight.w500),
+          style: GoogleFonts.inter(color: AppColors.textPrimary, fontWeight: FontWeight.w500),
         ),
         backgroundColor: isError ? AppColors.error : AppColors.success,
         behavior: SnackBarBehavior.floating,
@@ -274,11 +275,11 @@ class _AdminMfaScreenState extends State<AdminMfaScreen> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.refresh_rounded, color: Colors.white),
+                Icon(Icons.refresh_rounded, color: AppColors.textPrimary),
                 SizedBox(width: 8),
                 Text(
                   'Retry Setup',
-                  style: AppTypography.title.copyWith(fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold),
+                  style: AppTypography.title.copyWith(fontSize: 14, color: AppColors.textPrimary, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -339,7 +340,7 @@ class _AdminMfaScreenState extends State<AdminMfaScreen> {
             Container(
               padding: EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppColors.textPrimary,
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
@@ -358,7 +359,7 @@ class _AdminMfaScreenState extends State<AdminMfaScreen> {
                   return Container(
                     width: 200,
                     height: 200,
-                    color: Colors.white,
+                    color: AppColors.textPrimary,
                     alignment: Alignment.center,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -570,11 +571,11 @@ class _AdminMfaScreenState extends State<AdminMfaScreen> {
                   ? SizedBox(
                       width: 22,
                       height: 22,
-                      child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2.5),
+                      child: CircularProgressIndicator(color: AppColors.textPrimary, strokeWidth: 2.5),
                     )
                   : Text(
                       'Verify Code',
-                      style: AppTypography.title.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
+                      style: AppTypography.title.copyWith(color: AppColors.textPrimary, fontWeight: FontWeight.bold),
                     ),
             ),
           ),
@@ -647,14 +648,14 @@ class _SuccessCheckAnimationState extends State<_SuccessCheckAnimation>
             ),
             child: Icon(
               Icons.check_rounded,
-              color: Colors.white,
+              color: AppColors.textPrimary,
               size: 64,
             ),
           ),
           SizedBox(height: 28),
           Text(
             'MFA Verified',
-            style: AppTypography.h2.copyWith(color: Colors.white),
+            style: AppTypography.h2.copyWith(color: AppColors.textPrimary),
           ),
           SizedBox(height: 8),
           Text(
@@ -686,7 +687,7 @@ class _SuccessCheckAnimationState extends State<_SuccessCheckAnimation>
             ),
             child: Icon(
               Icons.check_rounded,
-              color: Colors.white,
+              color: AppColors.textPrimary,
               size: 64,
             ),
           ),
@@ -694,7 +695,7 @@ class _SuccessCheckAnimationState extends State<_SuccessCheckAnimation>
         SizedBox(height: 28),
         Text(
           'MFA Verified',
-          style: AppTypography.h2.copyWith(color: Colors.white),
+          style: AppTypography.h2.copyWith(color: AppColors.textPrimary),
         ),
         SizedBox(height: 8),
         Text(

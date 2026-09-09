@@ -9,8 +9,9 @@ import 'performance_run_service.dart';
 import 'sensor_fusion_service.dart';
 import 'obd_wifi_service.dart';
 import 'results_screen.dart';
-import '../core/theme/app_colors.dart';
 import '../core/motion/motion_tappable.dart';
+import 'package:car_parts_scanner/core/theme/app_colors.dart';
+
 
 /// Live dashboard during a performance run.
 /// - Redesigned speedometer with custom gauge CustomPainter
@@ -26,7 +27,7 @@ class LiveTestScreen extends StatefulWidget {
   final SensorFusionService? gpsService;
   final ObdWifiService? obdService;
 
-  LiveTestScreen({
+  const LiveTestScreen({
     super.key,
     required this.carId,
     required this.runService,
@@ -184,7 +185,7 @@ class _LiveTestScreenState extends State<LiveTestScreen> {
                       Text(
                         _formatElapsed(_elapsedS),
                         style: TextStyle(
-                          color: Colors.white38,
+                          color: AppColors.textMuted,
                           fontSize: 16,
                           fontFeatures: [FontFeature.tabularFigures()],
                           fontFamily: 'monospace',
@@ -194,7 +195,7 @@ class _LiveTestScreenState extends State<LiveTestScreen> {
                       onTap: _cancelTest,
                       child: Padding(
                         padding: EdgeInsets.all(8.0),
-                        child: Icon(Icons.close_rounded, color: Colors.white38),
+                        child: Icon(Icons.close_rounded, color: AppColors.textMuted),
                       ),
                     ),
                   ],
@@ -229,9 +230,9 @@ class _LiveTestScreenState extends State<LiveTestScreen> {
                       shape: BoxShape.circle,
                       color: _currentSpeed >= 98
                           ? AppColors.error.withValues(alpha: 0.2)
-                          : Colors.white.withValues(alpha: 0.04),
+                          : AppColors.textPrimary.withValues(alpha: 0.04),
                       border: Border.all(
-                        color: _currentSpeed >= 98 ? AppColors.error : Colors.white24,
+                        color: _currentSpeed >= 98 ? AppColors.error : (AppColors.textMuted.withValues(alpha: 0.5)),
                         width: 3,
                       ),
                       boxShadow: [
@@ -248,13 +249,13 @@ class _LiveTestScreenState extends State<LiveTestScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(Icons.block_rounded,
-                          color: _currentSpeed >= 98 ? AppColors.error : Colors.white38,
+                          color: _currentSpeed >= 98 ? AppColors.error : AppColors.textMuted,
                           size: 36),
                         SizedBox(height: 8),
                         Text(
                           _currentSpeed >= 98 ? 'BRAKE NOW' : 'Reach 100',
                           style: TextStyle(
-                            color: _currentSpeed >= 98 ? Colors.white : Colors.white38,
+                            color: _currentSpeed >= 98 ? AppColors.textPrimary : AppColors.textMuted,
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 1.0,
@@ -284,7 +285,7 @@ class _LiveTestScreenState extends State<LiveTestScreen> {
                         drawVerticalLine: false,
                         horizontalInterval: _chartMaxY / 3,
                         getDrawingHorizontalLine: (_) =>
-                            FlLine(color: Colors.white.withValues(alpha: 0.07), strokeWidth: 1),
+                            FlLine(color: AppColors.textPrimary.withValues(alpha: 0.07), strokeWidth: 1),
                       ),
                       titlesData: FlTitlesData(
                         rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
@@ -296,7 +297,7 @@ class _LiveTestScreenState extends State<LiveTestScreen> {
                             interval: 5,
                             getTitlesWidget: (v, _) => Text(
                               '${v.toInt()}s',
-                              style: TextStyle(color: Colors.white24, fontSize: 10),
+                              style: TextStyle(color: (AppColors.textMuted.withValues(alpha: 0.5)), fontSize: 10),
                             ),
                           ),
                         ),
@@ -307,7 +308,7 @@ class _LiveTestScreenState extends State<LiveTestScreen> {
                             interval: _chartMaxY / 3,
                             getTitlesWidget: (v, _) => Text(
                               '${v.toInt()}',
-                              style: TextStyle(color: Colors.white24, fontSize: 10),
+                              style: TextStyle(color: (AppColors.textMuted.withValues(alpha: 0.5)), fontSize: 10),
                             ),
                           ),
                         ),
@@ -355,17 +356,17 @@ class _LiveTestScreenState extends State<LiveTestScreen> {
                         children: [
                           Icon(
                             done ? Icons.check_circle_rounded : Icons.radio_button_unchecked_rounded,
-                            color: done ? AppColors.success : Colors.white24,
+                            color: done ? AppColors.success : (AppColors.textMuted.withValues(alpha: 0.5)),
                             size: 18,
                           ),
                           SizedBox(width: 10),
                           Text(
                             m.displayName,
                             style: TextStyle(
-                              color: done ? Colors.white54 : Colors.white70,
+                              color: done ? AppColors.textMuted : AppColors.textSecondary,
                               fontSize: 15,
                               decoration: done ? TextDecoration.lineThrough : null,
-                              decorationColor: Colors.white38,
+                              decorationColor: AppColors.textMuted,
                             ),
                           ),
                           if (done && _resultTime(m) != null) ...[
@@ -456,7 +457,7 @@ class SpeedometerGauge extends StatelessWidget {
   final double maxSpeed;
   final RunState runState;
 
-  SpeedometerGauge({
+  const SpeedometerGauge({
     super.key,
     required this.speed,
     required this.maxSpeed,
@@ -489,7 +490,7 @@ class SpeedometerGauge extends StatelessWidget {
             Text(
               speed.toStringAsFixed(0),
               style: GoogleFonts.inter(
-                color: Colors.white,
+                color: AppColors.textPrimary,
                 fontSize: 64,
                 fontWeight: FontWeight.w900,
                 height: 1.0,
@@ -530,13 +531,13 @@ class _GaugePainter extends CustomPainter {
     
     // Draw background track
     final trackPaint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.05)
+      ..color = AppColors.textPrimary.withValues(alpha: 0.05)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 8
       ..strokeCap = StrokeCap.round;
       
-    const startAngle = 130 * math.pi / 180;
-    const sweepAngle = 280 * math.pi / 180;
+    const double startAngle = 130 * math.pi / 180;
+    const double sweepAngle = 280 * math.pi / 180;
     canvas.drawArc(Rect.fromCircle(center: center, radius: radius), startAngle, sweepAngle, false, trackPaint);
     
     // Draw Speed Arc
@@ -557,11 +558,11 @@ class _GaugePainter extends CustomPainter {
     
     // Draw Tick Marks
     final tickPaint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.15)
+      ..color = AppColors.textPrimary.withValues(alpha: 0.15)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.5;
       
-    const totalTicks = 20;
+    const int totalTicks = 20;
     for (int i = 0; i <= totalTicks; i++) {
       final angle = startAngle + (i / totalTicks) * sweepAngle;
       final isMajor = i % 5 == 0;
@@ -580,8 +581,8 @@ class _GaugePainter extends CustomPainter {
       );
       
       tickPaint.color = isMajor 
-          ? Colors.white.withValues(alpha: 0.3) 
-          : Colors.white.withValues(alpha: 0.12);
+          ? AppColors.textPrimary.withValues(alpha: 0.3) 
+          : AppColors.textPrimary.withValues(alpha: 0.12);
       canvas.drawLine(startOffset, endOffset, tickPaint);
     }
 

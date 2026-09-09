@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 double _toDouble(dynamic val) {
   if (val == null) return 0.0;
   if (val is num) return val.toDouble();
@@ -135,7 +137,7 @@ class Product {
     this.comparePrice,
     required this.stockQuantity,
     this.unit = 'piece',
-    this.images = [],
+    this.images = const [],
     this.sku,
     this.isActive = true,
     this.vendorShopName,
@@ -238,7 +240,7 @@ class OrderItem {
         productImage: m['product_image']?.toString(),
       );
     } catch (e) {
-      print('OrderItem.fromMap error: $e | Data: $m');
+      debugPrint('OrderItem.fromMap error: $e | Data: $m');
       rethrow;
     }
   }
@@ -281,7 +283,7 @@ class Order {
     this.riderId,
     required this.createdAt,
     this.paymentMethod,
-    this.items = [],
+    this.items = const [],
     this.customerName,
     this.customerPhone,
     this.vendorShopName,
@@ -325,7 +327,7 @@ class Order {
         riderPhone: rider?['phone']?.toString(),
       );
     } catch (e) {
-      print('Order.fromMap error: $e | Data: $m');
+      debugPrint('Order.fromMap error: $e | Data: $m');
       rethrow;
     }
   }
@@ -346,7 +348,7 @@ class AppNotification {
     required this.title,
     required this.body,
     required this.type,
-    this.data = {},
+    this.data = const {},
     this.isRead = false,
     required this.createdAt,
   });

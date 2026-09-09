@@ -3,6 +3,9 @@ import '../marketplace_constants.dart';
 import 'admin_orders_screen.dart';
 import 'admin_approvals_screen.dart';
 import 'admin_profile_screen.dart';
+import 'package:car_parts_scanner/core/theme/app_colors.dart';
+
+
 
 class AdminShell extends StatefulWidget {
   const AdminShell({super.key});
@@ -27,7 +30,7 @@ class _AdminShellState extends State<AdminShell> {
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: kSurface,
-          border: Border(top: BorderSide(color: Colors.white.withValues(alpha: 0.06))),
+          border: Border(top: BorderSide(color: AppColors.textPrimary.withValues(alpha: 0.06))),
         ),
         child: NavigationBar(
           backgroundColor: Colors.transparent,
@@ -37,17 +40,17 @@ class _AdminShellState extends State<AdminShell> {
           labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
           destinations: [
             NavigationDestination(
-              icon: Icon(Icons.admin_panel_settings_outlined, color: Colors.white38),
+              icon: Icon(Icons.admin_panel_settings_outlined, color: AppColors.textMuted),
               selectedIcon: Icon(Icons.admin_panel_settings_rounded, color: kError),
               label: 'Orders',
             ),
             NavigationDestination(
-              icon: Icon(Icons.verified_outlined, color: Colors.white38),
+              icon: Icon(Icons.verified_outlined, color: AppColors.textMuted),
               selectedIcon: Icon(Icons.verified_rounded, color: kError),
               label: 'Approvals',
             ),
             NavigationDestination(
-              icon: Icon(Icons.person_outline_rounded, color: Colors.white38),
+              icon: Icon(Icons.person_outline_rounded, color: AppColors.textMuted),
               selectedIcon: Icon(Icons.person_rounded, color: kError),
               label: 'Profile',
             ),

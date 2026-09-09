@@ -6,6 +6,9 @@ import '../marketplace_constants.dart';
 import '../marketplace_models.dart';
 import '../marketplace_service.dart';
 import 'product_detail_screen.dart';
+import 'package:car_parts_scanner/core/theme/app_colors.dart';
+
+
 
 class CategoryProductsScreen extends StatefulWidget {
   final Category category;
@@ -38,17 +41,17 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
         backgroundColor: kBg,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white70, size: 20),
+          icon: Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.textSecondary, size: 20),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(widget.category.name,
-            style: GoogleFonts.inter(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+            style: GoogleFonts.inter(color: AppColors.textPrimary, fontSize: 18, fontWeight: FontWeight.bold)),
       ),
       body: _loading
           ? _shimmer()
           : _products.isEmpty
               ? Center(child: Text('No products in this category yet.',
-                    style: GoogleFonts.inter(color: Colors.white38)))
+                    style: GoogleFonts.inter(color: AppColors.textMuted)))
               : RefreshIndicator(
                   onRefresh: _load,
                   color: kAccent,
@@ -82,7 +85,7 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
                                 padding: EdgeInsets.all(10),
                                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                                   Text(p.name, maxLines: 2, overflow: TextOverflow.ellipsis,
-                                      style: GoogleFonts.inter(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600)),
+                                      style: GoogleFonts.inter(color: AppColors.textPrimary, fontSize: 12, fontWeight: FontWeight.w600)),
                                   SizedBox(height: 6),
                                   Text('Rs ${p.price.toStringAsFixed(0)}',
                                       style: GoogleFonts.inter(color: kAccent, fontSize: 14, fontWeight: FontWeight.bold)),
@@ -98,7 +101,7 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
     );
   }
 
-  Widget _imgPlaceholder() => Container(color: kCard, child: Icon(Icons.car_repair, color: Colors.white24, size: 40));
+  Widget _imgPlaceholder() => Container(color: kCard, child: Icon(Icons.car_repair, color: (AppColors.textMuted.withValues(alpha: 0.5)), size: 40));
 
   Widget _shimmer() => Shimmer.fromColors(
     baseColor: kSurface, highlightColor: kCard,

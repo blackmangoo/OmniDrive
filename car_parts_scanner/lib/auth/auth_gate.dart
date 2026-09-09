@@ -13,9 +13,10 @@ import '../marketplace/customer/customer_shell.dart';
 import '../marketplace/vendor/vendor_shell.dart';
 import '../marketplace/rider/rider_shell.dart';
 import '../marketplace/admin/admin_shell.dart';
-import '../core/theme/app_colors.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import '../main.dart';
+import 'package:car_parts_scanner/core/theme/app_colors.dart';
+
 
 /// Role-aware auth gate.  Routes to the correct shell based on user role.
 class AuthGate extends StatefulWidget {
@@ -100,7 +101,7 @@ class _AuthGateState extends State<AuthGate> {
       }
 
       // If we're suppressing the next signedIn (e.g. right after signup),
-      // consume it and don't reset state.
+      // consume it and don't reset state — let VerifyEmailScreen stay visible.
       if (data.event == AuthChangeEvent.signedIn && AuthGate._suppressNextSignIn) {
         AuthGate._suppressNextSignIn = false;
         return;

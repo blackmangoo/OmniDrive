@@ -6,10 +6,11 @@ import '../marketplace_models.dart';
 import '../marketplace_service.dart';
 import 'add_edit_product_screen.dart';
 import 'vendor_shell.dart';
-import '../../core/theme/app_colors.dart';
 import '../../core/motion/motion_stagger.dart';
 import '../../core/motion/motion_tappable.dart';
 import '../../core/motion/motion_counter.dart';
+import 'package:car_parts_scanner/core/theme/app_colors.dart';
+
 
 // ── Vendor Dashboard Screen (Stitch Design) ───────────────────────────────────
 class VendorDashboardScreen extends StatefulWidget {
@@ -385,7 +386,7 @@ class _StatCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(icon,
-                color: gradient != null ? Colors.white : accent, size: 18),
+                color: gradient != null ? AppColors.textPrimary : accent, size: 18),
             ),
           ]),
           SizedBox(height: 12),

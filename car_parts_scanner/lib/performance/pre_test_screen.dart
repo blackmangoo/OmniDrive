@@ -8,8 +8,9 @@ import 'performance_models.dart';
 import 'performance_run_service.dart';
 import 'sensor_fusion_service.dart';
 import 'obd_wifi_service.dart';
-import '../core/theme/app_colors.dart';
 import '../core/motion/motion_tappable.dart';
+import 'package:car_parts_scanner/core/theme/app_colors.dart';
+
 
 /// Pre-test check:
 /// 1. Phone placement warning
@@ -174,9 +175,9 @@ class _PreTestScreenState extends State<PreTestScreen> with SingleTickerProvider
         elevation: 0,
         leading: TappableScale(
           onTap: () => Navigator.pop(context),
-          child: Icon(Icons.close_rounded, color: Colors.white70),
+          child: Icon(Icons.close_rounded, color: AppColors.textSecondary),
         ),
-        title: Text('Pre-Test Check', style: TextStyle(color: Colors.white70, fontSize: 15)),
+        title: Text('Pre-Test Check', style: TextStyle(color: AppColors.textSecondary, fontSize: 15)),
       ),
       body: SafeArea(
         child: Padding(
@@ -199,13 +200,13 @@ class _PreTestScreenState extends State<PreTestScreen> with SingleTickerProvider
 
               Text(
                 'Mount Your Phone Securely',
-                style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
+                style: TextStyle(color: AppColors.textPrimary, fontSize: 22, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 12),
               Text(
                 'Place the phone in a fixed mount or wedge it firmly where it will NOT move during the test. Movement = inaccurate results.',
                 textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.white60, fontSize: 13, height: 1.6),
+                style: TextStyle(color: AppColors.textSecondary, fontSize: 13, height: 1.6),
               ),
 
               SizedBox(height: 40),
@@ -234,7 +235,7 @@ class _PreTestScreenState extends State<PreTestScreen> with SingleTickerProvider
                       child: Text(
                         _statusMsg,
                         style: TextStyle(
-                          color: _sensorReady ? AppColors.success : Colors.white70,
+                          color: _sensorReady ? AppColors.success : AppColors.textSecondary,
                           fontWeight: FontWeight.w600,
                           fontSize: 13,
                         ),
@@ -276,7 +277,7 @@ class _PreTestScreenState extends State<PreTestScreen> with SingleTickerProvider
                     child: Container(
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: _sensorReady ? AppColors.cyan : Colors.white.withValues(alpha: 0.08),
+                        color: _sensorReady ? AppColors.cyan : AppColors.textPrimary.withValues(alpha: 0.08),
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: Text(
@@ -285,7 +286,7 @@ class _PreTestScreenState extends State<PreTestScreen> with SingleTickerProvider
                           fontSize: 17,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 1.4,
-                          color: _sensorReady ? Colors.black : Colors.white38,
+                          color: _sensorReady ? Colors.black : AppColors.textMuted,
                         ),
                       ),
                     ),

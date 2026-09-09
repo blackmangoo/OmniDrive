@@ -5,6 +5,9 @@ import '../marketplace_models.dart';
 import '../marketplace_service.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/motion/motion_tappable.dart';
+import 'package:car_parts_scanner/core/theme/app_colors.dart';
+
+
 
 // ── Product Detail Screen (Stitch Design) ─────────────────────────────────────
 class ProductDetailScreen extends StatefulWidget {
@@ -133,7 +136,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                               width: i == _imageIdx ? 20 : 6,
                               height: 6,
                               decoration: BoxDecoration(
-                                color: i == _imageIdx ? kCyan : Colors.white38,
+                                color: i == _imageIdx ? kCyan : AppColors.textMuted,
                                 borderRadius: BorderRadius.circular(3),
                               ),
                             )),

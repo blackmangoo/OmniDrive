@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../core/theme/app_colors.dart';
 import '../core/theme/app_spacing.dart';
 import '../core/theme/app_typography.dart';
 import '../core/theme/app_shadows.dart';
 import '../core/motion/motion_tappable.dart';
+import 'package:car_parts_scanner/core/theme/app_colors.dart';
+
 
 class UpdatePasswordScreen extends StatefulWidget {
   const UpdatePasswordScreen({super.key});
@@ -50,7 +51,7 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
 
   void _showError(String msg) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(msg, style: AppTypography.body.copyWith(color: Colors.white)),
+      content: Text(msg, style: AppTypography.body.copyWith(color: AppColors.textPrimary)),
       backgroundColor: AppColors.error,
       behavior: SnackBarBehavior.floating,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),

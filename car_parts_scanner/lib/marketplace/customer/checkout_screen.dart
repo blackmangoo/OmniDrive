@@ -4,6 +4,9 @@ import '../marketplace_constants.dart';
 import '../marketplace_models.dart';
 import '../marketplace_service.dart';
 import 'orders_screen.dart';
+import 'package:car_parts_scanner/core/theme/app_colors.dart';
+
+
 
 class CheckoutScreen extends StatefulWidget {
   final List<CartItem> items;
@@ -74,10 +77,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         backgroundColor: kBg,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white70, size: 20),
+          icon: Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.textSecondary, size: 20),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text('Checkout', style: GoogleFonts.inter(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+        title: Text('Checkout', style: GoogleFonts.inter(color: AppColors.textPrimary, fontSize: 18, fontWeight: FontWeight.bold)),
       ),
       body: Column(
         children: [
@@ -94,9 +97,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     padding: EdgeInsets.only(bottom: 8),
                     child: Row(children: [
                       Expanded(child: Text('${ci.product?.name ?? 'Item'} × ${ci.quantity}',
-                          style: GoogleFonts.inter(color: Colors.white70, fontSize: 13), overflow: TextOverflow.ellipsis)),
+                          style: GoogleFonts.inter(color: AppColors.textSecondary, fontSize: 13), overflow: TextOverflow.ellipsis)),
                       Text('Rs ${ci.subtotal.toStringAsFixed(0)}',
-                          style: GoogleFonts.inter(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600)),
+                          style: GoogleFonts.inter(color: AppColors.textPrimary, fontSize: 13, fontWeight: FontWeight.w600)),
                     ]),
                   )),
                   Divider(color: kBorder, height: 24),
@@ -107,12 +110,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   TextFormField(
                     controller: _addrCtrl,
                     maxLines: 3,
-                    style: GoogleFonts.inter(color: Colors.white),
+                    style: GoogleFonts.inter(color: AppColors.textPrimary),
                     decoration: InputDecoration(
                       labelText: 'Full Address',
                       hintText: 'House #, Street, Area, City',
-                      labelStyle: GoogleFonts.inter(color: Colors.white38),
-                      hintStyle: GoogleFonts.inter(color: Colors.white24),
+                      labelStyle: GoogleFonts.inter(color: AppColors.textMuted),
+                      hintStyle: GoogleFonts.inter(color: (AppColors.textMuted.withValues(alpha: 0.5))),
                       filled: true,
                       fillColor: kCard,
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: kBorder)),
@@ -128,11 +131,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   SizedBox(height: 12),
                   TextFormField(
                     controller: _notesCtrl,
-                    style: GoogleFonts.inter(color: Colors.white),
+                    style: GoogleFonts.inter(color: AppColors.textPrimary),
                     decoration: InputDecoration(
                       labelText: 'Any special instructions?',
-                      labelStyle: GoogleFonts.inter(color: Colors.white38),
-                      hintStyle: GoogleFonts.inter(color: Colors.white24),
+                      labelStyle: GoogleFonts.inter(color: AppColors.textMuted),
+                      hintStyle: GoogleFonts.inter(color: (AppColors.textMuted.withValues(alpha: 0.5))),
                       filled: true,
                       fillColor: kCard,
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: kBorder)),
@@ -188,15 +191,15 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   Widget _sectionHeader(String t) => Row(children: [
     Container(width: 3, height: 18, decoration: BoxDecoration(color: kAccent, borderRadius: BorderRadius.circular(2))),
     SizedBox(width: 10),
-    Text(t, style: GoogleFonts.inter(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w700)),
+    Text(t, style: GoogleFonts.inter(color: AppColors.textPrimary, fontSize: 14, fontWeight: FontWeight.w700)),
   ]);
 
   Widget _priceRow(String label, double amount, {bool accent = false}) => Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: [
-      Text(label, style: GoogleFonts.inter(color: Colors.white54, fontSize: 14)),
+      Text(label, style: GoogleFonts.inter(color: AppColors.textMuted, fontSize: 14)),
       Text('Rs ${amount.toStringAsFixed(0)}',
-          style: GoogleFonts.inter(color: accent ? kAccent : Colors.white, fontSize: accent ? 16 : 14, fontWeight: accent ? FontWeight.bold : FontWeight.w500)),
+          style: GoogleFonts.inter(color: accent ? kAccent : AppColors.textPrimary, fontSize: accent ? 16 : 14, fontWeight: accent ? FontWeight.bold : FontWeight.w500)),
     ],
   );
 }

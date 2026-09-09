@@ -5,6 +5,9 @@ import '../marketplace_constants.dart';
 import '../marketplace_models.dart';
 import '../marketplace_service.dart';
 import '../../core/motion/motion_tappable.dart';
+import 'package:car_parts_scanner/core/theme/app_colors.dart';
+
+
 
 class RiderProfileScreen extends StatefulWidget {
   const RiderProfileScreen({super.key});
@@ -39,7 +42,7 @@ class _RiderProfileScreenState extends State<RiderProfileScreen> {
       backgroundColor: kBg,
       appBar: AppBar(
         backgroundColor: kBg, automaticallyImplyLeading: false,
-        title: Text('My Profile', style: GoogleFonts.inter(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+        title: Text('My Profile', style: GoogleFonts.inter(color: AppColors.textPrimary, fontSize: 20, fontWeight: FontWeight.bold)),
       ),
       body: _loading
           ? Center(child: CircularProgressIndicator(color: kRider))
@@ -59,9 +62,9 @@ class _RiderProfileScreenState extends State<RiderProfileScreen> {
                       child: Icon(Icons.delivery_dining_rounded, color: kRider, size: 44),
                     ),
                     SizedBox(height: 14),
-                    Text(_user?.fullName ?? '—', style: GoogleFonts.inter(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+                    Text(_user?.fullName ?? '—', style: GoogleFonts.inter(color: AppColors.textPrimary, fontSize: 20, fontWeight: FontWeight.bold)),
                     SizedBox(height: 4),
-                    Text(_user?.email ?? '—', style: GoogleFonts.inter(color: Colors.white38, fontSize: 14)),
+                    Text(_user?.email ?? '—', style: GoogleFonts.inter(color: AppColors.textMuted, fontSize: 14)),
                     SizedBox(height: 8),
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: 14, vertical: 5),
@@ -115,9 +118,9 @@ class _RiderProfileScreenState extends State<RiderProfileScreen> {
           SizedBox(width: 14),
           Expanded(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(label, style: GoogleFonts.inter(color: Colors.white38, fontSize: 11)),
+              Text(label, style: GoogleFonts.inter(color: AppColors.textMuted, fontSize: 11)),
               SizedBox(height: 2),
-              Text(value, style: GoogleFonts.inter(color: Colors.white, fontSize: 14), overflow: TextOverflow.ellipsis, maxLines: 3),
+              Text(value, style: GoogleFonts.inter(color: AppColors.textPrimary, fontSize: 14), overflow: TextOverflow.ellipsis, maxLines: 3),
             ]),
           ),
         ]),

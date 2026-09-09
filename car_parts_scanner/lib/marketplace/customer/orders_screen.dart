@@ -6,11 +6,12 @@ import '../marketplace_constants.dart';
 import '../marketplace_models.dart';
 import '../marketplace_service.dart';
 import 'order_detail_screen.dart';
-import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/motion/motion_stagger.dart';
 import '../../core/motion/motion_tappable.dart';
 import '../../core/motion/motion_counter.dart';
+import 'package:car_parts_scanner/core/theme/app_colors.dart';
+
 
 class OrdersScreen extends StatefulWidget {
   const OrdersScreen({super.key});
@@ -41,7 +42,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
       appBar: AppBar(
         backgroundColor: kBg,
         automaticallyImplyLeading: false,
-        title: Text('My Orders', style: AppTypography.h2.copyWith(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+        title: Text('My Orders', style: AppTypography.h2.copyWith(color: AppColors.textPrimary, fontSize: 20, fontWeight: FontWeight.bold)),
       ),
       body: _loading
           ? Shimmer.fromColors(
@@ -80,7 +81,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
 
   Widget _empty() => Center(
     child: Column(mainAxisSize: MainAxisSize.min, children: [
-      Icon(Icons.receipt_long_outlined, size: 72, color: Colors.white12),
+      Icon(Icons.receipt_long_outlined, size: 72, color: (AppColors.textMuted.withValues(alpha: 0.2))),
       SizedBox(height: 16),
       Text("No orders yet", style: AppTypography.body.copyWith(color: AppColors.textMuted, fontSize: 16)),
     ]),
@@ -99,11 +100,11 @@ class _OrderTile extends StatelessWidget {
       onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => OrderDetailScreen(order: order))),
       child: Container(
         padding: EdgeInsets.all(16),
-        decoration: kGlowCard(backgroundColor),
+        decoration: kGlowCard(color),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(children: [
             Text('Order #${order.id.substring(0, 8).toUpperCase()}',
-                style: GoogleFonts.inter(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold)),
+                style: GoogleFonts.inter(color: AppColors.textPrimary, fontSize: 14, fontWeight: FontWeight.bold)),
             Spacer(),
             _StatusPill(status: order.status),
           ]),

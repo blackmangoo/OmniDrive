@@ -7,6 +7,9 @@ import '../marketplace_constants.dart';
 import '../marketplace_models.dart';
 import '../marketplace_service.dart';
 import '../../core/motion/motion_tappable.dart';
+import 'package:car_parts_scanner/core/theme/app_colors.dart';
+
+
 
 class AddEditProductScreen extends StatefulWidget {
   final Product? product; // null = add new
@@ -123,10 +126,10 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
         backgroundColor: kBg, elevation: 0,
         leading: TappableScale(
           onTap: () => Navigator.pop(context),
-          child: Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white70, size: 20),
+          child: Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.textSecondary, size: 20),
         ),
         title: Text(isEditing ? 'Edit Product' : 'Add Product',
-            style: GoogleFonts.inter(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+            style: GoogleFonts.inter(color: AppColors.textPrimary, fontSize: 18, fontWeight: FontWeight.bold)),
         actions: [
           if (isEditing)
             TappableScale(
@@ -136,10 +139,10 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                   context: context,
                   builder: (_) => AlertDialog(
                     backgroundColor: kSurface,
-                    title: Text('Delete Product?', style: GoogleFonts.inter(color: Colors.white)),
-                    content: Text('This cannot be undone.', style: GoogleFonts.inter(color: Colors.white54)),
+                    title: Text('Delete Product?', style: GoogleFonts.inter(color: AppColors.textPrimary)),
+                    content: Text('This cannot be undone.', style: GoogleFonts.inter(color: AppColors.textMuted)),
                     actions: [
-                      TextButton(onPressed: () => Navigator.pop(context, false), child: Text('Cancel', style: GoogleFonts.inter(color: Colors.white38))),
+                      TextButton(onPressed: () => Navigator.pop(context, false), child: Text('Cancel', style: GoogleFonts.inter(color: AppColors.textMuted))),
                       ElevatedButton(onPressed: () => Navigator.pop(context, true), style: ElevatedButton.styleFrom(backgroundColor: kError), child: Text('Delete')),
                     ],
                   ),
@@ -179,12 +182,12 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                               width: 100, height: 100, margin: EdgeInsets.only(right: 8),
                               decoration: BoxDecoration(borderRadius: BorderRadius.circular(12), border: Border.all(color: kBorder)),
                               child: ClipRRect(borderRadius: BorderRadius.circular(12),
-                                  child: CachedNetworkImage(imageUrl: url, fit: BoxFit.cover, errorWidget: (_, _, _) => Icon(Icons.broken_image, color: Colors.white24))),
+                                  child: CachedNetworkImage(imageUrl: url, fit: BoxFit.cover, errorWidget: (_, _, _) => Icon(Icons.broken_image, color: (AppColors.textMuted.withValues(alpha: 0.5))))),
                             ),
                             Positioned(top: 4, right: 12, child: TappableScale(
                               onTap: () => setState(() => _existingImages.remove(url)),
                               child: Container(width: 22, height: 22, decoration: BoxDecoration(color: kError, shape: BoxShape.circle),
-                                  child: Icon(Icons.close, color: Colors.white, size: 14)),
+                                  child: Icon(Icons.close, color: AppColors.textPrimary, size: 14)),
                             )),
                           ],
                         )),
@@ -199,7 +202,7 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                             Positioned(top: 4, right: 12, child: TappableScale(
                               onTap: () => setState(() => _newImages.remove(file)),
                               child: Container(width: 22, height: 22, decoration: BoxDecoration(color: kError, shape: BoxShape.circle),
-                                  child: Icon(Icons.close, color: Colors.white, size: 14)),
+                                  child: Icon(Icons.close, color: AppColors.textPrimary, size: 14)),
                             )),
                           ],
                         )),
@@ -235,12 +238,12 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                     SizedBox(height: 14),
                     // Category dropdown
                     if (_categories.isNotEmpty) ...[
-                      Text('Category', style: GoogleFonts.inter(color: Colors.white70, fontSize: 13, fontWeight: FontWeight.w600)),
+                      Text('Category', style: GoogleFonts.inter(color: AppColors.textSecondary, fontSize: 13, fontWeight: FontWeight.w600)),
                       SizedBox(height: 8),
                       DropdownButtonFormField<String>(
                         initialValue: _selectedCategoryId,
                         dropdownColor: kSurface,
-                        style: GoogleFonts.inter(color: Colors.white),
+                        style: GoogleFonts.inter(color: AppColors.textPrimary),
                         decoration: InputDecoration(
                           filled: true, fillColor: kSurface,
                           contentPadding: EdgeInsets.symmetric(horizontal: 14, vertical: 14),
@@ -248,7 +251,7 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                           enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: kBorder)),
                           focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: kVendor, width: 1.5)),
                         ),
-                        hint: Text('Select category', style: GoogleFonts.inter(color: Colors.white24)),
+                        hint: Text('Select category', style: GoogleFonts.inter(color: (AppColors.textMuted.withValues(alpha: 0.5)))),
                         items: _categories.map((cat) => DropdownMenuItem(value: cat.id, child: Text(cat.name))).toList(),
                         onChanged: (v) => setState(() => _selectedCategoryId = v),
                         validator: (v) => v == null ? 'Required' : null,
@@ -279,9 +282,9 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       decoration: kCardDeco(),
                       child: Row(children: [
-                        Icon(Icons.visibility_rounded, color: Colors.white54, size: 20),
+                        Icon(Icons.visibility_rounded, color: AppColors.textMuted, size: 20),
                         SizedBox(width: 12),
-                        Expanded(child: Text('Product is Active', style: GoogleFonts.inter(color: Colors.white, fontSize: 14))),
+                        Expanded(child: Text('Product is Active', style: GoogleFonts.inter(color: AppColors.textPrimary, fontSize: 14))),
                         Switch(value: _isActive, activeThumbColor: kVendor, activeTrackColor: kVendor.withValues(alpha: 0.3), onChanged: (v) => setState(() => _isActive = v)),
                       ]),
                     ),
@@ -323,16 +326,16 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
   Widget _field(TextEditingController ctrl, String label, {
     String? hint, int maxLines = 1, TextInputType? keyboardType, String? Function(String?)? validator,
   }) => Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-    Text(label, style: GoogleFonts.inter(color: Colors.white70, fontSize: 13, fontWeight: FontWeight.w600)),
+    Text(label, style: GoogleFonts.inter(color: AppColors.textSecondary, fontSize: 13, fontWeight: FontWeight.w600)),
     SizedBox(height: 8),
     TextFormField(
       controller: ctrl,
       maxLines: maxLines,
       keyboardType: keyboardType,
       validator: validator,
-      style: GoogleFonts.inter(color: Colors.white, fontSize: 14),
+      style: GoogleFonts.inter(color: AppColors.textPrimary, fontSize: 14),
       decoration: InputDecoration(
-        hintText: hint, hintStyle: GoogleFonts.inter(color: Colors.white24),
+        hintText: hint, hintStyle: GoogleFonts.inter(color: (AppColors.textMuted.withValues(alpha: 0.5))),
         filled: true, fillColor: kSurface,
         contentPadding: EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: kBorder)),
@@ -347,6 +350,6 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
   Widget _sectionHeader(String t) => Row(children: [
     Container(width: 3, height: 18, decoration: BoxDecoration(color: kVendor, borderRadius: BorderRadius.circular(2))),
     SizedBox(width: 10),
-    Text(t, style: GoogleFonts.inter(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w700)),
+    Text(t, style: GoogleFonts.inter(color: AppColors.textPrimary, fontSize: 14, fontWeight: FontWeight.w700)),
   ]);
 }
