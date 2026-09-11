@@ -1,5 +1,5 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/motion/motion_tappable.dart';
@@ -19,7 +19,11 @@ class GoogleSignInButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Rely strictly on Theme.of(context) to avoid mixing system dispatcher brightness
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor = isDark ? const Color(0xFF1C1C1E) : Colors.white;
+    final borderColor = isDark ? const Color(0xFF2C2C2E) : const Color(0xFFE5E5E3);
+    final textColor = isDark ? const Color(0xFFF5F5F4) : const Color(0xFF1C1917);
 
     return SizedBox(
       width: double.infinity,
@@ -28,10 +32,10 @@ class GoogleSignInButton extends StatelessWidget {
         onTap: isLoading ? null : onPressed,
         child: Container(
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
+            color: backgroundColor,
             borderRadius: BorderRadius.circular(AppSpacing.rLg),
             border: Border.all(
-              color: isDark ? AppColors.border : const Color(0xFFE5E5E3),
+              color: borderColor,
               width: 1,
             ),
             boxShadow: [
@@ -49,7 +53,7 @@ class GoogleSignInButton extends StatelessWidget {
                     height: 20,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
-                      color: AppColors.textPrimary,
+                      color: textColor,
                     ),
                   )
                 : Row(
@@ -62,7 +66,7 @@ class GoogleSignInButton extends StatelessWidget {
                         style: AppTypography.label.copyWith(
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
-                          color: AppColors.textPrimary,
+                          color: textColor,
                         ),
                       ),
                     ],
@@ -74,125 +78,163 @@ class GoogleSignInButton extends StatelessWidget {
   }
 }
 
-/// Official 4-color Google "G" Emblem rendered via high-precision vectors.
-class GoogleLogo extends StatelessWidget {
+/// Official 4-color Google "G" Emblem rendered via high-precision precomputed vectors.
+class GoogleLogo extends StatefulWidget {
   final double size;
   const GoogleLogo({super.key, this.size = 24});
 
   @override
+  State<GoogleLogo> createState() => _GoogleLogoState();
+}
+
+class _GoogleLogoState extends State<GoogleLogo> {
+  late _GoogleLogoPainter _painter;
+
+  @override
+  void initState() {
+    super.initState();
+    _painter = _GoogleLogoPainter.build(widget.size);
+  }
+
+  @override
+  void didUpdateWidget(GoogleLogo oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.size != widget.size) {
+      _painter = _GoogleLogoPainter.build(widget.size);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: size,
-      height: size,
+      width: widget.size,
+      height: widget.size,
       child: CustomPaint(
-        painter: _GoogleLogoPainter(),
+        painter: _painter,
       ),
     );
   }
 }
 
+/// Zero-allocation painter: all Path and Rect instances are precomputed once,
+/// eliminating GC pressure during button interactions and animations.
 class _GoogleLogoPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final double w = size.width;
-    final double h = size.height;
-    final center = Offset(w / 2, h / 2);
-    final radius = w / 2;
-    final innerRadius = radius * 0.58;
+  final Path redPath;
+  final Path yellowPath;
+  final Path greenPath;
+  final Path blueArcPath;
+  final RRect barRect;
 
-    final paint = Paint()
-      ..style = PaintingStyle.fill
-      ..isAntiAlias = true;
+  _GoogleLogoPainter._({
+    required this.redPath,
+    required this.yellowPath,
+    required this.greenPath,
+    required this.blueArcPath,
+    required this.barRect,
+  });
 
-    // Red (Top segment)
-    paint.color = const Color(0xFFEA4335);
-    final redPath = Path()
-      ..moveTo(center.dx, center.dy)
-      ..arcTo(
-        Rect.fromCircle(center: center, radius: radius),
-        -2.356, // -135 deg
-        1.571,  // 90 deg
-        false,
-      )
-      ..lineTo(center.dx, center.dy)
-      ..close();
-    canvas.save();
-    canvas.clipPath(_donutMask(center, radius, innerRadius));
-    canvas.drawPath(redPath, paint);
-    canvas.restore();
+  static final Paint _paint = Paint()
+    ..style = PaintingStyle.fill
+    ..isAntiAlias = true;
 
-    // Yellow (Left segment)
-    paint.color = const Color(0xFFFBBC05);
-    final yellowPath = Path()
-      ..moveTo(center.dx, center.dy)
-      ..arcTo(
-        Rect.fromCircle(center: center, radius: radius),
-        2.356, // 135 deg
-        1.571, // 90 deg
-        false,
-      )
-      ..lineTo(center.dx, center.dy)
-      ..close();
-    canvas.save();
-    canvas.clipPath(_donutMask(center, radius, innerRadius));
-    canvas.drawPath(yellowPath, paint);
-    canvas.restore();
+  factory _GoogleLogoPainter.build(double size) {
+    final double radius = size / 2.0;
+    final double innerRadius = radius * 0.58;
+    final center = Offset(radius, radius);
+    final outerRect = Rect.fromCircle(center: center, radius: radius);
+    final innerRect = Rect.fromCircle(center: center, radius: innerRadius);
 
-    // Green (Bottom segment)
-    paint.color = const Color(0xFF34A853);
-    final greenPath = Path()
-      ..moveTo(center.dx, center.dy)
-      ..arcTo(
-        Rect.fromCircle(center: center, radius: radius),
-        0.785, // 45 deg
-        1.571, // 90 deg
-        false,
-      )
-      ..lineTo(center.dx, center.dy)
-      ..close();
-    canvas.save();
-    canvas.clipPath(_donutMask(center, radius, innerRadius));
-    canvas.drawPath(greenPath, paint);
-    canvas.restore();
+    // Annular sector path builder without canvas clips
+    Path buildWedge(double startAngle, double sweepAngle) {
+      final path = Path();
+      // Outer arc
+      path.arcTo(outerRect, startAngle, sweepAngle, false);
+      // Inner arc in reverse
+      path.arcTo(innerRect, startAngle + sweepAngle, -sweepAngle, false);
+      path.close();
+      return path;
+    }
 
-    // Blue (Right arc + horizontal bar)
-    paint.color = const Color(0xFF4285F4);
-    final blueArc = Path()
-      ..moveTo(center.dx, center.dy)
-      ..arcTo(
-        Rect.fromCircle(center: center, radius: radius),
-        -0.785, // -45 deg
-        1.571,  // 90 deg
-        false,
-      )
-      ..lineTo(center.dx, center.dy)
-      ..close();
-    canvas.save();
-    canvas.clipPath(_donutMask(center, radius, innerRadius));
-    canvas.drawPath(blueArc, paint);
-    canvas.restore();
+    // 1. Red: Top segment (-135° to -45°)
+    final red = buildWedge(-3.0 * math.pi / 4.0, math.pi / 2.0);
 
-    // Blue horizontal bar
+    // 2. Yellow: Left segment (135° to 225° / -135°)
+    final yellow = buildWedge(3.0 * math.pi / 4.0, math.pi / 2.0);
+
+    // 3. Green: Bottom segment (45° to 135°)
+    final green = buildWedge(math.pi / 4.0, math.pi / 2.0);
+
+    // 4. Blue Arc: Bottom-right segment (0° to 45°)
+    // Leaving -45° to 0° completely OPEN as the Google "G" mouth
+    final blueArc = buildWedge(0.0, math.pi / 4.0);
+
+    // 5. Blue Horizontal Bar: from center extending right through the G mouth
     final barHeight = (radius - innerRadius) * 0.95;
-    final barRect = RRect.fromRectAndRadius(
+    final bar = RRect.fromRectAndRadius(
       Rect.fromLTWH(
-        center.dx - 1,
-        center.dy - barHeight / 2,
-        radius + 1,
+        center.dx - 1.0,
+        center.dy - barHeight / 2.0,
+        radius + 1.0,
         barHeight,
       ),
-      const Radius.circular(1),
+      const Radius.circular(1.0),
     );
-    canvas.drawRRect(barRect, paint);
-  }
 
-  Path _donutMask(Offset center, double outer, double inner) {
-    return Path()
-      ..addOval(Rect.fromCircle(center: center, radius: outer))
-      ..addOval(Rect.fromCircle(center: center, radius: inner))
-      ..fillType = PathFillType.evenOdd;
+    return _GoogleLogoPainter._(
+      redPath: red,
+      yellowPath: yellow,
+      greenPath: green,
+      blueArcPath: blueArc,
+      barRect: bar,
+    );
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  void paint(Canvas canvas, Size size) {
+    // Red segment
+    _paint.color = const Color(0xFFEA4335);
+    canvas.drawPath(redPath, _paint);
+
+    // Yellow segment
+    _paint.color = const Color(0xFFFBBC05);
+    canvas.drawPath(yellowPath, _paint);
+
+    // Green segment
+    _paint.color = const Color(0xFF34A853);
+    canvas.drawPath(greenPath, _paint);
+
+    // Blue segments (bottom-right arc + horizontal bar)
+    _paint.color = const Color(0xFF4285F4);
+    canvas.drawPath(blueArcPath, _paint);
+    canvas.drawRRect(barRect, _paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant _GoogleLogoPainter oldDelegate) => false;
+}
+
+/// A standard divider with centered 'OR' text for authentication screens.
+class AuthDivider extends StatelessWidget {
+  const AuthDivider({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final borderColor = isDark ? const Color(0xFF2C2C2E) : const Color(0xFFE5E5E3);
+    final textColor = isDark ? const Color(0xFF78716C) : const Color(0xFFA8A29E);
+
+    return Row(
+      children: [
+        Expanded(child: Divider(color: borderColor)),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: Text(
+            'OR',
+            style: AppTypography.caption.copyWith(color: textColor),
+          ),
+        ),
+        Expanded(child: Divider(color: borderColor)),
+      ],
+    );
+  }
 }
