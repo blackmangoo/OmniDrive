@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart' hide Category;
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'marketplace_models.dart';
 
@@ -27,6 +28,27 @@ class MarketplaceService {
     }
   }
 
+  /// Centralized, production-grade Google OAuth sign-in flow.
+  /// Sets intended role into SharedPreferences, opens OAuth session,
+  /// and returns true if the OAuth browser successfully launched.
+  static Future<bool> signInWithGoogle({String? intendedRole}) async {
+    if (intendedRole != null) {
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('pending_oauth_role', intendedRole);
+      } catch (_) {}
+    }
+    return await _sb.auth.signInWithOAuth(
+      OAuthProvider.google,
+      redirectTo: 'omnidrive://login-callback',
+      authScreenLaunchMode: LaunchMode.inAppBrowserView,
+      queryParams: {
+        'access_type': 'offline',
+        'prompt': 'select_account',
+      },
+    );
+  }
+
   static Future<String> getUserRole() async {
     try {
       final user = _sb.auth.currentUser;
@@ -46,11 +68,67 @@ class MarketplaceService {
         dbRole = data?['role'] as String?;
       } catch (_) {}
 
-      // If DB has the role, trust it
-      if (dbRole != null) return dbRole;
+      // Check if user selected a specific role before launching OAuth (e.g. rider/vendor)
+      String? pendingRole;
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        pendingRole = prefs.getString('pending_oauth_role');
+        if (pendingRole != null) {
+          await prefs.remove('pending_oauth_role');
+        }
+      } catch (_) {}
 
-      // Fallback: use metadata role and create the missing profile
-      final finalRole = metadataRole ?? 'customer';
+      // If DB has the role from previous session or trigger
+      if (dbRole != null) {
+        // If trigger defaulted to customer but the user explicitly requested rider/vendor in OAuth
+        if (pendingRole != null && pendingRole != 'customer' && dbRole == 'customer') {
+          try {
+            await _sb.from('user_profiles').update({
+              'role': pendingRole,
+              'is_approved': false,
+            }).eq('id', currentUserId);
+            dbRole = pendingRole;
+            if (pendingRole == 'vendor') {
+              await _sb.from('vendor_profiles').upsert({
+                'id': currentUserId,
+                'shop_name': meta['shop_name'] ?? 'My Shop',
+                'location': meta['location'] ?? '',
+                'phone': meta['phone'] ?? '',
+              });
+            }
+          } catch (e) {
+            debugPrint('Error upgrading pending OAuth role: $e');
+          }
+        }
+
+        final avatar = meta['avatar_url'] ?? meta['picture'];
+        final displayName = meta['full_name'] ?? meta['name'] ?? meta['user_name'];
+        if (avatar != null || displayName != null) {
+          try {
+            final existing = await _sb
+                .from('user_profiles')
+                .select('avatar_url, full_name')
+                .eq('id', currentUserId)
+                .maybeSingle();
+            final currentAvatar = existing?['avatar_url'] as String?;
+            final currentName = existing?['full_name'] as String?;
+            final updates = <String, dynamic>{};
+            if ((currentAvatar == null || currentAvatar.isEmpty) && avatar != null) {
+              updates['avatar_url'] = avatar;
+            }
+            if ((currentName == null || currentName.isEmpty || currentName == 'User') && displayName != null) {
+              updates['full_name'] = displayName;
+            }
+            if (updates.isNotEmpty) {
+              await _sb.from('user_profiles').update(updates).eq('id', currentUserId);
+            }
+          } catch (_) {}
+        }
+        return dbRole!;
+      }
+
+      // Fallback: use pending/metadata role and create the missing profile
+      final finalRole = pendingRole ?? metadataRole ?? 'customer';
       final displayName = meta['full_name'] ?? meta['name'] ?? meta['user_name'] ?? 'User';
       final avatar = meta['avatar_url'] ?? meta['picture'];
       try {

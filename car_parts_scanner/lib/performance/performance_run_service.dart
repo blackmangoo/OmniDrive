@@ -180,7 +180,23 @@ class PerformanceRunService {
     if (!selectedMetrics.contains(type)) return;
     if (_achieved.contains(type))        return;
     if (speed < thresholdKmh)            return;
-    _recordMilestone(type, _elapsed, null);
+
+    // Sub-sample linear interpolation for millisecond-precision threshold timing
+    double preciseTime = _elapsed;
+    if (_dataPoints.length >= 2) {
+      final prevPoint = _dataPoints[_dataPoints.length - 2];
+      final currPoint = _dataPoints.last;
+      final dv = currPoint.speedKmh - prevPoint.speedKmh;
+      final dt = currPoint.timeS - prevPoint.timeS;
+      if (dv > 0.05 && dt > 0.0) {
+        final frac = (thresholdKmh - prevPoint.speedKmh) / dv;
+        if (frac >= 0.0 && frac <= 1.0) {
+          preciseTime = prevPoint.timeS + frac * dt;
+        }
+      }
+    }
+
+    _recordMilestone(type, preciseTime, null);
   }
 
   void _recordMilestone(MetricType type, double timeS, double? trapSpeed) {

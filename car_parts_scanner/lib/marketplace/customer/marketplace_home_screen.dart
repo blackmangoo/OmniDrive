@@ -14,10 +14,6 @@ import '../../core/motion/motion_stagger.dart';
 import '../../core/motion/motion_tappable.dart';
 import '../../core/motion/motion_counter.dart';
 import 'package:car_parts_scanner/core/theme/app_colors.dart';
-import '../../image_search_screen.dart';
-import '../../main.dart' show cameras;
-import '../vendor/vendor_shell.dart';
-import '../../auth/vendor_signup_screen.dart';
 
 
 class MarketplaceHomeScreen extends StatefulWidget {
@@ -117,17 +113,6 @@ class _MarketplaceHomeScreenState extends State<MarketplaceHomeScreen> {
     _searchCtrl.dispose();
     _pageCtrl?.dispose();
     super.dispose();
-  }
-
-  Future<void> _openVendorPortal() async {
-    final role = await MarketplaceService.getUserRole();
-    if (!mounted) return;
-    final nav = Navigator.of(context);
-    if (role == 'vendor') {
-      nav.push(MaterialPageRoute(builder: (_) => const VendorShell()));
-    } else {
-      nav.push(MaterialPageRoute(builder: (_) => const VendorSignupScreen()));
-    }
   }
 
   Future<void> _loadData() async {
@@ -512,41 +497,6 @@ class _MarketplaceHomeScreenState extends State<MarketplaceHomeScreen> {
                           ),
                         ),
 
-              // ── Vendor & AI Promo ───────────────────────────────────────────
-              SliverToBoxAdapter(
-                child: _loading ? SizedBox() : Padding(
-                  padding: EdgeInsets.fromLTRB(16, 0, 16, 120),
-                  child: Column(
-                    children: [
-                      SizedBox(height: 16),
-                      _PromoCard(
-                        icon: Icons.storefront_rounded,
-                        accent: kVendor,
-                        title: 'Vendor Portal',
-                        subtitle: 'List spare parts, manage catalog inventory, and track live shop orders.',
-                        label: 'Open Portal',
-                        onTap: _openVendorPortal,
-                      ),
-                      const SizedBox(height: 12),
-                      _PromoCard(
-                        icon: Icons.document_scanner_rounded,
-                        accent: kCyan,
-                        title: 'AI Visual Diagnostics',
-                        subtitle: 'Identify 50+ mechanical parts instantly using our YOLO11 vision engine.',
-                        label: 'Scan Part',
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => ImageSearchScreen(cameras: cameras),
-                            ),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              ),
             ],
           ),
         ),
@@ -678,60 +628,6 @@ class _EmptyState extends StatelessWidget {
         SizedBox(height: 8),
         Text('Try a different search or category', style: kBody(13)),
       ],
-    ),
-  );
-}
-
-class _PromoCard extends StatelessWidget {
-  final IconData icon;
-  final Color accent;
-  final String title, subtitle, label;
-  final VoidCallback onTap;
-  const _PromoCard({required this.icon, required this.accent,
-    required this.title, required this.subtitle,
-    required this.label, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) => TappableScale(
-    onTap: onTap,
-    child: Container(
-      padding: EdgeInsets.all(16),
-      decoration: kGlowDeco(accent, radius: 16),
-      child: Row(
-        children: [
-          Container(
-            width: 48, height: 48,
-            decoration: BoxDecoration(
-              color: accent.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: Icon(icon, color: accent, size: 24),
-          ),
-          SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title, style: AppTypography.title.copyWith(
-                  fontSize: 14, fontWeight: FontWeight.w700, color: kTextPrimary)),
-                SizedBox(height: 3),
-                Text(subtitle, style: kBody(11), maxLines: 2,
-                    overflow: TextOverflow.ellipsis),
-              ],
-            ),
-          ),
-          SizedBox(width: 8),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: accent.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: accent.withValues(alpha: 0.3)),
-            ),
-            child: Text(label, style: kBody(11, color: accent, fw: FontWeight.w600)),
-          ),
-        ],
-      ),
     ),
   );
 }

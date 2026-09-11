@@ -126,6 +126,17 @@ class _LoginScreenState extends State<LoginScreen>
     }
   }
 
+  String get _currentRoleKey {
+    switch (_roleIndex) {
+      case 1:
+        return 'vendor';
+      case 2:
+        return 'rider';
+      default:
+        return 'customer';
+    }
+  }
+
   Future<void> _signInWithGoogle() async {
     final now = DateTime.now();
     if (_lastLoginTap != null && now.difference(_lastLoginTap!) < Duration(seconds: 2)) return;
@@ -133,15 +144,12 @@ class _LoginScreenState extends State<LoginScreen>
     FocusScope.of(context).unfocus();
     setState(() => _googleLoading = true);
     try {
-      await Supabase.instance.client.auth.signInWithOAuth(
-        OAuthProvider.google,
-        redirectTo: 'omnidrive://login-callback',
-        authScreenLaunchMode: LaunchMode.inAppBrowserView,
-        queryParams: {
-          'access_type': 'offline',
-          'prompt': 'select_account',
-        },
+      final launched = await MarketplaceService.signInWithGoogle(
+        intendedRole: _currentRoleKey,
       );
+      if (!launched && mounted) {
+        _showErrorDialog('Google Sign-In Failed', 'Unable to launch browser for authentication.');
+      }
     } on AuthException catch (e) {
       if (!mounted) return;
       _showErrorDialog('Google Sign-In Failed', e.message);
@@ -305,7 +313,7 @@ class _LoginScreenState extends State<LoginScreen>
                     width: double.infinity,
                     height: 54,
                     child: TappableScale(
-                      onTap: _loading ? null : _login,
+                      onTap: (_loading || _googleLoading) ? null : _login,
                       child: Container(
                         decoration: BoxDecoration(
                           color: _accentColor,
@@ -327,7 +335,7 @@ class _LoginScreenState extends State<LoginScreen>
                   ),
 
                   SizedBox(height: 28),
-                  _divider(),
+                  const AuthDivider(),
                   SizedBox(height: 24),
 
                   GoogleSignInButton(
@@ -372,15 +380,6 @@ class _LoginScreenState extends State<LoginScreen>
       ),
     );
   }
-
-  Widget _divider() => Row(children: [
-        Expanded(child: Divider(color: AppColors.border)),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 12),
-          child: Text('OR', style: AppTypography.caption.copyWith(color: AppColors.textMuted)),
-        ),
-        Expanded(child: Divider(color: AppColors.border)),
-      ]);
 }
 
 // ── Role Tab ──────────────────────────────────────────────────────────────────

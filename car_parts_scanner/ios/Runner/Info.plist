@@ -72,5 +72,16 @@
 	<string>The camera component requires microphone access.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>OmniDrive AI needs photo library access to analyse car part images from your gallery.</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>omnidrive</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>

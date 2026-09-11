@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'auth_gate.dart';
 import 'verify_email_screen.dart';
+import '../marketplace/marketplace_service.dart';
 import '../core/theme/app_spacing.dart';
 import '../core/theme/app_typography.dart';
 import '../core/theme/app_shadows.dart';
@@ -26,11 +28,25 @@ class _SignupScreenState extends State<SignupScreen> {
   final _confirmCtrl = TextEditingController();
   bool _loading = false;
   bool _googleLoading = false;
+  DateTime? _lastGoogleTap;
   bool _obscurePass = true;
   bool _obscureConfirm = true;
+  StreamSubscription<AuthState>? _authSub;
+
+  @override
+  void initState() {
+    super.initState();
+    _authSub = Supabase.instance.client.auth.onAuthStateChange.listen((data) {
+      if (data.event == AuthChangeEvent.signedIn && mounted) {
+        // Pop all pushed auth screens so AuthGate takes over the root view
+        Navigator.of(context).popUntil((route) => route.isFirst);
+      }
+    });
+  }
 
   @override
   void dispose() {
+    _authSub?.cancel();
     _nameCtrl.dispose();
     _emailCtrl.dispose();
     _passCtrl.dispose();
@@ -86,17 +102,18 @@ class _SignupScreenState extends State<SignupScreen> {
   }
 
   Future<void> _signInWithGoogle() async {
+    final now = DateTime.now();
+    if (_lastGoogleTap != null && now.difference(_lastGoogleTap!) < Duration(seconds: 2)) return;
+    _lastGoogleTap = now;
+    FocusScope.of(context).unfocus();
     setState(() => _googleLoading = true);
     try {
-      await Supabase.instance.client.auth.signInWithOAuth(
-        OAuthProvider.google,
-        redirectTo: 'omnidrive://login-callback',
-        authScreenLaunchMode: LaunchMode.inAppBrowserView,
-        queryParams: {
-          'access_type': 'offline',
-          'prompt': 'select_account',
-        },
+      final launched = await MarketplaceService.signInWithGoogle(
+        intendedRole: widget.role,
       );
+      if (!launched && mounted) {
+        _showError('Unable to launch browser for Google Sign-In.');
+      }
     } on AuthException catch (e) {
       if (!mounted) return;
       _showError('Google Sign-Up Failed: ${e.message}');
@@ -235,7 +252,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   width: double.infinity,
                   height: 52,
                   child: TappableScale(
-                    onTap: _loading ? null : _signup,
+                    onTap: (_loading || _googleLoading) ? null : _signup,
                     child: Container(
                       decoration: BoxDecoration(
                         color: _accentColor,
@@ -257,7 +274,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 ),
 
                 SizedBox(height: 24),
-                _divider(),
+                const AuthDivider(),
                 SizedBox(height: 20),
 
                 GoogleSignInButton(
@@ -281,15 +298,6 @@ class _SignupScreenState extends State<SignupScreen> {
       ),
     );
   }
-
-  Widget _divider() => Row(children: [
-        Expanded(child: Divider(color: AppColors.border)),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 12),
-          child: Text('OR', style: AppTypography.caption.copyWith(color: AppColors.textMuted)),
-        ),
-        Expanded(child: Divider(color: AppColors.border)),
-      ]);
 }
 
 class _FieldLabel extends StatelessWidget {
