@@ -12,6 +12,7 @@ import '../core/theme/app_typography.dart';
 import '../core/theme/app_shadows.dart';
 import '../core/motion/motion_tappable.dart';
 import 'package:car_parts_scanner/core/theme/app_colors.dart';
+import 'widgets/google_sign_in_button.dart';
 
 
 class LoginScreen extends StatefulWidget {
@@ -27,6 +28,7 @@ class _LoginScreenState extends State<LoginScreen>
   final _emailCtrl = TextEditingController();
   final _passCtrl  = TextEditingController();
   bool _loading     = false;
+  bool _googleLoading = false;
   bool _obscurePass = true;
   DateTime? _lastLoginTap;
   // 0=Customer, 1=Vendor, 2=Rider
@@ -121,6 +123,36 @@ class _LoginScreenState extends State<LoginScreen>
       _showErrorDialog('Connection Error', 'Could not connect to the server. Please check your internet connection and try again.');
     } finally {
       if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  Future<void> _signInWithGoogle() async {
+    final now = DateTime.now();
+    if (_lastLoginTap != null && now.difference(_lastLoginTap!) < Duration(seconds: 2)) return;
+    _lastLoginTap = now;
+    FocusScope.of(context).unfocus();
+    setState(() => _googleLoading = true);
+    try {
+      await Supabase.instance.client.auth.signInWithOAuth(
+        OAuthProvider.google,
+        redirectTo: 'omnidrive://login-callback',
+        authScreenLaunchMode: LaunchMode.inAppBrowserView,
+        queryParams: {
+          'access_type': 'offline',
+          'prompt': 'select_account',
+        },
+      );
+    } on AuthException catch (e) {
+      if (!mounted) return;
+      _showErrorDialog('Google Sign-In Failed', e.message);
+    } catch (_) {
+      if (!mounted) return;
+      _showErrorDialog(
+        'Google Sign-In Error',
+        'Could not complete Google authentication. Please check your internet connection or Supabase dashboard credentials.',
+      );
+    } finally {
+      if (mounted) setState(() => _googleLoading = false);
     }
   }
 
@@ -296,6 +328,14 @@ class _LoginScreenState extends State<LoginScreen>
 
                   SizedBox(height: 28),
                   _divider(),
+                  SizedBox(height: 24),
+
+                  GoogleSignInButton(
+                    onPressed: _loading || _googleLoading ? null : _signInWithGoogle,
+                    isLoading: _googleLoading,
+                    label: 'Continue with Google',
+                  ),
+
                   SizedBox(height: 28),
 
                   // ── Sign up link ───────────────────────────────────────────

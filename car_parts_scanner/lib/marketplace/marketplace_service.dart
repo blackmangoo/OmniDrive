@@ -51,13 +51,19 @@ class MarketplaceService {
 
       // Fallback: use metadata role and create the missing profile
       final finalRole = metadataRole ?? 'customer';
+      final displayName = meta['full_name'] ?? meta['name'] ?? meta['user_name'] ?? 'User';
+      final avatar = meta['avatar_url'] ?? meta['picture'];
       try {
-        await _sb.from('user_profiles').upsert({
+        final profileData = <String, dynamic>{
           'id': currentUserId,
           'role': finalRole,
-          'full_name': meta['full_name'] ?? 'User',
+          'full_name': displayName,
           'phone': meta['phone'],
-        });
+        };
+        if (avatar != null) {
+          profileData['avatar_url'] = avatar;
+        }
+        await _sb.from('user_profiles').upsert(profileData);
       } catch (e) {
         debugPrint('getUserRole upsert fallback error: $e');
       }
