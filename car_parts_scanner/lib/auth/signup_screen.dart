@@ -7,6 +7,7 @@ import '../core/theme/app_typography.dart';
 import '../core/theme/app_shadows.dart';
 import '../core/motion/motion_tappable.dart';
 import 'package:car_parts_scanner/core/theme/app_colors.dart';
+import 'widgets/google_sign_in_button.dart';
 
 
 class SignupScreen extends StatefulWidget {
@@ -24,6 +25,7 @@ class _SignupScreenState extends State<SignupScreen> {
   final _passCtrl = TextEditingController();
   final _confirmCtrl = TextEditingController();
   bool _loading = false;
+  bool _googleLoading = false;
   bool _obscurePass = true;
   bool _obscureConfirm = true;
 
@@ -80,6 +82,29 @@ class _SignupScreenState extends State<SignupScreen> {
       _showError('Connection error. Check your internet and try again.');
     } finally {
       if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  Future<void> _signInWithGoogle() async {
+    setState(() => _googleLoading = true);
+    try {
+      await Supabase.instance.client.auth.signInWithOAuth(
+        OAuthProvider.google,
+        redirectTo: 'omnidrive://login-callback',
+        authScreenLaunchMode: LaunchMode.inAppBrowserView,
+        queryParams: {
+          'access_type': 'offline',
+          'prompt': 'select_account',
+        },
+      );
+    } on AuthException catch (e) {
+      if (!mounted) return;
+      _showError('Google Sign-Up Failed: ${e.message}');
+    } catch (_) {
+      if (!mounted) return;
+      _showError('Could not complete Google authentication. Please try again.');
+    } finally {
+      if (mounted) setState(() => _googleLoading = false);
     }
   }
 
@@ -231,7 +256,17 @@ class _SignupScreenState extends State<SignupScreen> {
                   ),
                 ),
 
+                SizedBox(height: 24),
+                _divider(),
                 SizedBox(height: 20),
+
+                GoogleSignInButton(
+                  onPressed: _loading || _googleLoading ? null : _signInWithGoogle,
+                  isLoading: _googleLoading,
+                  label: 'Sign up with Google',
+                ),
+
+                SizedBox(height: 24),
                 Center(
                   child: GestureDetector(
                     onTap: () => Navigator.pop(context),
@@ -246,6 +281,15 @@ class _SignupScreenState extends State<SignupScreen> {
       ),
     );
   }
+
+  Widget _divider() => Row(children: [
+        Expanded(child: Divider(color: AppColors.border)),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 12),
+          child: Text('OR', style: AppTypography.caption.copyWith(color: AppColors.textMuted)),
+        ),
+        Expanded(child: Divider(color: AppColors.border)),
+      ]);
 }
 
 class _FieldLabel extends StatelessWidget {
