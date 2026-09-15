@@ -35,6 +35,45 @@ class _CustomerProfileScreenState extends State<CustomerProfileScreen> {
     await Supabase.instance.client.auth.signOut();
   }
 
+  Future<void> _confirmDeleteAccount() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: kCard,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Row(
+          children: [
+            Icon(Icons.warning_amber_rounded, color: kError, size: 24),
+            SizedBox(width: 10),
+            Text('Delete Account', style: GoogleFonts.inter(color: AppColors.textPrimary, fontSize: 18, fontWeight: FontWeight.bold)),
+          ],
+        ),
+        content: Text(
+          'Are you sure you want to permanently delete your account and all associated data? This action cannot be undone.',
+          style: GoogleFonts.inter(color: AppColors.textSecondary, fontSize: 13, height: 1.5),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text('Cancel', style: GoogleFonts.inter(color: AppColors.textMuted, fontWeight: FontWeight.w600)),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: kError,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            ),
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text('Delete', style: GoogleFonts.inter(color: Colors.white, fontWeight: FontWeight.w700)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      await MarketplaceService.deleteUserAccount();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -97,14 +136,34 @@ class _CustomerProfileScreenState extends State<CustomerProfileScreen> {
                   child: Container(
                     padding: EdgeInsets.all(16),
                     decoration: BoxDecoration(
+                      color: kCard,
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(color: kBorder),
+                    ),
+                    child: Row(children: [
+                      Icon(Icons.logout_rounded, color: AppColors.textSecondary, size: 22),
+                      SizedBox(width: 14),
+                      Text('Sign Out', style: GoogleFonts.inter(color: AppColors.textPrimary, fontSize: 15, fontWeight: FontWeight.w600)),
+                    ]),
+                  ),
+                ),
+
+                SizedBox(height: 12),
+
+                // ── Delete Account (Store Compliance) ──────────────────────
+                GestureDetector(
+                  onTap: _confirmDeleteAccount,
+                  child: Container(
+                    padding: EdgeInsets.all(16),
+                    decoration: BoxDecoration(
                       color: kError.withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(14),
                       border: Border.all(color: kError.withValues(alpha: 0.3)),
                     ),
                     child: Row(children: [
-                      Icon(Icons.logout_rounded, color: kError, size: 22),
+                      Icon(Icons.delete_forever_rounded, color: kError, size: 22),
                       SizedBox(width: 14),
-                      Text('Sign Out', style: GoogleFonts.inter(color: kError, fontSize: 15, fontWeight: FontWeight.w600)),
+                      Text('Delete Account', style: GoogleFonts.inter(color: kError, fontSize: 15, fontWeight: FontWeight.w600)),
                     ]),
                   ),
                 ),

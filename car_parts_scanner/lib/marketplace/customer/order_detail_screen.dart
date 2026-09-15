@@ -60,6 +60,7 @@ class OrderDetailScreen extends StatelessWidget {
               child: _infoCard(children: [
                 _infoRow('Order ID', '#${order.id.substring(0, 8).toUpperCase()}'),
                 _infoRow('Total', 'Rs ${order.totalAmount.toStringAsFixed(0)}', valueColor: kAccent),
+                _infoRow('Payment Method', order.paymentMethod ?? 'COD', valueColor: kSuccess),
                 _infoRow('Delivery Fee', 'Rs ${order.deliveryFee.toStringAsFixed(0)}'),
                 if (order.customerNotes != null)
                   _infoRow('Notes', order.customerNotes!),

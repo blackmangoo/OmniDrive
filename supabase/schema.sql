@@ -402,6 +402,7 @@ CREATE POLICY "Public can view part docs" ON public.part_docs FOR SELECT USING (
 CREATE POLICY "Users view own profile" ON public.user_profiles FOR SELECT USING (auth.uid() = id);
 CREATE POLICY "Users insert own profile" ON public.user_profiles FOR INSERT WITH CHECK (auth.uid() = id);
 CREATE POLICY "Users update own profile" ON public.user_profiles FOR UPDATE USING (auth.uid() = id);
+CREATE POLICY "Users delete own profile" ON public.user_profiles FOR DELETE USING (auth.uid() = id);
 
 CREATE POLICY "Users view own cart" ON public.cart_items FOR SELECT USING (auth.uid() = user_id);
 CREATE POLICY "Users manage own cart" ON public.cart_items FOR ALL USING (auth.uid() = user_id);

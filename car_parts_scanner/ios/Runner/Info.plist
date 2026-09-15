@@ -72,6 +72,10 @@
 	<string>The camera component requires microphone access.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>OmniDrive AI needs photo library access to analyse car part images from your gallery.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>OmniDrive AI uses your location to calculate real-time vehicle speed metrics and track quarter-mile runs.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>OmniDrive AI requires location services while running performance telemetry tests.</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
