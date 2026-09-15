@@ -5,6 +5,20 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'marketplace_models.dart';
 
+/// Thrown when adding a product from a vendor different from the one currently in cart.
+class CartVendorMismatchException implements Exception {
+  final String existingShopName;
+  final String newShopName;
+  const CartVendorMismatchException({
+    required this.existingShopName,
+    required this.newShopName,
+  });
+
+  @override
+  String toString() =>
+      'Your cart already contains parts from $existingShopName. Replace with parts from $newShopName?';
+}
+
 /// Single source of truth for all Supabase calls in the Marketplace module.
 class MarketplaceService {
   static final _sb = Supabase.instance.client;
@@ -47,6 +61,34 @@ class MarketplaceService {
         'prompt': 'select_account',
       },
     );
+  }
+
+  /// Official Sign in with Apple flow compliant with Apple App Store Guideline 4.8.
+  static Future<bool> signInWithApple({String? intendedRole}) async {
+    if (intendedRole != null) {
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('pending_oauth_role', intendedRole);
+      } catch (_) {}
+    }
+    return await _sb.auth.signInWithOAuth(
+      OAuthProvider.apple,
+      redirectTo: 'omnidrive://login-callback',
+      authScreenLaunchMode: LaunchMode.inAppBrowserView,
+    );
+  }
+
+  /// Permanently deletes the current user's profile and related records,
+  /// complying with Apple Guideline 5.1.1(v) and Google Play account deletion mandates.
+  static Future<void> deleteUserAccount() async {
+    final user = _sb.auth.currentUser;
+    if (user == null) return;
+    try {
+      await _sb.from('user_profiles').delete().eq('id', user.id);
+    } catch (e) {
+      debugPrint('Error deleting user profile: $e');
+    }
+    await _sb.auth.signOut();
   }
 
   static Future<String> getUserRole() async {
@@ -129,6 +171,7 @@ class MarketplaceService {
 
       // Fallback: use pending/metadata role and create the missing profile
       final finalRole = pendingRole ?? metadataRole ?? 'customer';
+      final isApproved = finalRole == 'customer' || finalRole == 'admin';
       final displayName = meta['full_name'] ?? meta['name'] ?? meta['user_name'] ?? 'User';
       final avatar = meta['avatar_url'] ?? meta['picture'];
       try {
@@ -137,6 +180,7 @@ class MarketplaceService {
           'role': finalRole,
           'full_name': displayName,
           'phone': meta['phone'],
+          'is_approved': isApproved,
         };
         if (avatar != null) {
           profileData['avatar_url'] = avatar;
@@ -437,7 +481,26 @@ class MarketplaceService {
     }
   }
 
-  static Future<void> addToCart(String productId, {int quantity = 1}) async {
+  static Future<void> addToCart(String productId, {int quantity = 1, bool forceReplace = false}) async {
+    final currentCart = await fetchCart();
+    if (currentCart.isNotEmpty) {
+      final existingVendorId = currentCart.first.product?.vendorId;
+      final existingShopName = currentCart.first.product?.vendorShopName ?? 'Current Shop';
+      if (existingVendorId != null) {
+        final newProduct = await fetchProduct(productId);
+        if (newProduct != null && newProduct.vendorId != existingVendorId) {
+          if (!forceReplace) {
+            throw CartVendorMismatchException(
+              existingShopName: existingShopName,
+              newShopName: newProduct.vendorShopName ?? 'New Shop',
+            );
+          } else {
+            await clearCart();
+          }
+        }
+      }
+    }
+
     await _sb.from('cart_items').upsert({
       'user_id': currentUserId,
       'product_id': productId,

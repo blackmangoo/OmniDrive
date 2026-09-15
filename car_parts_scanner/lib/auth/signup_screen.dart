@@ -10,6 +10,7 @@ import '../core/theme/app_shadows.dart';
 import '../core/motion/motion_tappable.dart';
 import 'package:car_parts_scanner/core/theme/app_colors.dart';
 import 'widgets/google_sign_in_button.dart';
+import 'widgets/apple_sign_in_button.dart';
 
 
 class SignupScreen extends StatefulWidget {
@@ -28,7 +29,9 @@ class _SignupScreenState extends State<SignupScreen> {
   final _confirmCtrl = TextEditingController();
   bool _loading = false;
   bool _googleLoading = false;
+  bool _appleLoading = false;
   DateTime? _lastGoogleTap;
+  DateTime? _lastAppleTap;
   bool _obscurePass = true;
   bool _obscureConfirm = true;
   StreamSubscription<AuthState>? _authSub;
@@ -122,6 +125,30 @@ class _SignupScreenState extends State<SignupScreen> {
       _showError('Could not complete Google authentication. Please try again.');
     } finally {
       if (mounted) setState(() => _googleLoading = false);
+    }
+  }
+
+  Future<void> _signInWithApple() async {
+    final now = DateTime.now();
+    if (_lastAppleTap != null && now.difference(_lastAppleTap!) < Duration(seconds: 2)) return;
+    _lastAppleTap = now;
+    FocusScope.of(context).unfocus();
+    setState(() => _appleLoading = true);
+    try {
+      final launched = await MarketplaceService.signInWithApple(
+        intendedRole: widget.role,
+      );
+      if (!launched && mounted) {
+        _showError('Unable to launch browser for Apple Sign-In.');
+      }
+    } on AuthException catch (e) {
+      if (!mounted) return;
+      _showError('Apple Sign-Up Failed: ${e.message}');
+    } catch (_) {
+      if (!mounted) return;
+      _showError('Could not complete Apple authentication. Please try again.');
+    } finally {
+      if (mounted) setState(() => _appleLoading = false);
     }
   }
 
@@ -252,7 +279,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   width: double.infinity,
                   height: 52,
                   child: TappableScale(
-                    onTap: (_loading || _googleLoading) ? null : _signup,
+                    onTap: (_loading || _googleLoading || _appleLoading) ? null : _signup,
                     child: Container(
                       decoration: BoxDecoration(
                         color: _accentColor,
@@ -278,9 +305,15 @@ class _SignupScreenState extends State<SignupScreen> {
                 SizedBox(height: 20),
 
                 GoogleSignInButton(
-                  onPressed: _loading || _googleLoading ? null : _signInWithGoogle,
+                  onPressed: _loading || _googleLoading || _appleLoading ? null : _signInWithGoogle,
                   isLoading: _googleLoading,
                   label: 'Sign up with Google',
+                ),
+                const SizedBox(height: 12),
+                AppleSignInButton(
+                  onPressed: _loading || _googleLoading || _appleLoading ? null : _signInWithApple,
+                  isLoading: _appleLoading,
+                  label: 'Sign up with Apple',
                 ),
 
                 SizedBox(height: 24),

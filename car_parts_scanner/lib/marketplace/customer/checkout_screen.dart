@@ -20,6 +20,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   final _addrCtrl  = TextEditingController();
   final _notesCtrl = TextEditingController();
   bool _loading = false;
+  String _paymentMethod = 'COD'; // 'COD' | 'CARD'
 
   double get _subtotal => widget.items.fold(0, (s, i) => s + i.subtotal);
   double get _total => _subtotal + widget.deliveryFee;
@@ -50,6 +51,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         deliveryAddress: _addrCtrl.text.trim(),
         deliveryFee: widget.deliveryFee,
         notes: _notesCtrl.text.trim().isEmpty ? null : _notesCtrl.text.trim(),
+        paymentMethod: _paymentMethod,
       );
 
       if (!mounted) return;
@@ -144,6 +146,25 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     ),
                   ),
 
+                  SizedBox(height: 24),
+
+                  // ── Payment Method ─────────────────────────────────────
+                  _sectionHeader('Payment Method'),
+                  SizedBox(height: 12),
+                  _paymentMethodTile(
+                    id: 'COD',
+                    title: 'Cash on Delivery (COD)',
+                    subtitle: 'Pay cash to rider upon delivery of parts',
+                    icon: Icons.payments_outlined,
+                  ),
+                  SizedBox(height: 10),
+                  _paymentMethodTile(
+                    id: 'CARD',
+                    title: 'Credit / Debit Card (Online)',
+                    subtitle: 'Visa, Mastercard & UnionPay accepted',
+                    icon: Icons.credit_card_rounded,
+                  ),
+
                   SizedBox(height: 28),
 
                   // ── Price Breakdown ────────────────────────────────────
@@ -184,6 +205,58 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _paymentMethodTile({
+    required String id,
+    required String title,
+    required String subtitle,
+    required IconData icon,
+  }) {
+    final isSelected = _paymentMethod == id;
+    return GestureDetector(
+      onTap: () => setState(() => _paymentMethod = id),
+      child: Container(
+        padding: EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: kCard,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: isSelected ? kAccent : kBorder,
+            width: isSelected ? 1.5 : 1,
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: (isSelected ? kAccent : AppColors.textMuted).withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(icon, color: isSelected ? kAccent : AppColors.textMuted, size: 22),
+            ),
+            SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title, style: GoogleFonts.inter(color: AppColors.textPrimary, fontSize: 14, fontWeight: FontWeight.w600)),
+                  SizedBox(height: 2),
+                  Text(subtitle, style: GoogleFonts.inter(color: AppColors.textMuted, fontSize: 11)),
+                ],
+              ),
+            ),
+            Icon(
+              isSelected ? Icons.radio_button_checked_rounded : Icons.radio_button_off_rounded,
+              color: isSelected ? kAccent : AppColors.textMuted,
+              size: 20,
+            ),
+          ],
+        ),
       ),
     );
   }

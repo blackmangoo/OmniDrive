@@ -58,6 +58,62 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ));
       }
+    } on CartVendorMismatchException catch (e) {
+      if (!mounted) return;
+      final shouldReplace = await showDialog<bool>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          backgroundColor: kCard,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: Row(
+            children: [
+              Icon(Icons.storefront_rounded, color: kCyan, size: 24),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text('Replace Cart Items?', style: GoogleFonts.inter(color: AppColors.textPrimary, fontSize: 18, fontWeight: FontWeight.bold)),
+              ),
+            ],
+          ),
+          content: Text(
+            'Your cart already contains parts from ${e.existingShopName}. Creating an order from ${e.newShopName} will discard your current items. Would you like to start a new cart?',
+            style: GoogleFonts.inter(color: AppColors.textSecondary, fontSize: 13, height: 1.5),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: Text('Keep Current Cart', style: GoogleFonts.inter(color: AppColors.textMuted, fontWeight: FontWeight.w600)),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: kCyan,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              ),
+              onPressed: () => Navigator.pop(ctx, true),
+              child: Text('Start New Cart', style: GoogleFonts.inter(color: Colors.black, fontWeight: FontWeight.w700)),
+            ),
+          ],
+        ),
+      );
+
+      if (shouldReplace == true) {
+        await MarketplaceService.addToCart(widget.product.id, quantity: _qty, forceReplace: true);
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('Cart updated with parts from ${e.newShopName}', style: const TextStyle(color: Colors.black)),
+            backgroundColor: kCyan,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          ));
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Could not add to cart: $e'),
+          backgroundColor: kError,
+          behavior: SnackBarBehavior.floating,
+        ));
+      }
     } finally {
       if (mounted) setState(() => _addingToCart = false);
     }

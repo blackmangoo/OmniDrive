@@ -13,6 +13,7 @@ import '../core/theme/app_shadows.dart';
 import '../core/motion/motion_tappable.dart';
 import 'package:car_parts_scanner/core/theme/app_colors.dart';
 import 'widgets/google_sign_in_button.dart';
+import 'widgets/apple_sign_in_button.dart';
 
 
 class LoginScreen extends StatefulWidget {
@@ -29,6 +30,7 @@ class _LoginScreenState extends State<LoginScreen>
   final _passCtrl  = TextEditingController();
   bool _loading     = false;
   bool _googleLoading = false;
+  bool _appleLoading = false;
   bool _obscurePass = true;
   DateTime? _lastLoginTap;
   // 0=Customer, 1=Vendor, 2=Rider
@@ -161,6 +163,33 @@ class _LoginScreenState extends State<LoginScreen>
       );
     } finally {
       if (mounted) setState(() => _googleLoading = false);
+    }
+  }
+
+  Future<void> _signInWithApple() async {
+    final now = DateTime.now();
+    if (_lastLoginTap != null && now.difference(_lastLoginTap!) < Duration(seconds: 2)) return;
+    _lastLoginTap = now;
+    FocusScope.of(context).unfocus();
+    setState(() => _appleLoading = true);
+    try {
+      final launched = await MarketplaceService.signInWithApple(
+        intendedRole: _currentRoleKey,
+      );
+      if (!launched && mounted) {
+        _showErrorDialog('Apple Sign-In Failed', 'Unable to launch browser for authentication.');
+      }
+    } on AuthException catch (e) {
+      if (!mounted) return;
+      _showErrorDialog('Apple Sign-In Failed', e.message);
+    } catch (_) {
+      if (!mounted) return;
+      _showErrorDialog(
+        'Apple Sign-In Error',
+        'Could not complete Apple authentication. Please try again.',
+      );
+    } finally {
+      if (mounted) setState(() => _appleLoading = false);
     }
   }
 
@@ -313,7 +342,7 @@ class _LoginScreenState extends State<LoginScreen>
                     width: double.infinity,
                     height: 54,
                     child: TappableScale(
-                      onTap: (_loading || _googleLoading) ? null : _login,
+                      onTap: (_loading || _googleLoading || _appleLoading) ? null : _login,
                       child: Container(
                         decoration: BoxDecoration(
                           color: _accentColor,
@@ -339,9 +368,15 @@ class _LoginScreenState extends State<LoginScreen>
                   SizedBox(height: 24),
 
                   GoogleSignInButton(
-                    onPressed: _loading || _googleLoading ? null : _signInWithGoogle,
+                    onPressed: _loading || _googleLoading || _appleLoading ? null : _signInWithGoogle,
                     isLoading: _googleLoading,
                     label: 'Continue with Google',
+                  ),
+                  const SizedBox(height: 12),
+                  AppleSignInButton(
+                    onPressed: _loading || _googleLoading || _appleLoading ? null : _signInWithApple,
+                    isLoading: _appleLoading,
+                    label: 'Continue with Apple',
                   ),
 
                   SizedBox(height: 28),

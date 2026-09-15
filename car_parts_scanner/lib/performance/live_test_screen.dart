@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 import 'performance_models.dart';
 import 'performance_run_service.dart';
@@ -66,6 +67,8 @@ class _LiveTestScreenState extends State<LiveTestScreen> {
   @override
   void initState() {
     super.initState();
+    // Keep device screen awake during high-speed performance telemetry runs
+    WakelockPlus.enable();
     _state = widget.runService.state;
 
     // Listen to smoothed speed
@@ -118,11 +121,12 @@ class _LiveTestScreenState extends State<LiveTestScreen> {
 
   @override
   void dispose() {
+    WakelockPlus.disable();
     _speedSub?.cancel();
     _stateSub?.cancel();
     _milestoneSub?.cancel();
-    _elapsedSub?.cancel();       
-    _brakingArmSub?.cancel();    
+    _elapsedSub?.cancel();
+    _brakingArmSub?.cancel();
     super.dispose();
   }
 

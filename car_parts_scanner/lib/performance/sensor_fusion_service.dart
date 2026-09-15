@@ -434,9 +434,14 @@ class SensorFusionService {
   // ── Accelerometer Handler ─────────────────────────────────────────────────
 
   void _onAccel(UserAccelerometerEvent e) {
-    if (!_calibrated || _lastAccelTime == null) return;
+    if (!_calibrated) return;
 
     final now = DateTime.now();
+    if (_lastAccelTime == null) {
+      _lastAccelTime = now;
+      return;
+    }
+
     final dtS = now.difference(_lastAccelTime!).inMicroseconds / 1e6;
 
     // Reject erratic timer steps
