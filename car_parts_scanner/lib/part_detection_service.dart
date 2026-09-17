@@ -41,7 +41,9 @@ class PartDetectionService {
       debugPrint('[API Health Check] Response code: ${resp.statusCode}');
       if (resp.statusCode == 200) {
         final json = jsonDecode(resp.body);
-        final isLoaded = json['model_loaded'] == true;
+        final isLoaded = json['model_loaded'] == true ||
+            json['model_available'] == true ||
+            json['status'] == 'online';
         debugPrint('[API Health Check] Model loaded status: $isLoaded');
         return isLoaded;
       }
