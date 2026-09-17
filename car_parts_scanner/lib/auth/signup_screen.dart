@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'auth_gate.dart';
@@ -300,23 +301,27 @@ class _SignupScreenState extends State<SignupScreen> {
                   ),
                 ),
 
-                SizedBox(height: 24),
-                const AuthDivider(),
-                SizedBox(height: 20),
+                if (widget.role != 'vendor') ...[
+                  const SizedBox(height: 24),
+                  const AuthDivider(),
+                  const SizedBox(height: 20),
 
-                GoogleSignInButton(
-                  onPressed: _loading || _googleLoading || _appleLoading ? null : _signInWithGoogle,
-                  isLoading: _googleLoading,
-                  label: 'Sign up with Google',
-                ),
-                const SizedBox(height: 12),
-                AppleSignInButton(
-                  onPressed: _loading || _googleLoading || _appleLoading ? null : _signInWithApple,
-                  isLoading: _appleLoading,
-                  label: 'Sign up with Apple',
-                ),
+                  GoogleSignInButton(
+                    onPressed: _loading || _googleLoading || _appleLoading ? null : _signInWithGoogle,
+                    isLoading: _googleLoading,
+                    label: 'Sign up with Google',
+                  ),
+                  if (defaultTargetPlatform == TargetPlatform.iOS) ...[
+                    const SizedBox(height: 12),
+                    AppleSignInButton(
+                      onPressed: _loading || _googleLoading || _appleLoading ? null : _signInWithApple,
+                      isLoading: _appleLoading,
+                      label: 'Sign up with Apple',
+                    ),
+                  ],
+                ],
 
-                SizedBox(height: 24),
+                const SizedBox(height: 24),
                 Center(
                   child: GestureDetector(
                     onTap: () => Navigator.pop(context),
