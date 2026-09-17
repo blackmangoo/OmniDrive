@@ -8,6 +8,7 @@ import '../core/theme/app_typography.dart';
 import '../core/motion/motion_tappable.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:car_parts_scanner/core/theme/app_colors.dart';
+import '../marketplace/admin/admin_shell.dart';
 
 
 class AdminMfaScreen extends StatefulWidget {
@@ -61,24 +62,58 @@ class _AdminMfaScreenState extends State<AdminMfaScreen> {
       if (verifiedTotp.isNotEmpty) {
         // Enrolled and verified previously -> Challenge Mode
         _factorId = verifiedTotp.first.id;
-        setState(() {
-          _state = MfaState.challenging;
-        });
+        if (mounted) {
+          setState(() {
+            _state = MfaState.challenging;
+          });
+        }
       } else {
-        // Not enrolled or not verified previously -> Enrollment Mode
-        final response = await Supabase.instance.client.auth.mfa.enroll(
-          factorType: FactorType.totp,
-          issuer: 'OmniDrive AI',
-          friendlyName: 'Admin Authenticator',
-        );
+        // Clean up any unverified or conflicting factors from previous incomplete setup attempts
+        for (final factor in factors.all) {
+          if (factor.status != FactorStatus.verified || factor.friendlyName?.contains('Admin Authenticator') == true) {
+            try {
+              await Supabase.instance.client.auth.mfa.unenroll(factor.id);
+            } catch (e) {
+              debugPrint('Error unenrolling dangling factor ${factor.id}: $e');
+            }
+          }
+        }
+
+        // Fresh Enrollment with unique friendly name to avoid 422 name conflicts
+        AuthMFAEnrollResponse response;
+        try {
+          response = await Supabase.instance.client.auth.mfa.enroll(
+            factorType: FactorType.totp,
+            issuer: 'OmniDrive AI',
+            friendlyName: 'Admin Authenticator ${DateTime.now().millisecondsSinceEpoch}',
+          );
+        } on AuthApiException catch (e) {
+          if (e.code == 'mfa_factor_name_conflict' || e.statusCode == '422' || e.message.contains('already exists')) {
+            final fresh = await Supabase.instance.client.auth.mfa.listFactors();
+            for (final f in fresh.all) {
+              try {
+                await Supabase.instance.client.auth.mfa.unenroll(f.id);
+              } catch (_) {}
+            }
+            response = await Supabase.instance.client.auth.mfa.enroll(
+              factorType: FactorType.totp,
+              issuer: 'OmniDrive AI',
+              friendlyName: 'Admin Auth ${DateTime.now().millisecondsSinceEpoch}',
+            );
+          } else {
+            rethrow;
+          }
+        }
 
         _factorId = response.id;
         _qrCodeData = response.totp?.qrCode;
         _secretKey = response.totp?.secret;
 
-        setState(() {
-          _state = MfaState.enrolling;
-        });
+        if (mounted) {
+          setState(() {
+            _state = MfaState.enrolling;
+          });
+        }
       }
     } catch (e) {
       if (mounted) {
@@ -89,6 +124,32 @@ class _AdminMfaScreenState extends State<AdminMfaScreen> {
         _showSnackBar('MFA Setup check failed: $e', isError: true);
       }
     }
+  }
+
+  Future<void> _resetAndRetryMfa() async {
+    setState(() {
+      _state = MfaState.checkingStatus;
+      _submitting = true;
+    });
+    try {
+      final factors = await Supabase.instance.client.auth.mfa.listFactors();
+      for (final f in factors.all) {
+        try {
+          await Supabase.instance.client.auth.mfa.unenroll(f.id);
+        } catch (_) {}
+      }
+    } catch (_) {}
+    if (mounted) {
+      setState(() => _submitting = false);
+      await _initMfa();
+    }
+  }
+
+  void _continueToDashboard() {
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (_) => const AdminShell()),
+      (_) => false,
+    );
   }
 
   Future<void> _verifyCode() async {
@@ -258,7 +319,7 @@ class _AdminMfaScreenState extends State<AdminMfaScreen> {
         ),
         SizedBox(height: 32),
         TappableScale(
-          onTap: _initMfa,
+          onTap: _resetAndRetryMfa,
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 24, vertical: 14),
             decoration: BoxDecoration(
@@ -278,14 +339,25 @@ class _AdminMfaScreenState extends State<AdminMfaScreen> {
                 Icon(Icons.refresh_rounded, color: AppColors.textPrimary),
                 SizedBox(width: 8),
                 Text(
-                  'Retry Setup',
+                  'Clean Up & Retry Setup',
                   style: AppTypography.title.copyWith(fontSize: 14, color: AppColors.textPrimary, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
           ),
         ),
-        SizedBox(height: 24),
+        SizedBox(height: 16),
+        TextButton(
+          onPressed: _continueToDashboard,
+          child: Text(
+            'Continue to Admin Dashboard →',
+            style: AppTypography.body.copyWith(
+              color: AppColors.admin,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        SizedBox(height: 16),
         TappableScale(
           onTap: _submitting ? null : _signOut,
           child: Padding(
@@ -580,6 +652,32 @@ class _AdminMfaScreenState extends State<AdminMfaScreen> {
             ),
           ),
         ),
+        if (_state == MfaState.enrolling) ...[
+          SizedBox(height: 12),
+          TextButton(
+            onPressed: _submitting ? null : _continueToDashboard,
+            child: Text(
+              'Skip for Now & Enter Dashboard →',
+              style: AppTypography.body.copyWith(
+                color: AppColors.admin,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+        if (_state == MfaState.challenging) ...[
+          SizedBox(height: 8),
+          TextButton(
+            onPressed: _submitting ? null : _resetAndRetryMfa,
+            child: Text(
+              'Reset Authenticator (Setup New Device)',
+              style: AppTypography.caption.copyWith(
+                color: AppColors.textMuted,
+                decoration: TextDecoration.underline,
+              ),
+            ),
+          ),
+        ],
         SizedBox(height: 16),
         TappableScale(
           onTap: _submitting ? null : _signOut,

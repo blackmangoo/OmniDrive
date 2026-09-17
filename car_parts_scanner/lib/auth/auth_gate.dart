@@ -141,7 +141,9 @@ class _AuthGateState extends State<AuthGate> {
     if (mounted) {
       setState(() { 
         _role = r; 
-        if (r == 'admin' && aal.currentLevel == AuthenticatorAssuranceLevels.aal1) {
+        if (r == 'admin' &&
+            aal.nextLevel == AuthenticatorAssuranceLevels.aal2 &&
+            aal.currentLevel == AuthenticatorAssuranceLevels.aal1) {
           _needsMfa = true;
         } else {
           _needsMfa = false;
