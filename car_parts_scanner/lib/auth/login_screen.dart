@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -364,22 +365,36 @@ class _LoginScreenState extends State<LoginScreen>
                   ),
 
                   SizedBox(height: 28),
-                  const AuthDivider(),
-                  SizedBox(height: 24),
 
-                  GoogleSignInButton(
-                    onPressed: _loading || _googleLoading || _appleLoading ? null : _signInWithGoogle,
-                    isLoading: _googleLoading,
-                    label: 'Continue with Google',
-                  ),
-                  const SizedBox(height: 12),
-                  AppleSignInButton(
-                    onPressed: _loading || _googleLoading || _appleLoading ? null : _signInWithApple,
-                    isLoading: _appleLoading,
-                    label: 'Continue with Apple',
-                  ),
+                  // ── Social Logins (Hidden for Vendors; Apple only on iOS) ──
+                  if (_roleIndex == 1) ...[
+                    Center(
+                      child: Text(
+                        'Vendors must log in with verified shop credentials.',
+                        style: AppTypography.caption.copyWith(color: AppColors.textMuted),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                  ] else ...[
+                    const AuthDivider(),
+                    const SizedBox(height: 20),
 
-                  SizedBox(height: 28),
+                    GoogleSignInButton(
+                      onPressed: _loading || _googleLoading || _appleLoading ? null : _signInWithGoogle,
+                      isLoading: _googleLoading,
+                      label: 'Continue with Google',
+                    ),
+                    if (defaultTargetPlatform == TargetPlatform.iOS) ...[
+                      const SizedBox(height: 12),
+                      AppleSignInButton(
+                        onPressed: _loading || _googleLoading || _appleLoading ? null : _signInWithApple,
+                        isLoading: _appleLoading,
+                        label: 'Continue with Apple',
+                      ),
+                    ],
+                    const SizedBox(height: 24),
+                  ],
 
                   // ── Sign up link ───────────────────────────────────────────
                   Center(
