@@ -53,7 +53,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             Text('Added to cart', style: AppTypography.label.copyWith(
               fontSize: 13, fontWeight: FontWeight.w600, color: Colors.black)),
           ]),
-          backgroundColor: kCyan,
+          backgroundColor: kAccent,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ));
@@ -67,7 +67,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           title: Row(
             children: [
-              Icon(Icons.storefront_rounded, color: kCyan, size: 24),
+              Icon(Icons.storefront_rounded, color: kAccent, size: 24),
               const SizedBox(width: 10),
               Expanded(
                 child: Text('Replace Cart Items?', style: GoogleFonts.inter(color: AppColors.textPrimary, fontSize: 18, fontWeight: FontWeight.bold)),
@@ -85,7 +85,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: kCyan,
+                backgroundColor: kAccent,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
               ),
               onPressed: () => Navigator.pop(ctx, true),
@@ -100,7 +100,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text('Cart updated with parts from ${e.newShopName}', style: const TextStyle(color: Colors.black)),
-            backgroundColor: kCyan,
+            backgroundColor: kAccent,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           ));
@@ -192,7 +192,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                               width: i == _imageIdx ? 20 : 6,
                               height: 6,
                               decoration: BoxDecoration(
-                                color: i == _imageIdx ? kCyan : AppColors.textMuted,
+                                color: i == _imageIdx ? kAccent : AppColors.textMuted,
                                 borderRadius: BorderRadius.circular(3),
                               ),
                             )),
@@ -225,7 +225,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 Row(children: [
                                   Text('Rs ${product.price.toStringAsFixed(0)}',
                                     style: GoogleFonts.inter(fontSize: 24,
-                                      fontWeight: FontWeight.w800, color: kCyan,
+                                      fontWeight: FontWeight.w800, color: kAccent,
                                       letterSpacing: -0.5)),
                                   if (product.hasDiscount) ...[
                                     SizedBox(width: 8),
@@ -265,10 +265,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       SizedBox(height: 6),
                       if (product.vendorShopName != null)
                         Row(children: [
-                          Icon(Icons.storefront_rounded, size: 14, color: kVendor),
+                          Icon(Icons.storefront_rounded, size: 14, color: kAccent),
                           SizedBox(width: 6),
                           Text(product.vendorShopName!,
-                            style: kBody(13, color: kVendor, fw: FontWeight.w600)),
+                            style: kBody(13, color: kAccent, fw: FontWeight.w600)),
                         ]),
                       SizedBox(height: 16),
 
@@ -296,7 +296,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       SizedBox(height: 12),
                       Row(children: [
                         Container(
-                          decoration: kGlassDeco(radius: 14),
+                          decoration: kFieldDeco(radius: 14),
                           child: Row(children: [
                             _QtyBtn(Icons.remove_rounded, () {
                               if (_qty > 1) setState(() => _qty--);
@@ -367,7 +367,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         color: product.stockQuantity == 0 ? kCard : null,
                         borderRadius: BorderRadius.circular(14),
                         boxShadow: product.stockQuantity > 0
-                            ? [BoxShadow(color: kCyan.withValues(alpha: 0.3),
+                            ? [BoxShadow(color: kAccent.withValues(alpha: 0.3),
                                 blurRadius: 16, offset: Offset(0, 6))]
                             : [],
                       ),

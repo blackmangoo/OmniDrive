@@ -60,9 +60,9 @@ class _LoginScreenState extends State<LoginScreen>
 
   Color get _accentColor {
     switch (_roleIndex) {
-      case 1: return AppColors.vendorDark;
-      case 2: return AppColors.riderDark;
-      default: return AppColors.cyan;
+      case 1: return AppColors.accentPressed;
+      case 2: return AppColors.accentPressed;
+      default: return AppColors.accent;
     }
   }
 
@@ -266,9 +266,9 @@ class _LoginScreenState extends State<LoginScreen>
                     ),
                     child: Row(
                       children: [
-                        _RoleTab(label: 'Customer', icon: Icons.person_rounded, index: 0, selectedIndex: _roleIndex, accent: AppColors.customer, onTap: () => setState(() => _roleIndex = 0)),
-                        _RoleTab(label: 'Vendor',   icon: Icons.storefront_rounded, index: 1, selectedIndex: _roleIndex, accent: AppColors.vendorDark, onTap: () => setState(() => _roleIndex = 1)),
-                        _RoleTab(label: 'Rider',    icon: Icons.delivery_dining_rounded, index: 2, selectedIndex: _roleIndex, accent: AppColors.rider, onTap: () => setState(() => _roleIndex = 2)),
+                        _RoleTab(label: 'Customer', icon: Icons.person_rounded, index: 0, selectedIndex: _roleIndex, accent: AppColors.accent, onTap: () => setState(() => _roleIndex = 0)),
+                        _RoleTab(label: 'Vendor',   icon: Icons.storefront_rounded, index: 1, selectedIndex: _roleIndex, accent: AppColors.accentPressed, onTap: () => setState(() => _roleIndex = 1)),
+                        _RoleTab(label: 'Rider',    icon: Icons.delivery_dining_rounded, index: 2, selectedIndex: _roleIndex, accent: AppColors.accent, onTap: () => setState(() => _roleIndex = 2)),
                       ],
                     ),
                   ),
@@ -348,7 +348,7 @@ class _LoginScreenState extends State<LoginScreen>
                         decoration: BoxDecoration(
                           color: _accentColor,
                           borderRadius: BorderRadius.circular(AppSpacing.rLg),
-                          boxShadow: AppShadows.roleGlow(_accentColor),
+                          boxShadow: AppShadows.raised,
                         ),
                         child: Center(
                           child: _loading
@@ -467,7 +467,7 @@ class _RoleTab extends StatelessWidget {
               color: selected ? accent.withValues(alpha: 0.3) : Colors.transparent,
               width: 1,
             ),
-            boxShadow: selected ? AppShadows.roleGlow(accent) : null,
+            boxShadow: selected ? AppShadows.raised : null,
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,

@@ -40,7 +40,7 @@ class OrderDetailScreen extends StatelessWidget {
               child: Container(
                 width: double.infinity,
                 padding: EdgeInsets.all(20),
-                decoration: kGlowCard(color),
+                decoration: kCardDeco(),
                 child: Column(children: [
                   Text(statusIcon(order.status), style: TextStyle(fontSize: 42)),
                   SizedBox(height: 10),

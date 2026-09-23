@@ -94,13 +94,12 @@ class _OrderTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = statusColor(order.status);
     final date  = DateFormat('d MMM, hh:mm a').format(order.createdAt.toLocal());
     return TappableScale(
       onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => OrderDetailScreen(order: order))),
       child: Container(
         padding: EdgeInsets.all(16),
-        decoration: kGlowCard(color),
+        decoration: kCardDeco(),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(children: [
             Text('Order #${order.id.substring(0, 8).toUpperCase()}',

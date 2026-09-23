@@ -35,7 +35,7 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Password updated successfully!'),
-        backgroundColor: AppColors.success,
+        backgroundColor: AppColors.successFill,
         behavior: SnackBarBehavior.floating,
       ));
       
@@ -52,7 +52,7 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
   void _showError(String msg) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(msg, style: AppTypography.body.copyWith(color: AppColors.textPrimary)),
-      backgroundColor: AppColors.error,
+      backgroundColor: AppColors.errorFill,
       behavior: SnackBarBehavior.floating,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
     ));
@@ -122,9 +122,9 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
                     onTap: _loading ? null : _updatePassword,
                     child: Container(
                       decoration: BoxDecoration(
-                        color: AppColors.cyan,
+                        color: AppColors.accent,
                         borderRadius: BorderRadius.circular(AppSpacing.rLg),
-                        boxShadow: AppShadows.cyanGlow,
+                        boxShadow: AppShadows.raised,
                       ),
                       child: Center(
                         child: _loading
@@ -156,7 +156,7 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
         contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.rLg), borderSide: BorderSide(color: AppColors.border)),
         enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.rLg), borderSide: BorderSide(color: AppColors.border)),
-        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.rLg), borderSide: BorderSide(color: AppColors.cyan, width: 1.5)),
+        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.rLg), borderSide: BorderSide(color: AppColors.accent, width: 1.5)),
         suffixIcon: IconButton(
           icon: Icon(
             obscure ? Icons.visibility_off_outlined : Icons.visibility_outlined,

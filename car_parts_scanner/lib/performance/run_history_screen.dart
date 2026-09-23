@@ -82,7 +82,7 @@ class _RunHistoryScreenState extends State<RunHistoryScreen> {
         ),
       ),
       body: _loading
-          ? Center(child: CircularProgressIndicator(color: AppColors.cyan))
+          ? Center(child: CircularProgressIndicator(color: AppColors.accent))
           : _runs.isEmpty
               ? Center(
                   child: Column(
@@ -147,10 +147,10 @@ class _RunHistoryScreenState extends State<RunHistoryScreen> {
                               Container(
                                 padding: EdgeInsets.all(12),
                                 decoration: BoxDecoration(
-                                  color: AppColors.cyan.withValues(alpha: 0.1),
+                                  color: AppColors.accent.withValues(alpha: 0.1),
                                   shape: BoxShape.circle,
                                 ),
-                                child: Icon(Icons.speed_rounded, color: AppColors.cyan, size: 22),
+                                child: Icon(Icons.speed_rounded, color: AppColors.accent, size: 22),
                               ),
                               SizedBox(width: 14),
                               Expanded(
@@ -177,13 +177,13 @@ class _RunHistoryScreenState extends State<RunHistoryScreen> {
                                   decimals: 2,
                                   suffix: 's',
                                   style: TextStyle(
-                                    color: AppColors.cyan,
+                                    color: AppColors.accent,
                                     fontWeight: FontWeight.w900,
                                     fontSize: 18,
                                   ),
                                 )
                               else
-                                Text('--', style: TextStyle(color: AppColors.cyan, fontWeight: FontWeight.w900, fontSize: 18)),
+                                Text('--', style: TextStyle(color: AppColors.accent, fontWeight: FontWeight.w900, fontSize: 18)),
                               SizedBox(width: 6),
                               Icon(Icons.chevron_right_rounded, color: (AppColors.textMuted.withValues(alpha: 0.5))),
                             ],

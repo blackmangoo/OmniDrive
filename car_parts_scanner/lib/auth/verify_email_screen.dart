@@ -67,14 +67,14 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Verification email resent. Check your inbox.'),
-        backgroundColor: AppColors.success,
+        backgroundColor: AppColors.successFill,
         behavior: SnackBarBehavior.floating,
       ));
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Failed to resend: $e'),
-        backgroundColor: AppColors.error,
+        backgroundColor: AppColors.errorFill,
         behavior: SnackBarBehavior.floating,
       ));
     } finally {
@@ -118,13 +118,13 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
       if (e.message.contains('Email not confirmed')) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text("Email has not been verified yet. Please check your inbox."),
-          backgroundColor: AppColors.warning,
+          backgroundColor: AppColors.warningFill,
           behavior: SnackBarBehavior.floating,
         ));
       } else {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text('Verification check failed: ${e.message}'),
-          backgroundColor: AppColors.error,
+          backgroundColor: AppColors.errorFill,
           behavior: SnackBarBehavior.floating,
         ));
       }
@@ -132,7 +132,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Verification check failed: $e'),
-        backgroundColor: AppColors.error,
+        backgroundColor: AppColors.errorFill,
         behavior: SnackBarBehavior.floating,
       ));
     } finally {
@@ -171,12 +171,12 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
           height: 120,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: AppColors.cyan.withValues(alpha: 0.1),
-            border: Border.all(color: AppColors.cyan.withValues(alpha: 0.3), width: 1.5),
-            boxShadow: AppShadows.cyanGlow,
+            color: AppColors.accent.withValues(alpha: 0.1),
+            border: Border.all(color: AppColors.accent.withValues(alpha: 0.3), width: 1.5),
+            boxShadow: AppShadows.raised,
           ),
           child: Icon(Icons.mark_email_unread_outlined,
-              color: AppColors.cyan, size: 54),
+              color: AppColors.accent, size: 54),
         )
             .animate(onPlay: (controller) => controller.repeat(reverse: true))
             .scale(begin: Offset(0.92, 0.92), end: Offset(1.08, 1.08), duration: 1500.ms, curve: Curves.easeInOutCubic),
@@ -230,9 +230,9 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
             onTap: _checkingStatus ? null : _checkVerificationStatus,
             child: Container(
               decoration: BoxDecoration(
-                color: AppColors.cyan,
+                color: AppColors.accent,
                 borderRadius: BorderRadius.circular(AppSpacing.rLg),
-                boxShadow: AppShadows.cyanGlow,
+                boxShadow: AppShadows.raised,
               ),
               child: Center(
                 child: _checkingStatus
@@ -259,7 +259,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
               ? SizedBox(
                   width: 18, height: 18,
                   child: CircularProgressIndicator(
-                      color: AppColors.cyan, strokeWidth: 2))
+                      color: AppColors.accent, strokeWidth: 2))
               : Text("Didn't receive it? Resend",
                   style: AppTypography.label.copyWith(color: AppColors.textMuted)),
         ),
@@ -278,7 +278,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
             shape: BoxShape.circle,
             color: AppColors.success.withValues(alpha: 0.12),
             border: Border.all(color: AppColors.success.withValues(alpha: 0.5), width: 1.5),
-            boxShadow: AppShadows.roleGlow(AppColors.success),
+            boxShadow: AppShadows.raised,
           ),
           child: Icon(Icons.check_circle_outline_rounded,
               color: AppColors.success, size: 60),
@@ -292,7 +292,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
         SizedBox(height: 24),
         SizedBox(
           width: 28, height: 28,
-          child: CircularProgressIndicator(strokeWidth: 2.5, color: AppColors.cyan),
+          child: CircularProgressIndicator(strokeWidth: 2.5, color: AppColors.accent),
         ),
       ],
     );

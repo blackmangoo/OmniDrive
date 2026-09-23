@@ -32,19 +32,19 @@ class _RiderShellState extends State<RiderShell> {
         ),
         child: NavigationBar(
           backgroundColor: Colors.transparent,
-          indicatorColor: kRider.withValues(alpha: 0.15),
+          indicatorColor: kAccent.withValues(alpha: 0.15),
           selectedIndex: _idx,
           onDestinationSelected: (i) => setState(() => _idx = i),
           labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
           destinations: [
             NavigationDestination(
               icon: Icon(Icons.delivery_dining_outlined, color: AppColors.textMuted),
-              selectedIcon: Icon(Icons.delivery_dining_rounded, color: kRider),
+              selectedIcon: Icon(Icons.delivery_dining_rounded, color: kAccent),
               label: 'My Deliveries',
             ),
             NavigationDestination(
               icon: Icon(Icons.person_outline_rounded, color: AppColors.textMuted),
-              selectedIcon: Icon(Icons.person_rounded, color: kRider),
+              selectedIcon: Icon(Icons.person_rounded, color: kAccent),
               label: 'Profile',
             ),
           ],

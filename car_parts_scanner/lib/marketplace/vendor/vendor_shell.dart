@@ -46,19 +46,19 @@ class VendorShellState extends State<VendorShell> {
         ),
         child: NavigationBar(
           backgroundColor: Colors.transparent,
-          indicatorColor: kVendor.withValues(alpha: 0.15),
+          indicatorColor: kAccent.withValues(alpha: 0.15),
           selectedIndex: _idx,
           onDestinationSelected: (i) => setState(() => _idx = i),
           labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
           destinations: [
             NavigationDestination(
               icon: Icon(Icons.dashboard_outlined, color: AppColors.textMuted),
-              selectedIcon: Icon(Icons.dashboard_rounded, color: kVendor),
+              selectedIcon: Icon(Icons.dashboard_rounded, color: kAccent),
               label: 'Dashboard',
             ),
             NavigationDestination(
               icon: Icon(Icons.inventory_2_outlined, color: AppColors.textMuted),
-              selectedIcon: Icon(Icons.inventory_2_rounded, color: kVendor),
+              selectedIcon: Icon(Icons.inventory_2_rounded, color: kAccent),
               label: 'Catalogue',
             ),
             NavigationDestination(
@@ -72,13 +72,13 @@ class VendorShellState extends State<VendorShell> {
                 showBadge: _pendingOrders > 0,
                 badgeContent: Text('$_pendingOrders', style: TextStyle(color: AppColors.textPrimary, fontSize: 10)),
                 badgeStyle: badges.BadgeStyle(badgeColor: kError),
-                child: Icon(Icons.receipt_rounded, color: kVendor),
+                child: Icon(Icons.receipt_rounded, color: kAccent),
               ),
               label: 'Orders',
             ),
             NavigationDestination(
               icon: Icon(Icons.person_outline_rounded, color: AppColors.textMuted),
-              selectedIcon: Icon(Icons.person_rounded, color: kVendor),
+              selectedIcon: Icon(Icons.person_rounded, color: kAccent),
               label: 'Profile',
             ),
           ],

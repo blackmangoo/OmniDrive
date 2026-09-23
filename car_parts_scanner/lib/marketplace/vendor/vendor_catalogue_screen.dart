@@ -89,7 +89,7 @@ class _VendorCatalogueScreenState extends State<VendorCatalogueScreen> {
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: kVendor.withValues(alpha: 0.3),
+              color: kAccent.withValues(alpha: 0.3),
               blurRadius: 12,
               offset: Offset(0, 4),
             )
@@ -127,9 +127,9 @@ class _VendorCatalogueScreenState extends State<VendorCatalogueScreen> {
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
-                    color: kVendor.withValues(alpha: 0.15),
+                    color: kAccent.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: kVendor.withValues(alpha: 0.4)),
+                    border: Border.all(color: kAccent.withValues(alpha: 0.4)),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -138,14 +138,14 @@ class _VendorCatalogueScreenState extends State<VendorCatalogueScreen> {
                         value: _products.length,
                         style: GoogleFonts.inter(
                           fontSize: 11,
-                          color: kVendor,
+                          color: kAccent,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                       SizedBox(width: 4),
                       Text('products', style: GoogleFonts.inter(
                         fontSize: 11,
-                        color: kVendor,
+                        color: kAccent,
                         fontWeight: FontWeight.w600,
                       )),
                     ],
@@ -157,7 +157,7 @@ class _VendorCatalogueScreenState extends State<VendorCatalogueScreen> {
               SizedBox(height: 14),
               Container(
                 height: 44,
-                decoration: kGlassDeco(radius: 12),
+                decoration: kFieldDeco(radius: 12),
                 child: TextField(
                   controller: _searchCtrl,
                   style: kBody(13, color: kTextPrimary),
@@ -190,11 +190,11 @@ class _VendorCatalogueScreenState extends State<VendorCatalogueScreen> {
         // ── Product list ──────────────────────────────────────────────────
         Expanded(
           child: _loading
-              ? Center(child: CircularProgressIndicator(color: kVendor))
+              ? Center(child: CircularProgressIndicator(color: kAccent))
               : _products.isEmpty
                   ? _empty()
                   : RefreshIndicator(
-                      color: kVendor, backgroundColor: kCard,
+                      color: kAccent, backgroundColor: kCard,
                       onRefresh: _load,
                       child: ListView.builder(
                         padding: EdgeInsets.fromLTRB(16, 12, 16, 100),
@@ -231,7 +231,7 @@ class _VendorCatalogueScreenState extends State<VendorCatalogueScreen> {
           ),
           child: Icon(
             Icons.inventory_2_rounded,
-            color: kVendor,
+            color: kAccent,
             size: 64,
           ),
         )
@@ -304,7 +304,7 @@ class _ProductRow extends StatelessWidget {
                           value: product.price,
                           prefix: 'Rs ',
                           style: GoogleFonts.inter(fontSize: 14,
-                            fontWeight: FontWeight.w800, color: kVendor),
+                            fontWeight: FontWeight.w800, color: kAccent),
                         ),
                         SizedBox(width: 8),
                         Container(
@@ -329,10 +329,10 @@ class _ProductRow extends StatelessWidget {
                     child: Container(
                       padding: EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: kCyan.withValues(alpha: 0.1),
+                        color: kAccent.withValues(alpha: 0.1),
                         shape: BoxShape.circle,
                       ),
-                      child: Icon(Icons.edit_rounded, color: kCyan, size: 18),
+                      child: Icon(Icons.edit_rounded, color: kAccent, size: 18),
                     ),
                   ),
                   SizedBox(width: 8),
@@ -453,12 +453,12 @@ class _StockUpdateSheetState extends State<_StockUpdateSheet> {
                 margin: EdgeInsets.symmetric(horizontal: 4),
                 padding: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                 decoration: BoxDecoration(
-                  color: _qty == preset ? kVendor.withValues(alpha: 0.2) : kCard,
+                  color: _qty == preset ? kAccent.withValues(alpha: 0.2) : kCard,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: _qty == preset ? kVendor : kBorder),
+                  border: Border.all(color: _qty == preset ? kAccent : kBorder),
                 ),
                 child: Text('+$preset', style: kBody(12,
-                  color: _qty == preset ? kVendor : kTextSecondary,
+                  color: _qty == preset ? kAccent : kTextSecondary,
                   fw: FontWeight.w600)),
               ),
             ),

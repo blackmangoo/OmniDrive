@@ -86,14 +86,14 @@ class _RiderOrdersScreenState extends State<RiderOrdersScreen>
             onTap: _load,
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 16),
-              child: Icon(Icons.refresh_rounded, color: kRider),
+              child: Icon(Icons.refresh_rounded, color: kAccent),
             ),
           ),
         ],
         bottom: TabBar(
           controller: _tab,
-          indicatorColor: kRider,
-          labelColor: kRider,
+          indicatorColor: kAccent,
+          labelColor: kAccent,
           unselectedLabelColor: AppColors.textMuted,
           dividerColor: Colors.transparent,
           tabs: [
@@ -103,7 +103,7 @@ class _RiderOrdersScreenState extends State<RiderOrdersScreen>
         ),
       ),
       body: _loading
-          ? Center(child: CircularProgressIndicator(color: kRider))
+          ? Center(child: CircularProgressIndicator(color: kAccent))
           : TabBarView(
               controller: _tab,
               children: [
@@ -120,7 +120,7 @@ class _RiderOrdersScreenState extends State<RiderOrdersScreen>
     }
     return RefreshIndicator(
       onRefresh: _load,
-      color: kRider, backgroundColor: kSurface,
+      color: kAccent, backgroundColor: kSurface,
       child: ListView.separated(
         padding: EdgeInsets.all(16),
         itemCount: list.length,
@@ -154,7 +154,7 @@ class _RiderOrdersScreenState extends State<RiderOrdersScreen>
           ),
           child: Icon(
             isClaimed ? Icons.local_shipping_rounded : Icons.explore_rounded,
-            color: kRider,
+            color: kAccent,
             size: 64,
           ),
         )
@@ -201,7 +201,7 @@ class _RiderOrderCardState extends State<_RiderOrderCard> {
 
     return AnimatedContainer(
       duration: Duration(milliseconds: 200),
-      decoration: kGlowCard(color),
+      decoration: kCardDeco(),
       child: Column(
         children: [
           // ── Header ──────────────────────────────────────────────────────
@@ -227,7 +227,7 @@ class _RiderOrderCardState extends State<_RiderOrderCard> {
                 SizedBox(height: 10),
                 // Delivery address prominent
                 Row(children: [
-                  Icon(Icons.location_on_rounded, color: kRider, size: 16),
+                  Icon(Icons.location_on_rounded, color: kAccent, size: 16),
                   SizedBox(width: 6),
                   Expanded(
                     child: Text(o.deliveryAddress,
@@ -286,7 +286,7 @@ class _RiderOrderCardState extends State<_RiderOrderCard> {
                     MotionCounter(
                       value: o.totalAmount,
                       prefix: 'Rs ',
-                      style: GoogleFonts.inter(color: kRider, fontSize: 14, fontWeight: FontWeight.bold),
+                      style: GoogleFonts.inter(color: kAccent, fontSize: 14, fontWeight: FontWeight.bold),
                     ),
                   ]),
                 ]),
@@ -327,7 +327,7 @@ class _RiderOrderCardState extends State<_RiderOrderCard> {
                       child: Container(
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
-                          color: kRider,
+                          color: kAccent,
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Row(

@@ -97,10 +97,10 @@ class _CameraPreviewScreenState extends State<CameraPreviewScreen>
         backgroundColor: AppColors.background,
         body: Center(
           child: Column(mainAxisSize: MainAxisSize.min, children: [
-            CircularProgressIndicator(color: AppColors.cyan, strokeWidth: 2),
+            CircularProgressIndicator(color: AppColors.accent, strokeWidth: 2),
             SizedBox(height: 16),
             Text('Starting camera…',
-                style: TextStyle(color: AppColors.cyan, fontSize: 13)),
+                style: TextStyle(color: AppColors.accent, fontSize: 13)),
           ]),
         ),
       );
@@ -156,12 +156,12 @@ class _CameraPreviewScreenState extends State<CameraPreviewScreen>
                         color: Colors.black.withValues(alpha: 0.45),
                         borderRadius: BorderRadius.circular(30),
                         border: Border.all(
-                            color: AppColors.cyan.withValues(alpha: 0.5)),
+                            color: AppColors.accent.withValues(alpha: 0.5)),
                       ),
                       child: Text(
                         'SCAN MODE',
                         style: AppTypography.label.copyWith(
-                            color: AppColors.cyan,
+                            color: AppColors.accent,
                             letterSpacing: 2,
                             fontSize: 12,
                             fontWeight: FontWeight.bold),
@@ -187,7 +187,7 @@ class _CameraPreviewScreenState extends State<CameraPreviewScreen>
                       color: Colors.black.withValues(alpha: 0.54),
                       borderRadius: BorderRadius.circular(AppSpacing.rMd),
                       border: Border.all(
-                          color: AppColors.cyan.withValues(alpha: 0.25)),
+                          color: AppColors.accent.withValues(alpha: 0.25)),
                     ),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
@@ -218,11 +218,11 @@ class _CameraPreviewScreenState extends State<CameraPreviewScreen>
                   child: _isCapturing
                       ? Column(mainAxisSize: MainAxisSize.min, children: [
                           CircularProgressIndicator(
-                              color: AppColors.cyan, strokeWidth: 2.5),
+                              color: AppColors.accent, strokeWidth: 2.5),
                           SizedBox(height: 12),
                           Text('ANALYSING…',
                               style: AppTypography.label.copyWith(
-                                  color: AppColors.cyan,
+                                  color: AppColors.accent,
                                   letterSpacing: 2,
                                   fontSize: 12,
                                   fontWeight: FontWeight.w600)),
@@ -237,11 +237,11 @@ class _CameraPreviewScreenState extends State<CameraPreviewScreen>
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 border: Border.all(
-                                    color: AppColors.cyan, width: 3.5),
+                                    color: AppColors.accent, width: 3.5),
                                 color: Colors.black.withValues(alpha: 0.26),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: AppColors.cyan.withValues(alpha: 0.35),
+                                    color: AppColors.accent.withValues(alpha: 0.35),
                                     blurRadius: 20,
                                     spreadRadius: 4,
                                   ),
@@ -253,7 +253,7 @@ class _CameraPreviewScreenState extends State<CameraPreviewScreen>
                                   height: 58,
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
-                                    color: AppColors.cyan,
+                                    color: AppColors.accent,
                                   ),
                                   child: Icon(
                                       Icons.camera_alt_rounded,
@@ -285,7 +285,7 @@ class _TipRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(icon, color: AppColors.cyan, size: 16),
+        Icon(icon, color: AppColors.accent, size: 16),
         SizedBox(width: 10),
         Expanded(
           child: Text(text,
@@ -342,7 +342,7 @@ class _ScanReticleState extends State<_ScanReticle>
         height: 240,
         child: CustomPaint(
           painter: _ReticlePainter(
-            color: widget.scanning ? AppColors.textPrimary : AppColors.cyan,
+            color: widget.scanning ? AppColors.textPrimary : AppColors.accent,
           ),
         ),
       );
@@ -357,7 +357,7 @@ class _ScanReticleState extends State<_ScanReticle>
           height: 240,
           child: CustomPaint(
             painter: _ReticlePainter(
-              color: widget.scanning ? AppColors.textPrimary : AppColors.cyan,
+              color: widget.scanning ? AppColors.textPrimary : AppColors.accent,
             ),
           ),
         ),

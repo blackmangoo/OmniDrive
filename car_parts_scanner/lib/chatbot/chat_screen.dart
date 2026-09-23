@@ -171,7 +171,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
             height: 36,
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [AppColors.cyan, AppColors.cyan.withValues(alpha: 0.7)],
+                colors: [AppColors.accent, AppColors.accent.withValues(alpha: 0.7)],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -246,8 +246,8 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    AppColors.cyan,
-                    AppColors.cyan.withValues(alpha: 0.7),
+                    AppColors.accent,
+                    AppColors.accent.withValues(alpha: 0.7),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(10),
@@ -266,7 +266,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
-                color: isUser ? AppColors.cyan : AppColors.surface,
+                color: isUser ? AppColors.accent : AppColors.surface,
                 borderRadius: BorderRadius.only(
                   topLeft: const Radius.circular(18),
                   topRight: const Radius.circular(18),
@@ -276,7 +276,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                 border: isUser ? null : Border.all(color: AppColors.border),
                 boxShadow: [
                   BoxShadow(
-                    color: (isUser ? AppColors.cyan : Colors.black).withValues(
+                    color: (isUser ? AppColors.accent : Colors.black).withValues(
                       alpha: 0.08,
                     ),
                     blurRadius: 8,
@@ -326,12 +326,12 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                           fontSize: 14,
                         ),
                         listBullet: AppTypography.body.copyWith(
-                          color: AppColors.cyan,
+                          color: AppColors.accent,
                         ),
                         code: TextStyle(
                           fontFamily: 'monospace',
                           fontSize: 13,
-                          color: AppColors.cyan,
+                          color: AppColors.accent,
                           backgroundColor: AppColors.background,
                         ),
                         codeblockDecoration: BoxDecoration(
@@ -342,7 +342,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                         codeblockPadding: const EdgeInsets.all(12),
                         blockquoteDecoration: BoxDecoration(
                           border: Border(
-                            left: BorderSide(color: AppColors.cyan, width: 3),
+                            left: BorderSide(color: AppColors.accent, width: 3),
                           ),
                         ),
                         blockquotePadding: const EdgeInsets.only(
@@ -416,7 +416,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
             margin: const EdgeInsets.only(top: 4),
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [AppColors.cyan, AppColors.cyan.withValues(alpha: 0.7)],
+                colors: [AppColors.accent, AppColors.accent.withValues(alpha: 0.7)],
               ),
               borderRadius: BorderRadius.circular(10),
             ),
@@ -499,8 +499,8 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                     colors: _isLoading
                         ? [AppColors.textMuted, AppColors.textMuted]
                         : [
-                            AppColors.cyan,
-                            AppColors.cyan.withValues(alpha: 0.8),
+                            AppColors.accent,
+                            AppColors.accent.withValues(alpha: 0.8),
                           ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -510,7 +510,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                       ? []
                       : [
                           BoxShadow(
-                            color: AppColors.cyan.withValues(alpha: 0.3),
+                            color: AppColors.accent.withValues(alpha: 0.3),
                             blurRadius: 8,
                             offset: const Offset(0, 2),
                           ),
@@ -611,7 +611,7 @@ class _TypingDotsState extends State<_TypingDots>
             height: 8,
             margin: EdgeInsets.only(right: i < 2 ? 4 : 0),
             decoration: BoxDecoration(
-              color: AppColors.cyan.withValues(alpha: 0.6),
+              color: AppColors.accent.withValues(alpha: 0.6),
               shape: BoxShape.circle,
             ),
           ),

@@ -112,7 +112,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   void _showError(String msg) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(msg, style: AppTypography.body.copyWith(color: AppColors.textPrimary)),
-      backgroundColor: AppColors.error,
+      backgroundColor: AppColors.errorFill,
       behavior: SnackBarBehavior.floating,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
     ));
@@ -169,7 +169,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.rLg), borderSide: BorderSide(color: AppColors.border)),
                     enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.rLg), borderSide: BorderSide(color: AppColors.border)),
-                    focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.rLg), borderSide: BorderSide(color: AppColors.cyan, width: 1.5)),
+                    focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.rLg), borderSide: BorderSide(color: AppColors.accent, width: 1.5)),
                   ),
                 ),
                 SizedBox(height: 36),
@@ -181,9 +181,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     onTap: _loading ? null : _resetPassword,
                     child: Container(
                       decoration: BoxDecoration(
-                        color: AppColors.cyan,
+                        color: AppColors.accent,
                         borderRadius: BorderRadius.circular(AppSpacing.rLg),
-                        boxShadow: AppShadows.cyanGlow,
+                        boxShadow: AppShadows.raised,
                       ),
                       child: Center(
                         child: _loading
@@ -207,7 +207,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.rLg), borderSide: BorderSide(color: AppColors.border)),
                     enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.rLg), borderSide: BorderSide(color: AppColors.border)),
-                    focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.rLg), borderSide: BorderSide(color: AppColors.cyan, width: 1.5)),
+                    focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.rLg), borderSide: BorderSide(color: AppColors.accent, width: 1.5)),
                   ),
                 ),
                 SizedBox(height: 36),
@@ -219,9 +219,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     onTap: _loading ? null : _verifyCode,
                     child: Container(
                       decoration: BoxDecoration(
-                        color: AppColors.cyan,
+                        color: AppColors.accent,
                         borderRadius: BorderRadius.circular(AppSpacing.rLg),
-                        boxShadow: AppShadows.cyanGlow,
+                        boxShadow: AppShadows.raised,
                       ),
                       child: Center(
                         child: _loading
@@ -235,7 +235,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 Center(
                   child: TextButton(
                     onPressed: () => setState(() => _emailSent = false),
-                    child: Text('Resend email / Change email', style: AppTypography.label.copyWith(color: AppColors.cyan)),
+                    child: Text('Resend email / Change email', style: AppTypography.label.copyWith(color: AppColors.accent)),
                   ),
                 ),
               ],

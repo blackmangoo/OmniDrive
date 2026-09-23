@@ -179,10 +179,10 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
                       onTap: () => _showAddCarDialog(context),
                       child: Row(
                         children: [
-                          Icon(Icons.add, color: AppColors.cyan, size: 18),
+                          Icon(Icons.add, color: AppColors.accent, size: 18),
                           SizedBox(width: 4),
                           Text('Add Car',
-                              style: TextStyle(color: AppColors.cyan, fontSize: 13, fontWeight: FontWeight.bold)),
+                              style: TextStyle(color: AppColors.accent, fontSize: 13, fontWeight: FontWeight.bold)),
                         ],
                       ),
                     ),
@@ -197,7 +197,7 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
                     child: Center(
                         child: Padding(
                     padding: EdgeInsets.all(32),
-                    child: CircularProgressIndicator(color: AppColors.cyan),
+                    child: CircularProgressIndicator(color: AppColors.accent),
                   )))
                 : _cars.isEmpty
                     ? SliverToBoxAdapter(
@@ -245,7 +245,7 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
                           ).then((_) => _loadRecentRuns());
                         },
                         child: Text('See All',
-                            style: TextStyle(color: AppColors.cyan, fontSize: 13, fontWeight: FontWeight.bold)),
+                            style: TextStyle(color: AppColors.accent, fontSize: 13, fontWeight: FontWeight.bold)),
                       ),
                   ],
                 ),
@@ -257,7 +257,7 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
                     child: Center(
                         child: Padding(
                       padding: EdgeInsets.all(24),
-                      child: CircularProgressIndicator(color: AppColors.cyan),
+                      child: CircularProgressIndicator(color: AppColors.accent),
                     )))
                 : _recentRuns.isEmpty
                     ? SliverToBoxAdapter(
@@ -338,10 +338,10 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
                                         Container(
                                           padding: EdgeInsets.all(12),
                                           decoration: BoxDecoration(
-                                            color: AppColors.cyan.withValues(alpha: 0.1),
+                                            color: AppColors.accent.withValues(alpha: 0.1),
                                             shape: BoxShape.circle,
                                           ),
-                                          child: Icon(Icons.speed_rounded, color: AppColors.cyan, size: 22),
+                                          child: Icon(Icons.speed_rounded, color: AppColors.accent, size: 22),
                                         ),
                                         SizedBox(width: 14),
                                         Expanded(
@@ -368,13 +368,13 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
                                             decimals: 2,
                                             suffix: 's',
                                             style: TextStyle(
-                                              color: AppColors.cyan,
+                                              color: AppColors.accent,
                                               fontWeight: FontWeight.w900,
                                               fontSize: 18,
                                             ),
                                           )
                                         else
-                                          Text('--', style: TextStyle(color: AppColors.cyan, fontWeight: FontWeight.w900, fontSize: 18)),
+                                          Text('--', style: TextStyle(color: AppColors.accent, fontWeight: FontWeight.w900, fontSize: 18)),
                                         SizedBox(width: 6),
                                         Icon(Icons.chevron_right_rounded, color: (AppColors.textMuted.withValues(alpha: 0.5))),
                                       ],
@@ -401,11 +401,11 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
                 height: 48,
                 padding: EdgeInsets.symmetric(horizontal: 20),
                 decoration: BoxDecoration(
-                  color: AppColors.cyan,
+                  color: AppColors.accent,
                   borderRadius: BorderRadius.circular(24),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.cyan.withValues(alpha: 0.3),
+                      color: AppColors.accent.withValues(alpha: 0.3),
                       blurRadius: 12,
                       offset: Offset(0, 4),
                     )
@@ -531,7 +531,7 @@ class _PerformanceHomeScreenState extends State<PerformanceHomeScreen> {
                   child: Container(
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      color: AppColors.cyan,
+                      color: AppColors.accent,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text('Save Car',
@@ -562,18 +562,18 @@ class _CarCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: isSelected ? AppColors.cyan : AppColors.border, width: isSelected ? 2 : 1),
+        border: Border.all(color: isSelected ? AppColors.accent : AppColors.border, width: isSelected ? 2 : 1),
       ),
       child: Row(
         children: [
           Container(
             padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: AppColors.cyan.withValues(alpha: 0.1),
+              color: AppColors.accent.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(Icons.directions_car_rounded,
-                color: AppColors.cyan, size: 28),
+                color: AppColors.accent, size: 28),
           ),
           SizedBox(width: 14),
           Expanded(
@@ -602,7 +602,7 @@ class _CarCard extends StatelessWidget {
                     padding: EdgeInsets.only(top: 4),
                     child: Text(car['mods'],
                         style: TextStyle(
-                            color: AppColors.cyan, fontSize: 11),
+                            color: AppColors.accent, fontSize: 11),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis),
                   ),
@@ -633,13 +633,13 @@ class _EmptyCarPrompt extends StatelessWidget {
             color: AppColors.surface,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-                color: AppColors.cyan.withValues(alpha: 0.25),
+                color: AppColors.accent.withValues(alpha: 0.25),
                 style: BorderStyle.solid),
           ),
           child: Column(
             children: [
               Icon(Icons.add_circle_outline_rounded,
-                  color: AppColors.cyan, size: 44),
+                  color: AppColors.accent, size: 44),
               SizedBox(height: 12),
               Text('Add your first car',
                   style: TextStyle(
@@ -693,7 +693,7 @@ class _DialogField extends StatelessWidget {
             borderSide: BorderSide(color: AppColors.border)),
         focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide(color: AppColors.cyan, width: 1.5)),
+            borderSide: BorderSide(color: AppColors.accent, width: 1.5)),
       ),
     );
   }

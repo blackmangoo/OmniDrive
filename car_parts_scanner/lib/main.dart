@@ -6,12 +6,11 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:flutter_animate/flutter_animate.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'auth/auth_gate.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/app_typography.dart';
-import 'core/theme/app_gradients.dart';
-import 'core/theme/app_shadows.dart';
+import 'core/theme/app_spacing.dart';
 import 'package:car_parts_scanner/core/theme/app_colors.dart';
 import 'core/config/app_config.dart';
 
@@ -39,6 +38,11 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Inter ships in assets/google_fonts/. Resolving it over the network would
+  // make the typeface depend on connectivity at launch and cause a visible
+  // fallback-and-swap on first run.
+  GoogleFonts.config.allowRuntimeFetching = false;
 
   // Show a splash screen IMMEDIATELY so the user doesn't see a black screen
   runApp(OmniDriveSplashScreen());
@@ -122,47 +126,42 @@ class OmniDriveSplashScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.darkTheme,
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: ThemeMode.system,
       home: Scaffold(
         body: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Container(
-                width: 96,
-                height: 96,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: AppGradients.primary,
-                  boxShadow: AppShadows.cyanGlow,
-                ),
-                child: Icon(
-                  Icons.directions_car_rounded,
-                  color: Colors.black,
-                  size: 48,
-                ),
-              )
-                  .animate(onPlay: (controller) => controller.repeat(reverse: true))
-                  .scale(
-                    begin: Offset(0.92, 0.92),
-                    end: Offset(1.08, 1.08),
-                    duration: 1200.ms,
-                    curve: Curves.easeInOutCubic,
+              // The real launcher icon, so the splash matches the mark the
+              // user tapped. A generic Material car glyph in a gradient
+              // circle is a placeholder, not a logo.
+              ClipRRect(
+                borderRadius: BorderRadius.circular(AppSpacing.rXl),
+                child: Image.asset(
+                  'assets/icon/app_icon.png',
+                  width: 88,
+                  height: 88,
+                  filterQuality: FilterQuality.medium,
+                  errorBuilder: (_, _, _) => Container(
+                    width: 88,
+                    height: 88,
+                    color: AppColors.surface,
                   ),
-              SizedBox(height: 32),
-              Text(
-                'Starting Engine...',
-                style: AppTypography.title.copyWith(
-                  color: AppColors.textSecondary,
-                  letterSpacing: 1.5,
                 ),
-              )
-                  .animate()
-                  .fadeIn(duration: 800.ms, curve: Curves.easeOutCubic)
-                  .shimmer(
-                    duration: 2000.ms,
-                    color: AppColors.cyan.withValues(alpha: 0.25),
-                  ),
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              Text('OmniDrive', style: AppTypography.h1),
+              const SizedBox(height: AppSpacing.xxl),
+              SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: AppColors.textMuted,
+                ),
+              ),
             ],
           ),
         ),
@@ -182,7 +181,9 @@ class OmniDriveApp extends StatelessWidget {
       scaffoldMessengerKey: scaffoldMessengerKey,
       debugShowCheckedModeBanner: false,
       title: 'OmniDrive AI',
-      theme: AppTheme.darkTheme,
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: ThemeMode.system,
       home: AuthGate(),
     );
   }

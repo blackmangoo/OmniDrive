@@ -88,7 +88,7 @@ class _VendorProfileScreenState extends State<VendorProfileScreen> {
         title: Text('Shop Profile', style: GoogleFonts.inter(color: AppColors.textPrimary, fontSize: 20, fontWeight: FontWeight.bold)),
       ),
       body: _loading
-          ? Center(child: CircularProgressIndicator(color: kVendor))
+          ? Center(child: CircularProgressIndicator(color: kAccent))
           : SingleChildScrollView(
               padding: EdgeInsets.all(20),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -96,16 +96,16 @@ class _VendorProfileScreenState extends State<VendorProfileScreen> {
                 Container(
                   width: double.infinity,
                   padding: EdgeInsets.all(20),
-                  decoration: kGlowCard(kVendor),
+                  decoration: kCardDeco(),
                   child: Column(children: [
                     Container(
                       width: 72, height: 72,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: kVendor.withValues(alpha: 0.15),
-                        border: Border.all(color: kVendor.withValues(alpha: 0.4), width: 2),
+                        color: kAccent.withValues(alpha: 0.15),
+                        border: Border.all(color: kAccent.withValues(alpha: 0.4), width: 2),
                       ),
-                      child: Icon(Icons.storefront_rounded, color: kVendor, size: 36),
+                      child: Icon(Icons.storefront_rounded, color: kAccent, size: 36),
                     ),
                     SizedBox(height: 12),
                     Text(_vendor?.shopName ?? 'Your Shop',
@@ -119,7 +119,7 @@ class _VendorProfileScreenState extends State<VendorProfileScreen> {
                       _statChip(
                         MotionCounter(
                           value: _vendor?.totalOrders ?? 0,
-                          style: GoogleFonts.inter(color: kVendor, fontSize: 16, fontWeight: FontWeight.bold),
+                          style: GoogleFonts.inter(color: kAccent, fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                         'Orders',
                       ),
@@ -129,14 +129,14 @@ class _VendorProfileScreenState extends State<VendorProfileScreen> {
                           value: _vendor?.rating ?? 0.0,
                           decimals: 1,
                           suffix: ' ⭐',
-                          style: GoogleFonts.inter(color: kVendor, fontSize: 16, fontWeight: FontWeight.bold),
+                          style: GoogleFonts.inter(color: kAccent, fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                         'Rating',
                       ),
                       SizedBox(width: 16),
                       _statChip(
                         Text(_vendor?.isVerified == true ? '✅' : '⏳',
-                            style: GoogleFonts.inter(color: kVendor, fontSize: 16, fontWeight: FontWeight.bold)),
+                            style: GoogleFonts.inter(color: kAccent, fontSize: 16, fontWeight: FontWeight.bold)),
                         _vendor?.isVerified == true ? 'Verified' : 'Pending',
                       ),
                     ]),
@@ -211,7 +211,7 @@ class _VendorProfileScreenState extends State<VendorProfileScreen> {
     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 13),
     decoration: kCardDeco(),
     child: Row(children: [
-      Icon(icon, color: kVendor, size: 20),
+      Icon(icon, color: kAccent, size: 20),
       SizedBox(width: 14),
       Expanded(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [

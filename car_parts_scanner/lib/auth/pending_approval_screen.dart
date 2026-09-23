@@ -61,7 +61,7 @@ class _PendingApprovalScreenState extends State<PendingApprovalScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Failed to check status. Please try again.'),
-            backgroundColor: AppColors.error,
+            backgroundColor: AppColors.errorFill,
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -88,7 +88,7 @@ class _PendingApprovalScreenState extends State<PendingApprovalScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Failed to sign out. Please try again.'),
-            backgroundColor: AppColors.error,
+            backgroundColor: AppColors.errorFill,
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -106,10 +106,10 @@ class _PendingApprovalScreenState extends State<PendingApprovalScreen> {
         : 'User';
 
     final accentColor = widget.role == 'vendor'
-        ? AppColors.vendorDark
+        ? AppColors.accentPressed
         : widget.role == 'rider'
-            ? AppColors.rider
-            : AppColors.cyan;
+            ? AppColors.accent
+            : AppColors.accent;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -133,7 +133,7 @@ class _PendingApprovalScreenState extends State<PendingApprovalScreen> {
                       color: accentColor.withValues(alpha: 0.25),
                       width: 2,
                     ),
-                    boxShadow: AppShadows.roleGlow(accentColor),
+                    boxShadow: AppShadows.raised,
                   ),
                   child: Icon(
                     Icons.hourglass_empty_rounded,
@@ -203,7 +203,7 @@ class _PendingApprovalScreenState extends State<PendingApprovalScreen> {
                     decoration: BoxDecoration(
                       color: accentColor,
                       borderRadius: BorderRadius.circular(AppSpacing.rLg),
-                      boxShadow: AppShadows.roleGlow(accentColor),
+                      boxShadow: AppShadows.raised,
                     ),
                     child: Center(
                       child: _checkingStatus

@@ -84,7 +84,7 @@ class _RiderProfileScreenState extends State<RiderProfileScreen> {
         title: Text('My Profile', style: GoogleFonts.inter(color: AppColors.textPrimary, fontSize: 20, fontWeight: FontWeight.bold)),
       ),
       body: _loading
-          ? Center(child: CircularProgressIndicator(color: kRider))
+          ? Center(child: CircularProgressIndicator(color: kAccent))
           : SingleChildScrollView(
               padding: EdgeInsets.all(20),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -95,10 +95,10 @@ class _RiderProfileScreenState extends State<RiderProfileScreen> {
                       width: 90, height: 90,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: kRider.withValues(alpha: 0.15),
-                        border: Border.all(color: kRider.withValues(alpha: 0.4), width: 2),
+                        color: kAccent.withValues(alpha: 0.15),
+                        border: Border.all(color: kAccent.withValues(alpha: 0.4), width: 2),
                       ),
-                      child: Icon(Icons.delivery_dining_rounded, color: kRider, size: 44),
+                      child: Icon(Icons.delivery_dining_rounded, color: kAccent, size: 44),
                     ),
                     SizedBox(height: 14),
                     Text(_user?.fullName ?? '—', style: GoogleFonts.inter(color: AppColors.textPrimary, fontSize: 20, fontWeight: FontWeight.bold)),
@@ -108,11 +108,11 @@ class _RiderProfileScreenState extends State<RiderProfileScreen> {
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: 14, vertical: 5),
                       decoration: BoxDecoration(
-                        color: kRider.withValues(alpha: 0.1),
+                        color: kAccent.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: kRider.withValues(alpha: 0.3)),
+                        border: Border.all(color: kAccent.withValues(alpha: 0.3)),
                       ),
-                      child: Text('🏍️  Rider', style: GoogleFonts.inter(color: kRider, fontSize: 12, fontWeight: FontWeight.w600)),
+                      child: Text('🏍️  Rider', style: GoogleFonts.inter(color: kAccent, fontSize: 12, fontWeight: FontWeight.w600)),
                     ),
                   ]),
                 ),
@@ -173,7 +173,7 @@ class _RiderProfileScreenState extends State<RiderProfileScreen> {
         padding: EdgeInsets.all(16),
         decoration: kCardDeco(),
         child: Row(children: [
-          Icon(icon, color: kRider, size: 22),
+          Icon(icon, color: kAccent, size: 22),
           SizedBox(width: 14),
           Expanded(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
