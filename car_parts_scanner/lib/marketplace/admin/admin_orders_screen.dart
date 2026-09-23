@@ -51,10 +51,10 @@ class _AdminOrdersScreenState extends State<AdminOrdersScreen> {
             SizedBox(width: 8),
             Container(
               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-              decoration: BoxDecoration(color: kAdmin.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(12)),
+              decoration: BoxDecoration(color: kAccent.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(12)),
               child: MotionCounter(
                 value: _orders.length,
-                style: GoogleFonts.inter(color: kAdmin, fontSize: 13, fontWeight: FontWeight.bold),
+                style: GoogleFonts.inter(color: kAccent, fontSize: 13, fontWeight: FontWeight.bold),
               ),
             ),
           ],
@@ -64,17 +64,17 @@ class _AdminOrdersScreenState extends State<AdminOrdersScreen> {
             onTap: _load,
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 16),
-              child: Icon(Icons.refresh_rounded, color: kAdmin),
+              child: Icon(Icons.refresh_rounded, color: kAccent),
             ),
           ),
         ],
       ),
       body: _loading
-          ? Center(child: CircularProgressIndicator(color: kAdmin))
+          ? Center(child: CircularProgressIndicator(color: kAccent))
           : _orders.isEmpty
               ? _empty()
               : RefreshIndicator(
-                  onRefresh: _load, color: kAdmin, backgroundColor: kSurface,
+                  onRefresh: _load, color: kAccent, backgroundColor: kSurface,
                   child: ListView.separated(
                     padding: EdgeInsets.all(16),
                     itemCount: _orders.length,
@@ -103,7 +103,7 @@ class _AdminOrdersScreenState extends State<AdminOrdersScreen> {
           ),
           child: Icon(
             Icons.receipt_long_rounded,
-            color: kAdmin,
+            color: kAccent,
             size: 64,
           ),
         )
@@ -128,7 +128,7 @@ class _AdminOrderTile extends StatelessWidget {
 
     return Container(
       padding: EdgeInsets.all(14),
-      decoration: kGlowCard(color),
+      decoration: kCardDeco(),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
           Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -149,7 +149,7 @@ class _AdminOrderTile extends StatelessWidget {
           MotionCounter(
             value: order.totalAmount,
             prefix: 'Rs ',
-            style: GoogleFonts.inter(color: kCyan, fontSize: 13, fontWeight: FontWeight.bold),
+            style: GoogleFonts.inter(color: kAccent, fontSize: 13, fontWeight: FontWeight.bold),
           ),
           SizedBox(width: 12),
           Text(date, style: GoogleFonts.inter(color: (AppColors.textMuted.withValues(alpha: 0.5)), fontSize: 11)),
@@ -157,7 +157,7 @@ class _AdminOrderTile extends StatelessWidget {
         if (order.riderId != null) Padding(
           padding: EdgeInsets.only(top: 6),
           child: Text('🏍️ Rider: ${order.riderName ?? "Assigned"}',
-              style: GoogleFonts.inter(color: kRider, fontSize: 11, fontWeight: FontWeight.w600)),
+              style: GoogleFonts.inter(color: kAccent, fontSize: 11, fontWeight: FontWeight.w600)),
         ),
       ]),
     );

@@ -87,9 +87,9 @@ class _VendorOrdersScreenState extends State<VendorOrdersScreen>
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
-                    color: kVendor.withValues(alpha: 0.15),
+                    color: kAccent.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: kVendor.withValues(alpha: 0.4)),
+                    border: Border.all(color: kAccent.withValues(alpha: 0.4)),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -98,14 +98,14 @@ class _VendorOrdersScreenState extends State<VendorOrdersScreen>
                         value: _ordersByStatus['all']?.length ?? 0,
                         style: GoogleFonts.inter(
                           fontSize: 11,
-                          color: kVendor,
+                          color: kAccent,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                       SizedBox(width: 4),
                       Text('orders', style: GoogleFonts.inter(
                         fontSize: 11,
-                        color: kVendor,
+                        color: kAccent,
                         fontWeight: FontWeight.w600,
                       )),
                     ],
@@ -121,9 +121,9 @@ class _VendorOrdersScreenState extends State<VendorOrdersScreen>
                   fontWeight: FontWeight.w700),
                 unselectedLabelStyle: GoogleFonts.inter(fontSize: 12,
                   fontWeight: FontWeight.w500),
-                labelColor: kVendor,
+                labelColor: kAccent,
                 unselectedLabelColor: kTextMuted,
-                indicatorColor: kVendor,
+                indicatorColor: kAccent,
                 indicatorWeight: 2.5,
                 padding: EdgeInsets.zero,
                 dividerColor: Colors.transparent,
@@ -141,7 +141,7 @@ class _VendorOrdersScreenState extends State<VendorOrdersScreen>
         // ── Tab content ────────────────────────────────────────────────────
         Expanded(
           child: _loading
-              ? Center(child: CircularProgressIndicator(color: kVendor))
+              ? Center(child: CircularProgressIndicator(color: kAccent))
               : TabBarView(
                   controller: _tab,
                   children: _tabs.map((t) {
@@ -180,7 +180,7 @@ class _OrderList extends StatelessWidget {
       );
     }
     return RefreshIndicator(
-      color: kVendor, backgroundColor: kCard,
+      color: kAccent, backgroundColor: kCard,
       onRefresh: () async => onStatusChange(),
       child: ListView.builder(
         padding: EdgeInsets.fromLTRB(16, 12, 16, 100),
@@ -241,7 +241,7 @@ class _VendorOrderCardState extends State<_VendorOrderCard> {
 
     return Container(
       margin: EdgeInsets.only(bottom: 12),
-      decoration: kGlowDeco(accent, radius: 18),
+      decoration: kCardDeco( radius: 18),
       child: Column(children: [
         TappableScale(
           onTap: () => setState(() => _expanded = !_expanded),
@@ -283,18 +283,18 @@ class _VendorOrderCardState extends State<_VendorOrderCard> {
                 SizedBox(width: 8),
                 Row(
                   children: [
-                    Icon(Icons.payments_rounded, color: kVendor, size: 12),
+                    Icon(Icons.payments_rounded, color: kAccent, size: 12),
                     SizedBox(width: 4),
                     MotionCounter(
                       value: order.totalAmount,
                       prefix: 'Rs ',
-                      style: kBody(11, color: kVendor),
+                      style: kBody(11, color: kAccent),
                     ),
                   ],
                 ),
                 SizedBox(width: 8),
                 _Chip(Icons.receipt_rounded,
-                  order.paymentMethod ?? 'COD', kCyan),
+                  order.paymentMethod ?? 'COD', kAccent),
               ]),
             ]),
           ),
@@ -336,13 +336,13 @@ class _VendorOrderCardState extends State<_VendorOrderCard> {
                     MotionCounter(
                       value: item.total,
                       prefix: 'Rs ',
-                      style: kBody(12, color: kVendor, fw: FontWeight.w700),
+                      style: kBody(12, color: kAccent, fw: FontWeight.w700),
                     ),
                   ]),
                 )),
                 SizedBox(height: 4),
                 Row(children: [
-                  Icon(Icons.location_on_rounded, color: kCyan, size: 14),
+                  Icon(Icons.location_on_rounded, color: kAccent, size: 14),
                   SizedBox(width: 6),
                   Expanded(child: Text(order.deliveryAddress,
                     style: kBody(11, color: kTextMuted), maxLines: 2,

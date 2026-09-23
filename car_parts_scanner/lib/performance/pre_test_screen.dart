@@ -191,10 +191,10 @@ class _PreTestScreenState extends State<PreTestScreen> with SingleTickerProvider
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: AppColors.surface,
-                  border: Border.all(color: AppColors.cyan.withValues(alpha: 0.3), width: 2),
+                  border: Border.all(color: AppColors.accent.withValues(alpha: 0.3), width: 2),
                 ),
                 child: Icon(Icons.phone_android_rounded,
-                  color: AppColors.cyan, size: 60),
+                  color: AppColors.accent, size: 60),
               ),
               SizedBox(height: 28),
 
@@ -228,7 +228,7 @@ class _PreTestScreenState extends State<PreTestScreen> with SingleTickerProvider
                   children: [
                     Icon(
                       _sensorReady ? Icons.check_circle_rounded : Icons.sensors_rounded,
-                      color: _sensorReady ? AppColors.success : AppColors.cyan,
+                      color: _sensorReady ? AppColors.success : AppColors.accent,
                     ),
                     SizedBox(width: 14),
                     Expanded(
@@ -244,7 +244,7 @@ class _PreTestScreenState extends State<PreTestScreen> with SingleTickerProvider
                     if (!_sensorReady && !_isCountingDown)
                       SizedBox(
                         width: 16, height: 16,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.cyan),
+                        child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.accent),
                       )
                   ],
                 ),
@@ -261,7 +261,7 @@ class _PreTestScreenState extends State<PreTestScreen> with SingleTickerProvider
                   child: Text(
                     _countdown.toString(),
                     style: TextStyle(
-                      color: AppColors.cyan,
+                      color: AppColors.accent,
                       fontSize: 100,
                       fontWeight: FontWeight.w900,
                       letterSpacing: -2,
@@ -277,7 +277,7 @@ class _PreTestScreenState extends State<PreTestScreen> with SingleTickerProvider
                     child: Container(
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: _sensorReady ? AppColors.cyan : AppColors.textPrimary.withValues(alpha: 0.08),
+                        color: _sensorReady ? AppColors.accent : AppColors.textPrimary.withValues(alpha: 0.08),
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: Text(

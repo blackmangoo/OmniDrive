@@ -58,7 +58,7 @@ class _SignupScreenState extends State<SignupScreen> {
     super.dispose();
   }
 
-  Color get _accentColor => widget.role == 'rider' ? AppColors.rider : AppColors.cyan;
+  Color get _accentColor => widget.role == 'rider' ? AppColors.accent : AppColors.accent;
 
   Future<void> _signup() async {
     if (!_formKey.currentState!.validate()) return;
@@ -156,7 +156,7 @@ class _SignupScreenState extends State<SignupScreen> {
   void _showError(String msg) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(msg, style: AppTypography.body.copyWith(color: AppColors.textPrimary)),
-      backgroundColor: AppColors.error,
+      backgroundColor: AppColors.errorFill,
       behavior: SnackBarBehavior.floating,
     ));
   }
@@ -285,7 +285,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       decoration: BoxDecoration(
                         color: _accentColor,
                         borderRadius: BorderRadius.circular(AppSpacing.rLg),
-                        boxShadow: AppShadows.roleGlow(_accentColor),
+                        boxShadow: AppShadows.raised,
                       ),
                       child: Center(
                         child: _loading

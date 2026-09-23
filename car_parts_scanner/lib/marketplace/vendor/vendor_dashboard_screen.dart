@@ -56,7 +56,7 @@ class _VendorDashboardScreenState extends State<VendorDashboardScreen> {
     return Scaffold(
       backgroundColor: kBg,
       body: RefreshIndicator(
-        color: kVendor, backgroundColor: kCard,
+        color: kAccent, backgroundColor: kCard,
         onRefresh: _load,
         child: CustomScrollView(
           slivers: [
@@ -123,7 +123,7 @@ class _VendorDashboardScreenState extends State<VendorDashboardScreen> {
                             numericValue: revenue,
                             prefix: 'Rs ',
                             icon: Icons.trending_up_rounded,
-                            accent: kVendor,
+                            accent: kAccent,
                             gradient: kVendorGradient,
                           ),
                         )),
@@ -135,7 +135,7 @@ class _VendorDashboardScreenState extends State<VendorDashboardScreen> {
                             value: '',
                             numericValue: orders,
                             icon: Icons.receipt_long_rounded,
-                            accent: kCyan,
+                            accent: kAccent,
                           ),
                         )),
                       ]),
@@ -177,7 +177,7 @@ class _VendorDashboardScreenState extends State<VendorDashboardScreen> {
                         _QuickAction(
                           icon: Icons.add_box_rounded,
                           label: 'Add Product',
-                          accent: kVendor,
+                          accent: kAccent,
                           onTap: () => Navigator.push(context,
                             MaterialPageRoute(builder: (_) =>
                               AddEditProductScreen()))
@@ -187,7 +187,7 @@ class _VendorDashboardScreenState extends State<VendorDashboardScreen> {
                         _QuickAction(
                           icon: Icons.inventory_2_rounded,
                           label: 'Stock Manager',
-                          accent: kCyan,
+                          accent: kAccent,
                           onTap: () {
                             context.findAncestorStateOfType<VendorShellState>()?.setIndex(1);
                           },
@@ -196,12 +196,12 @@ class _VendorDashboardScreenState extends State<VendorDashboardScreen> {
                         _QuickAction(
                           icon: Icons.bar_chart_rounded,
                           label: 'Analytics',
-                          accent: kRider,
+                          accent: kAccent,
                           onTap: () {
                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                               content: Text('Analytics coming soon!',
                                 style: GoogleFonts.inter(fontWeight: FontWeight.w600, color: Colors.black)),
-                              backgroundColor: kCyan,
+                              backgroundColor: kAccent,
                               behavior: SnackBarBehavior.floating,
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                             ));
@@ -243,7 +243,7 @@ class _VendorDashboardScreenState extends State<VendorDashboardScreen> {
                               width: 180,
                               margin: EdgeInsets.symmetric(horizontal: 4),
                               padding: EdgeInsets.all(12),
-                              decoration: kGlowDeco(kError, radius: 14),
+                              decoration: kCardDeco( radius: 14),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -277,7 +277,7 @@ class _VendorDashboardScreenState extends State<VendorDashboardScreen> {
                           onPressed: () {
                             context.findAncestorStateOfType<VendorShellState>()?.setIndex(2);
                           },
-                          child: Text('See all', style: kBody(12, color: kVendor,
+                          child: Text('See all', style: kBody(12, color: kAccent,
                             fw: FontWeight.w600)),
                         )),
                     ),
@@ -448,7 +448,7 @@ class _PendingOrderRow extends StatelessWidget {
   Widget build(BuildContext context) => Container(
     margin: EdgeInsets.fromLTRB(20, 0, 20, 10),
     padding: EdgeInsets.all(14),
-    decoration: kGlowDeco(kWarning, radius: 14),
+    decoration: kCardDeco( radius: 14),
     child: Row(
       children: [
         Container(
@@ -474,12 +474,12 @@ class _PendingOrderRow extends StatelessWidget {
                 '${order.items.length} items', style: kLabel(10)),
               SizedBox(height: 2),
               Text('Rs ${order.totalAmount.toStringAsFixed(0)}',
-                style: kBody(12, color: kVendor, fw: FontWeight.w700)),
+                style: kBody(12, color: kAccent, fw: FontWeight.w700)),
             ],
           ),
         ),
         Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-          kStatusPill(order.paymentMethod ?? 'COD', kCyan, fontSize: 10),
+          kStatusPill(order.paymentMethod ?? 'COD', kAccent, fontSize: 10),
           SizedBox(height: 6),
           TappableScale(
             onTap: () async {

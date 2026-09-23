@@ -109,7 +109,7 @@ class _CartScreenState extends State<CartScreen> {
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 32, vertical: 14),
           decoration: BoxDecoration(
-            color: kCyan,
+            color: kAccent,
             borderRadius: BorderRadius.circular(14),
           ),
           child: Text('Browse Market', style: AppTypography.label.copyWith(
@@ -122,7 +122,7 @@ class _CartScreenState extends State<CartScreen> {
   Widget _buildCart() => Stack(
     children: [
       RefreshIndicator(
-        color: kCyan, backgroundColor: kCard,
+        color: kAccent, backgroundColor: kCard,
         onRefresh: _load,
         child: ListView(
           padding: EdgeInsets.fromLTRB(16, 8, 16, 200),
@@ -197,7 +197,7 @@ class _CartScreenState extends State<CartScreen> {
                 SizedBox(height: 8),
                 Divider(color: kBorder),
                 SizedBox(height: 8),
-                _SummaryRow('Total', '', numericValue: _total, prefix: 'Rs ', bold: true, color: kCyan),
+                _SummaryRow('Total', '', numericValue: _total, prefix: 'Rs ', bold: true, color: kAccent),
               ]),
             ),
           ],
@@ -220,11 +220,11 @@ class _CartScreenState extends State<CartScreen> {
               height: 54,
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                color: kCyan,
+                color: kAccent,
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: kCyan.withValues(alpha: 0.25),
+                    color: kAccent.withValues(alpha: 0.25),
                     blurRadius: 16,
                     offset: Offset(0, 4),
                   )
@@ -251,19 +251,19 @@ class _CartScreenState extends State<CartScreen> {
         duration: Duration(milliseconds: 200),
         padding: EdgeInsets.symmetric(vertical: 12, horizontal: 12),
         decoration: BoxDecoration(
-          color: _paymentMethod == id ? kCyan.withValues(alpha: 0.12) : kCard,
+          color: _paymentMethod == id ? kAccent.withValues(alpha: 0.12) : kCard,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: _paymentMethod == id ? kCyan : kBorder,
+            color: _paymentMethod == id ? kAccent : kBorder,
             width: _paymentMethod == id ? 1.5 : 1,
           ),
         ),
         child: Row(children: [
           Icon(icon,
-            color: _paymentMethod == id ? kCyan : kTextMuted, size: 18),
+            color: _paymentMethod == id ? kAccent : kTextMuted, size: 18),
           SizedBox(width: 8),
           Expanded(child: Text(label, style: kBody(11,
-            color: _paymentMethod == id ? kCyan : kTextSecondary,
+            color: _paymentMethod == id ? kAccent : kTextSecondary,
             fw: FontWeight.w500), overflow: TextOverflow.ellipsis)),
         ]),
       ),
@@ -315,12 +315,12 @@ class _CartItemCard extends StatelessWidget {
                     value: item.totalPrice,
                     prefix: 'Rs ',
                     style: GoogleFonts.inter(fontSize: 14,
-                      fontWeight: FontWeight.w800, color: kCyan),
+                      fontWeight: FontWeight.w800, color: kAccent),
                   ),
                   Spacer(),
                   // Qty controls
                   Container(
-                    decoration: kGlassDeco(radius: 10),
+                    decoration: kFieldDeco(radius: 10),
                     child: Row(mainAxisSize: MainAxisSize.min, children: [
                       TappableScale(
                         onTap: () => item.quantity > 1

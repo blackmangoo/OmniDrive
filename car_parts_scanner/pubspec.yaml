@@ -94,6 +94,10 @@ flutter:
 
   assets:
     - assets/icon/app_icon.png
+    # Inter is bundled so google_fonts resolves it from the app package.
+    # Without these the typeface is fetched over the network at runtime, which
+    # means an offline first launch silently falls back to Roboto/SF.
+    - assets/google_fonts/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

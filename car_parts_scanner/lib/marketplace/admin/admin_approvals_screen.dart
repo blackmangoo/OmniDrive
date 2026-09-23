@@ -43,7 +43,7 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen> {
       context: context,
       barrierDismissible: false,
       builder: (_) => Center(
-        child: CircularProgressIndicator(color: kAdmin),
+        child: CircularProgressIndicator(color: kAccent),
       ),
     );
 
@@ -127,7 +127,7 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen> {
       context: context,
       barrierDismissible: false,
       builder: (_) => Center(
-        child: CircularProgressIndicator(color: kAdmin),
+        child: CircularProgressIndicator(color: kAccent),
       ),
     );
 
@@ -179,9 +179,9 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen> {
         ],
       ),
       body: _loading
-          ? Center(child: CircularProgressIndicator(color: kAdmin))
+          ? Center(child: CircularProgressIndicator(color: kAccent))
           : RefreshIndicator(
-              color: kAdmin,
+              color: kAccent,
               backgroundColor: kSurface,
               onRefresh: _loadApprovals,
               child: _pendingUsers.isEmpty
@@ -218,7 +218,7 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen> {
                 ),
                 child: Icon(
                   Icons.check_circle_outline_rounded,
-                  color: kCyan,
+                  color: kAccent,
                   size: 64,
                 ),
               )
@@ -252,12 +252,12 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen> {
     final String? location = item['location'] as String?;
 
     final isVendor = role == 'vendor';
-    final roleAccent = isVendor ? kVendor : kRider;
+    final roleAccent = isVendor ? kAccent : kAccent;
     final roleName = isVendor ? 'Vendor' : 'Rider';
 
     return Container(
       margin: EdgeInsets.only(bottom: 16),
-      decoration: kGlowDeco(roleAccent, radius: 16),
+      decoration: kCardDeco( radius: 16),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16),
         child: Column(

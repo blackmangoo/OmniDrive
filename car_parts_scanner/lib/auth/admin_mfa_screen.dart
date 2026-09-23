@@ -245,7 +245,7 @@ class _AdminMfaScreenState extends State<AdminMfaScreen> {
               center: Alignment(0.0, -0.3),
               radius: 1.2,
               colors: [
-                AppColors.admin.withValues(alpha: 0.12),
+                AppColors.accent.withValues(alpha: 0.12),
                 Colors.transparent,
               ],
             ),
@@ -289,7 +289,7 @@ class _AdminMfaScreenState extends State<AdminMfaScreen> {
         SizedBox(
           width: 50,
           height: 50,
-          child: CircularProgressIndicator(color: AppColors.admin, strokeWidth: 3.5),
+          child: CircularProgressIndicator(color: AppColors.accent, strokeWidth: 3.5),
         ),
         SizedBox(height: 24),
         Text(
@@ -323,11 +323,11 @@ class _AdminMfaScreenState extends State<AdminMfaScreen> {
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 24, vertical: 14),
             decoration: BoxDecoration(
-              color: AppColors.admin,
+              color: AppColors.accent,
               borderRadius: BorderRadius.circular(AppSpacing.rMd),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.admin.withValues(alpha: 0.3),
+                  color: AppColors.accent.withValues(alpha: 0.3),
                   blurRadius: 12,
                   offset: Offset(0, 4),
                 )
@@ -352,7 +352,7 @@ class _AdminMfaScreenState extends State<AdminMfaScreen> {
           child: Text(
             'Continue to Admin Dashboard →',
             style: AppTypography.body.copyWith(
-              color: AppColors.admin,
+              color: AppColors.accent,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -387,11 +387,11 @@ class _AdminMfaScreenState extends State<AdminMfaScreen> {
           Container(
             padding: EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: AppColors.admin.withValues(alpha: 0.1),
+              color: AppColors.accent.withValues(alpha: 0.1),
               shape: BoxShape.circle,
-              border: Border.all(color: AppColors.admin.withValues(alpha: 0.3), width: 1.5),
+              border: Border.all(color: AppColors.accent.withValues(alpha: 0.3), width: 1.5),
             ),
-            child: Icon(Icons.security_rounded, color: AppColors.admin, size: 40),
+            child: Icon(Icons.security_rounded, color: AppColors.accent, size: 40),
           ),
           SizedBox(height: 20),
           Text(
@@ -457,7 +457,7 @@ class _AdminMfaScreenState extends State<AdminMfaScreen> {
                             ? loadingProgress.cumulativeBytesLoaded /
                                 loadingProgress.expectedTotalBytes!
                             : null,
-                        color: AppColors.admin,
+                        color: AppColors.accent,
                       ),
                     ),
                   );
@@ -502,7 +502,7 @@ class _AdminMfaScreenState extends State<AdminMfaScreen> {
                       Clipboard.setData(ClipboardData(text: _secretKey!));
                       _showSnackBar('Secret key copied to clipboard!', isError: false);
                     },
-                    icon: Icon(Icons.copy_rounded, color: AppColors.admin),
+                    icon: Icon(Icons.copy_rounded, color: AppColors.accent),
                     tooltip: 'Copy Secret Key',
                   ),
                 ],
@@ -535,11 +535,11 @@ class _AdminMfaScreenState extends State<AdminMfaScreen> {
           Container(
             padding: EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: AppColors.admin.withValues(alpha: 0.1),
+              color: AppColors.accent.withValues(alpha: 0.1),
               shape: BoxShape.circle,
-              border: Border.all(color: AppColors.admin.withValues(alpha: 0.3), width: 1.5),
+              border: Border.all(color: AppColors.accent.withValues(alpha: 0.3), width: 1.5),
             ),
-            child: Icon(Icons.lock_person_rounded, color: AppColors.admin, size: 40),
+            child: Icon(Icons.lock_person_rounded, color: AppColors.accent, size: 40),
           ),
           SizedBox(height: 20),
           Text(
@@ -607,7 +607,7 @@ class _AdminMfaScreenState extends State<AdminMfaScreen> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppSpacing.rMd),
-          borderSide: BorderSide(color: AppColors.admin, width: 1.5),
+          borderSide: BorderSide(color: AppColors.accent, width: 1.5),
         ),
       ),
       validator: (v) {
@@ -629,11 +629,11 @@ class _AdminMfaScreenState extends State<AdminMfaScreen> {
             child: Container(
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                color: AppColors.admin,
+                color: AppColors.accent,
                 borderRadius: BorderRadius.circular(AppSpacing.rMd),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.admin.withValues(alpha: 0.3),
+                    color: AppColors.accent.withValues(alpha: 0.3),
                     blurRadius: 12,
                     offset: Offset(0, 4),
                   )
@@ -659,7 +659,7 @@ class _AdminMfaScreenState extends State<AdminMfaScreen> {
             child: Text(
               'Skip for Now & Enter Dashboard →',
               style: AppTypography.body.copyWith(
-                color: AppColors.admin,
+                color: AppColors.accent,
                 fontWeight: FontWeight.w600,
               ),
             ),

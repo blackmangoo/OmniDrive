@@ -196,7 +196,7 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                           children: [
                             Container(
                               width: 100, height: 100, margin: EdgeInsets.only(right: 8),
-                              decoration: BoxDecoration(borderRadius: BorderRadius.circular(12), border: Border.all(color: kVendor.withValues(alpha: 0.5))),
+                              decoration: BoxDecoration(borderRadius: BorderRadius.circular(12), border: Border.all(color: kAccent.withValues(alpha: 0.5))),
                               child: ClipRRect(borderRadius: BorderRadius.circular(12), child: Image.file(file, fit: BoxFit.cover)),
                             ),
                             Positioned(top: 4, right: 12, child: TappableScale(
@@ -212,14 +212,14 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                           child: Container(
                             width: 100, height: 100,
                             decoration: BoxDecoration(
-                              color: kVendor.withValues(alpha: 0.08),
+                              color: kAccent.withValues(alpha: 0.08),
                               borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: kVendor.withValues(alpha: 0.4), style: BorderStyle.solid),
+                              border: Border.all(color: kAccent.withValues(alpha: 0.4), style: BorderStyle.solid),
                             ),
                             child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                              Icon(Icons.add_photo_alternate_outlined, color: kVendor, size: 28),
+                              Icon(Icons.add_photo_alternate_outlined, color: kAccent, size: 28),
                               SizedBox(height: 4),
-                              Text('Add', style: GoogleFonts.inter(color: kVendor, fontSize: 11)),
+                              Text('Add', style: GoogleFonts.inter(color: kAccent, fontSize: 11)),
                             ]),
                           ),
                         ),
@@ -249,7 +249,7 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                           contentPadding: EdgeInsets.symmetric(horizontal: 14, vertical: 14),
                           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: kBorder)),
                           enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: kBorder)),
-                          focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: kVendor, width: 1.5)),
+                          focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: kAccent, width: 1.5)),
                         ),
                         hint: Text('Select category', style: GoogleFonts.inter(color: (AppColors.textMuted.withValues(alpha: 0.5)))),
                         items: _categories.map((cat) => DropdownMenuItem(value: cat.id, child: Text(cat.name))).toList(),
@@ -285,7 +285,7 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
                         Icon(Icons.visibility_rounded, color: AppColors.textMuted, size: 20),
                         SizedBox(width: 12),
                         Expanded(child: Text('Product is Active', style: GoogleFonts.inter(color: AppColors.textPrimary, fontSize: 14))),
-                        Switch(value: _isActive, activeThumbColor: kVendor, activeTrackColor: kVendor.withValues(alpha: 0.3), onChanged: (v) => setState(() => _isActive = v)),
+                        Switch(value: _isActive, activeThumbColor: kAccent, activeTrackColor: kAccent.withValues(alpha: 0.3), onChanged: (v) => setState(() => _isActive = v)),
                       ]),
                     ),
 
@@ -340,7 +340,7 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
         contentPadding: EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: kBorder)),
         enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: kBorder)),
-        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: kVendor, width: 1.5)),
+        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: kAccent, width: 1.5)),
         errorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: kError)),
         focusedErrorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: kError)),
       ),
@@ -348,7 +348,7 @@ class _AddEditProductScreenState extends State<AddEditProductScreen> {
   ]);
 
   Widget _sectionHeader(String t) => Row(children: [
-    Container(width: 3, height: 18, decoration: BoxDecoration(color: kVendor, borderRadius: BorderRadius.circular(2))),
+    Container(width: 3, height: 18, decoration: BoxDecoration(color: kAccent, borderRadius: BorderRadius.circular(2))),
     SizedBox(width: 10),
     Text(t, style: GoogleFonts.inter(color: AppColors.textPrimary, fontSize: 14, fontWeight: FontWeight.w700)),
   ]);

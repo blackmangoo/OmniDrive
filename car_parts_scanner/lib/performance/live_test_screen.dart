@@ -324,7 +324,7 @@ class _LiveTestScreenState extends State<LiveTestScreen> {
                               ? [FlSpot(0, 0)]
                               : _chartData,
                           isCurved: true,
-                          color: AppColors.cyan,
+                          color: AppColors.accent,
                           barWidth: 2.5,
                           isStrokeCapRound: true,
                           dotData: FlDotData(show: false),
@@ -332,7 +332,7 @@ class _LiveTestScreenState extends State<LiveTestScreen> {
                             show: true,
                             gradient: LinearGradient(
                               colors: [
-                                AppColors.cyan.withValues(alpha: 0.25),
+                                AppColors.accent.withValues(alpha: 0.25),
                                 Colors.transparent,
                               ],
                               begin: Alignment.topCenter,
@@ -504,7 +504,7 @@ class SpeedometerGauge extends StatelessWidget {
             Text(
               'km/h',
               style: GoogleFonts.inter(
-                color: AppColors.cyan,
+                color: AppColors.accent,
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
                 letterSpacing: 1.5,
@@ -550,7 +550,7 @@ class _GaugePainter extends CustomPainter {
     
     final speedPaint = Paint()
       ..shader = LinearGradient(
-        colors: [AppColors.cyan, AppColors.warning],
+        colors: [AppColors.accent, AppColors.warning],
       ).createShader(Rect.fromCircle(center: center, radius: radius))
       ..style = PaintingStyle.stroke
       ..strokeWidth = 10
@@ -593,7 +593,7 @@ class _GaugePainter extends CustomPainter {
     // Outer glow pulse
     if (isPulsing) {
       final glowPaint = Paint()
-        ..color = AppColors.cyan.withValues(alpha: 0.15)
+        ..color = AppColors.accent.withValues(alpha: 0.15)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 4
         ..maskFilter = MaskFilter.blur(BlurStyle.normal, 8);

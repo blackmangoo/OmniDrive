@@ -7,7 +7,7 @@ import 'package:car_parts_scanner/core/theme/app_colors.dart';
 
 
 Color get _kBg => AppColors.background;
-Color get _kAccent => AppColors.cyan;
+Color get _kAccent => AppColors.accent;
 Color get _kNavBg => AppColors.surface;
 
 /// The main app shell after successful login — hosts the bottom nav bar.

@@ -85,9 +85,9 @@ class _MetricSelectionScreenState extends State<MetricSelectionScreen>
               child: TabBar(
                 controller: _tabCtrl,
                 indicator: BoxDecoration(
-                  color: AppColors.cyan.withValues(alpha: 0.18),
+                  color: AppColors.accent.withValues(alpha: 0.18),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: AppColors.cyan.withValues(alpha: 0.6)),
+                  border: Border.all(color: AppColors.accent.withValues(alpha: 0.6)),
                 ),
                 indicatorSize: TabBarIndicatorSize.tab,
                 dividerColor: Colors.transparent,
@@ -115,7 +115,7 @@ class _MetricSelectionScreenState extends State<MetricSelectionScreen>
                     ),
                   ),
                 ],
-                labelColor: AppColors.cyan,
+                labelColor: AppColors.accent,
                 unselectedLabelColor: AppColors.textMuted,
               ),
             ),
@@ -139,7 +139,7 @@ class _MetricSelectionScreenState extends State<MetricSelectionScreen>
                   }),
                   note: 'All selected metrics are measured in a single drive.',
                   noteIcon: Icons.info_outline_rounded,
-                  noteColor: AppColors.cyan,
+                  noteColor: AppColors.accent,
                 ),
 
                 // ── Braking tab ───────────────────────────────────────────
@@ -213,7 +213,7 @@ class _MetricSelectionScreenState extends State<MetricSelectionScreen>
                 child: Container(
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: _canProceed ? AppColors.cyan : (AppColors.textMuted.withValues(alpha: 0.2)),
+                    color: _canProceed ? AppColors.accent : (AppColors.textMuted.withValues(alpha: 0.2)),
                     borderRadius: BorderRadius.circular(14),
                   ),
                   child: Row(
@@ -319,10 +319,10 @@ class _MetricTile extends StatelessWidget {
         margin: EdgeInsets.only(bottom: 12),
         padding: EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: selected ? AppColors.cyan.withValues(alpha: 0.1) : AppColors.surface,
+          color: selected ? AppColors.accent.withValues(alpha: 0.1) : AppColors.surface,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: selected ? AppColors.cyan.withValues(alpha: 0.5) : AppColors.border,
+            color: selected ? AppColors.accent.withValues(alpha: 0.5) : AppColors.border,
             width: selected ? 1.5 : 1,
           ),
         ),
@@ -333,9 +333,9 @@ class _MetricTile extends StatelessWidget {
               width: 22, height: 22,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: selected ? AppColors.cyan : Colors.transparent,
+                color: selected ? AppColors.accent : Colors.transparent,
                 border: Border.all(
-                    color: selected ? AppColors.cyan : (AppColors.textMuted.withValues(alpha: 0.5)), width: 1.5),
+                    color: selected ? AppColors.accent : (AppColors.textMuted.withValues(alpha: 0.5)), width: 1.5),
               ),
               child: selected
                   ? Icon(Icons.check_rounded,
@@ -425,16 +425,16 @@ class _ModeChip extends StatelessWidget {
           duration: Duration(milliseconds: 180),
           padding: EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: selected ? AppColors.cyan.withValues(alpha: 0.1) : AppColors.surface,
+            color: selected ? AppColors.accent.withValues(alpha: 0.1) : AppColors.surface,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-                color: selected ? AppColors.cyan.withValues(alpha: 0.5) : AppColors.border,
+                color: selected ? AppColors.accent.withValues(alpha: 0.5) : AppColors.border,
                 width: selected ? 1.5 : 1),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(icon, color: selected ? AppColors.cyan : AppColors.textMuted, size: 20),
+              Icon(icon, color: selected ? AppColors.accent : AppColors.textMuted, size: 20),
               SizedBox(height: 8),
               Text(label,
                   style: TextStyle(

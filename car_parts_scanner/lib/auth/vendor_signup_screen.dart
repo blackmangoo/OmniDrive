@@ -34,7 +34,7 @@ class _VendorSignupScreenState extends State<VendorSignupScreen> {
     super.dispose();
   }
 
-  Color get _accentColor => AppColors.vendorDark;
+  Color get _accentColor => AppColors.accentPressed;
 
   Future<void> _signup() async {
     if (!_formKey.currentState!.validate()) return;
@@ -75,7 +75,7 @@ class _VendorSignupScreenState extends State<VendorSignupScreen> {
   void _showError(String msg) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(msg, style: AppTypography.body.copyWith(color: AppColors.textPrimary)),
-      backgroundColor: AppColors.error,
+      backgroundColor: AppColors.errorFill,
       behavior: SnackBarBehavior.floating,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
     ));
@@ -108,7 +108,7 @@ class _VendorSignupScreenState extends State<VendorSignupScreen> {
                       decoration: BoxDecoration(
                         color: _accentColor.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(AppSpacing.rLg),
-                        boxShadow: AppShadows.roleGlow(_accentColor),
+                        boxShadow: AppShadows.raised,
                       ),
                       child: Icon(Icons.storefront_rounded, color: _accentColor, size: 28),
                     ),
@@ -169,7 +169,7 @@ class _VendorSignupScreenState extends State<VendorSignupScreen> {
                       decoration: BoxDecoration(
                         color: _accentColor,
                         borderRadius: BorderRadius.circular(AppSpacing.rLg),
-                        boxShadow: AppShadows.roleGlow(_accentColor),
+                        boxShadow: AppShadows.raised,
                       ),
                       child: Center(
                         child: _loading

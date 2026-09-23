@@ -95,7 +95,7 @@ class _MarketplaceHomeScreenState extends State<MarketplaceHomeScreen> {
     if (lower.contains('tyre') || lower.contains('wheel')) return const Color(0xFF94A3B8);
     if (lower.contains('body')) return const Color(0xFFA78BFA);
     if (lower.contains('electr')) return const Color(0xFF60A5FA);
-    return AppColors.cyan;
+    return AppColors.accent;
   }
 
   int _heroBannerIndex = 0;
@@ -137,7 +137,7 @@ class _MarketplaceHomeScreenState extends State<MarketplaceHomeScreen> {
       child: Scaffold(
         backgroundColor: kBg,
         body: RefreshIndicator(
-          color: kCyan,
+          color: kAccent,
           backgroundColor: kCard,
           onRefresh: _loadData,
           child: CustomScrollView(
@@ -180,7 +180,7 @@ class _MarketplaceHomeScreenState extends State<MarketplaceHomeScreen> {
                         child: Container(
                           width: 16, height: 16,
                           decoration: BoxDecoration(
-                              color: kCyan, shape: BoxShape.circle),
+                              color: kAccent, shape: BoxShape.circle),
                           child: Center(child: Text('$_cartCount',
                             style: TextStyle(fontSize: 9, color: Colors.black,
                                 fontWeight: FontWeight.w800))),
@@ -189,7 +189,7 @@ class _MarketplaceHomeScreenState extends State<MarketplaceHomeScreen> {
                     ],
                   ),
                   IconButton(
-                    icon: Icon(Icons.support_agent_rounded, color: kCyan),
+                    icon: Icon(Icons.support_agent_rounded, color: kAccent),
                     onPressed: () => Navigator.push(context,
                         MaterialPageRoute(builder: (_) => ChatScreen())),
                   ),
@@ -211,7 +211,7 @@ class _MarketplaceHomeScreenState extends State<MarketplaceHomeScreen> {
                       padding: EdgeInsets.fromLTRB(16, 8, 16, 16),
                       child: Container(
                         height: 48,
-                        decoration: kGlassDeco(radius: 14),
+                        decoration: kFieldDeco(radius: 14),
                         child: TextField(
                           controller: _searchCtrl,
                           style: kBody(14, color: kTextPrimary),
@@ -325,7 +325,7 @@ class _MarketplaceHomeScreenState extends State<MarketplaceHomeScreen> {
                             height: 6,
                             decoration: BoxDecoration(
                               color: i == _heroBannerIndex
-                                  ? kCyan : kBorder,
+                                  ? kAccent : kBorder,
                               borderRadius: BorderRadius.circular(3),
                             ),
                           )),
@@ -339,7 +339,7 @@ class _MarketplaceHomeScreenState extends State<MarketplaceHomeScreen> {
                           trailing: TextButton(
                             onPressed: () {},
                             child: Text('See all',
-                                style: AppTypography.label.copyWith(color: kCyan, fontWeight: FontWeight.w600)),
+                                style: AppTypography.label.copyWith(color: kAccent, fontWeight: FontWeight.w600)),
                           )),
                     ),
                     SizedBox(
@@ -560,7 +560,7 @@ class _ProductCard extends StatelessWidget {
                                 value: product.price,
                                 prefix: 'Rs ',
                                 style: GoogleFonts.inter(fontSize: 13,
-                                  fontWeight: FontWeight.w800, color: kCyan),
+                                  fontWeight: FontWeight.w800, color: kAccent),
                               ),
                               if (product.hasDiscount)
                                 Text('Rs ${product.comparePrice!.toStringAsFixed(0)}',

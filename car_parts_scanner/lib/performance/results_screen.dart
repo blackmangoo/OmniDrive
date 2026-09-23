@@ -38,9 +38,9 @@ class ResultsScreen extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Row(
                 children: [
-                  Icon(Icons.home_rounded, color: AppColors.cyan, size: 18),
+                  Icon(Icons.home_rounded, color: AppColors.accent, size: 18),
                   SizedBox(width: 6),
-                  Text('Garage', style: GoogleFonts.inter(color: AppColors.cyan, fontWeight: FontWeight.bold)),
+                  Text('Garage', style: GoogleFonts.inter(color: AppColors.accent, fontWeight: FontWeight.bold)),
                 ],
               ),
             ),
@@ -58,7 +58,7 @@ class ResultsScreen extends StatelessWidget {
                 children: [
                   Icon(
                     Icons.satellite_alt_rounded,
-                    color: AppColors.cyan, size: 16,
+                    color: AppColors.accent, size: 16,
                   ),
                   SizedBox(width: 6),
                   Text(
@@ -165,14 +165,14 @@ class ResultsScreen extends StatelessWidget {
                               .map((p) => FlSpot(p.timeS, p.speedKmh))
                               .toList(),
                           isCurved: true,
-                          color: AppColors.cyan,
+                          color: AppColors.accent,
                           barWidth: 2.5,
                           dotData: FlDotData(show: false),
                           belowBarData: BarAreaData(
                             show: true,
                             gradient: LinearGradient(
                               colors: [
-                                AppColors.cyan.withValues(alpha: 0.25),
+                                AppColors.accent.withValues(alpha: 0.25),
                                 Colors.transparent,
                               ],
                               begin: Alignment.topCenter,
@@ -289,7 +289,7 @@ class _ResultCard extends StatelessWidget {
               padding: EdgeInsets.only(top: 4),
               child: Text(
                 '@ ${trapSpeed!.toStringAsFixed(1)} km/h',
-                style: TextStyle(color: AppColors.cyan, fontSize: 11),
+                style: TextStyle(color: AppColors.accent, fontSize: 11),
               ),
             ),
         ],

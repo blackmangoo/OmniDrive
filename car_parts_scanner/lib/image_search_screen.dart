@@ -122,7 +122,7 @@ class _ImageSearchScreenState extends State<ImageSearchScreen>
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: RadialGradient(colors: [
-                  AppColors.cyan.withValues(alpha: 0.07),
+                  AppColors.accent.withValues(alpha: 0.07),
                   Colors.transparent,
                 ]),
               ),
@@ -169,11 +169,11 @@ class _ImageSearchScreenState extends State<ImageSearchScreen>
                   height: 9,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: AppColors.cyan
+                    color: AppColors.accent
                         .withValues(alpha: 0.5 + _pulseCtrl.value * 0.5),
                     boxShadow: [
                       BoxShadow(
-                        color: AppColors.cyan
+                        color: AppColors.accent
                             .withValues(alpha: _pulseCtrl.value * 0.6),
                         blurRadius: 8,
                         spreadRadius: 2,
@@ -237,7 +237,7 @@ class _ImageSearchScreenState extends State<ImageSearchScreen>
           Text(
             'Automotive Vision System',
             style: AppTypography.caption.copyWith(
-                color: AppColors.cyan, fontSize: 12, letterSpacing: 1.8),
+                color: AppColors.accent, fontSize: 12, letterSpacing: 1.8),
           ),
         ],
       ),
@@ -252,10 +252,10 @@ class _ImageSearchScreenState extends State<ImageSearchScreen>
         decoration: BoxDecoration(
           color: AppColors.surface,
           borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: AppColors.cyan.withValues(alpha: 0.4), width: 1.5),
+          border: Border.all(color: AppColors.accent.withValues(alpha: 0.4), width: 1.5),
           boxShadow: [
             BoxShadow(
-              color: AppColors.cyan.withValues(alpha: 0.08),
+              color: AppColors.accent.withValues(alpha: 0.08),
               blurRadius: 24,
               spreadRadius: 2,
             ),
@@ -279,7 +279,7 @@ class _ImageSearchScreenState extends State<ImageSearchScreen>
             Container(
                 width: 1,
                 height: 28,
-                color: AppColors.cyan.withValues(alpha: 0.18)),
+                color: AppColors.accent.withValues(alpha: 0.18)),
 
             // Hint text
             Expanded(
@@ -296,7 +296,7 @@ class _ImageSearchScreenState extends State<ImageSearchScreen>
             Container(
                 width: 1,
                 height: 28,
-                color: AppColors.cyan.withValues(alpha: 0.18)),
+                color: AppColors.accent.withValues(alpha: 0.18)),
 
             // Camera scan button
             Hero(
@@ -344,7 +344,7 @@ class _ImageSearchScreenState extends State<ImageSearchScreen>
           index: 0,
           child: _FeatureCard(
             icon: Icons.camera_alt_rounded,
-            iconColor: AppColors.cyan,
+            iconColor: AppColors.accent,
             title: 'Scan a Part',
             subtitle:
                 'Point the camera at any car part — YOLO11 identifies it in ~110ms.',
@@ -355,7 +355,7 @@ class _ImageSearchScreenState extends State<ImageSearchScreen>
           index: 1,
           child: _FeatureCard(
             icon: Icons.photo_library_rounded,
-            iconColor: AppColors.violet,
+            iconColor: AppColors.accent,
             title: 'Upload from Gallery',
             subtitle:
                 'Select an existing photo of a part and get instant AI identification.',
@@ -377,7 +377,7 @@ class _ImageSearchScreenState extends State<ImageSearchScreen>
           index: 3,
           child: _FeatureCard(
             icon: Icons.store_rounded,
-            iconColor: AppColors.vendor,
+            iconColor: AppColors.accent,
             title: 'Marketplace — Coming Soon',
             subtitle:
                 'Vendor listings, real-time pricing and delivery — Phase 4.',
@@ -396,12 +396,12 @@ class _ImageSearchScreenState extends State<ImageSearchScreen>
           mainAxisSize: MainAxisSize.min,
           children: [
             CircularProgressIndicator(
-                color: AppColors.cyan, strokeWidth: 2.5),
+                color: AppColors.accent, strokeWidth: 2.5),
             SizedBox(height: 18),
             Text(
               'ANALYSING IMAGE…',
               style: AppTypography.label.copyWith(
-                color: AppColors.cyan,
+                color: AppColors.accent,
                 letterSpacing: 2.5,
                 fontWeight: FontWeight.w600,
                 fontSize: 13,
@@ -438,13 +438,13 @@ class _SearchBarButton extends StatelessWidget {
         child: InkWell(
           onTap: onTap,
           borderRadius: radius,
-          splashColor: AppColors.cyan.withValues(alpha: 0.15),
+          splashColor: AppColors.accent.withValues(alpha: 0.15),
           child: SizedBox(
             width: 58,
             height: double.infinity,
             child: Icon(
               icon,
-              color: onTap == null ? Colors.grey[700] : AppColors.cyan,
+              color: onTap == null ? Colors.grey[700] : AppColors.accent,
               size: 25,
             ),
           ),
@@ -558,12 +558,12 @@ class _ResultsSheet extends StatelessWidget {
                 child: Container(
                   padding: EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: (hasError ? AppColors.error : AppColors.cyan).withValues(alpha: 0.1),
+                    color: (hasError ? AppColors.error : AppColors.accent).withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
                     hasError ? Icons.error_outline : Icons.analytics_rounded,
-                    color: hasError ? AppColors.error : AppColors.cyan,
+                    color: hasError ? AppColors.error : AppColors.accent,
                     size: 32,
                   ),
                 ),
@@ -629,7 +629,7 @@ class _ResultsSheet extends StatelessWidget {
               if (result.part!.averagePrice != null)
                 _InfoCard(
                   icon: Icons.local_offer_rounded,
-                  iconColor: AppColors.cyan,
+                  iconColor: AppColors.accent,
                   label: 'Estimated Price',
                   value:
                       'Rs. ${result.part!.averagePrice!.toStringAsFixed(0)}',
