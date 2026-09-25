@@ -1,0 +1,54 @@
+name: Render Backend Keep-Alive (Zero Cold-Start)
+
+on:
+  schedule:
+    # Runs every 10 minutes to prevent Render free-tier containers from spinning down
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+jobs:
+  keep-alive-ping:
+    name: Ping Render Health Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Ping OmniDrive API Health Endpoint
+        run: |
+          ENDPOINT="https://omnidrive.onrender.com/health"
+          echo "Sending keep-alive heartbeat to $ENDPOINT..."
+
+          # Attempt up to 3 times with 10s backoff in case container is waking up
+          MAX_ATTEMPTS=3
+          ATTEMPT=1
+          SUCCESS=false
+
+          while [ $ATTEMPT -le $MAX_ATTEMPTS ]; do
+            echo "Attempt $ATTEMPT of $MAX_ATTEMPTS..."
+            START_TIME=$(date +%s%N)
+
+            HTTP_RESPONSE=$(curl -s -w "\n%{http_code}" --max-time 60 "$ENDPOINT" || echo "000")
+
+            HTTP_BODY=$(echo "$HTTP_RESPONSE" | sed '$d')
+            HTTP_CODE=$(echo "$HTTP_RESPONSE" | tail -n1)
+
+            END_TIME=$(date +%s%N)
+            ELAPSED_MS=$(( (END_TIME - START_TIME) / 1000000 ))
+
+            echo "HTTP Status: $HTTP_CODE (Response Time: ${ELAPSED_MS}ms)"
+            echo "Response: $HTTP_BODY"
+
+            if [ "$HTTP_CODE" -eq 200 ]; then
+              echo "Server is healthy and warm!"
+              SUCCESS=true
+              break
+            else
+              echo "Server responded with status $HTTP_CODE or timed out. Waiting 10s before retry..."
+              sleep 10
+              ATTEMPT=$((ATTEMPT + 1))
+            fi
+          done
+
+          if [ "$SUCCESS" = false ]; then
+            echo "Warning: All keep-alive attempts failed. The server might be down or redeploying."
+            exit 1
+          fi
