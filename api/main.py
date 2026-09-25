@@ -194,7 +194,11 @@ from supabase import create_client
 
 SUPABASE_URL = os.environ.get("SUPABASE_URL", "https://cqeubytgsrxdkfejxvan.supabase.co")
 SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
-supabase_client = create_client(SUPABASE_URL, SUPABASE_KEY) if SUPABASE_KEY else None
+try:
+    supabase_client = create_client(SUPABASE_URL, SUPABASE_KEY) if SUPABASE_KEY else None
+except Exception as e:
+    print(f"Warning: Supabase client could not be initialized: {e}")
+    supabase_client = None
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
 
 class ChatRequest(BaseModel):

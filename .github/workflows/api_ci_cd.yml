@@ -43,10 +43,6 @@ jobs:
           python -m py_compile main.py app.py rag_ingest.py
 
       - name: Run Test Suite
-        env:
-          SUPABASE_URL: "https://cqeubytgsrxdkfejxvan.supabase.co"
-          SUPABASE_KEY: "dummy_anon_key_for_ci_tests"
-          GEMINI_API_KEY: "dummy_gemini_key_for_ci_tests"
         run: |
           pytest tests/ -v
 
