@@ -1,0 +1,90 @@
+name: FastAPI Backend CI/CD & Test Pipeline
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'api/**'
+      - '.github/workflows/api_ci_cd.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'api/**'
+      - '.github/workflows/api_ci_cd.yml'
+  workflow_dispatch:
+
+jobs:
+  test-and-lint:
+    name: Lint & Pytest Suite
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: api
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install Python Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install --extra-index-url https://download.pytorch.org/whl/cpu -r requirements.txt pytest httpx
+
+      - name: Syntax & Bytecode Compilation Check
+        run: |
+          python -m py_compile main.py app.py rag_ingest.py
+
+      - name: Run Test Suite
+        env:
+          SUPABASE_URL: "https://cqeubytgsrxdkfejxvan.supabase.co"
+          SUPABASE_KEY: "dummy_anon_key_for_ci_tests"
+          GEMINI_API_KEY: "dummy_gemini_key_for_ci_tests"
+        run: |
+          pytest tests/ -v
+
+  docker-build-verification:
+    name: Docker Container Build Verification
+    needs: test-and-lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: api/
+          file: api/Dockerfile
+          push: false
+          tags: omnidrive-api:test
+
+  notify-render-deploy:
+    name: Trigger Render Deployment Webhook (Optional)
+    needs: [test-and-lint, docker-build-verification]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Ping Render Deploy Hook (if secret configured)
+        env:
+          DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -n "$DEPLOY_HOOK" ]; then
+            echo "Triggering Render auto-deploy..."
+            curl -s -X POST "$DEPLOY_HOOK"
+            echo "Deploy hook triggered successfully."
+          else
+            echo "RENDER_DEPLOY_HOOK_URL not set in repository secrets; skipping webhook call."
+          fi

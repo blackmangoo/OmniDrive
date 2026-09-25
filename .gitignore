@@ -1,2 +1,7 @@
 /dataset/
 /dataset1/
+.qoder/
+.vscode/
+*.py[cod]
+__pycache__/
+.env
