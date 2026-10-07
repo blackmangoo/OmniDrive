@@ -6,6 +6,7 @@ os.environ["OPENBLAS_NUM_THREADS"] = "1"
 os.environ["VECLIB_MAXIMUM_THREADS"] = "1"
 os.environ["NUMEXPR_NUM_THREADS"] = "1"
 os.environ["YOLO_VERBOSE"] = "False"
+os.environ["YOLO_OFFLINE"] = "True"
 
 import asyncio
 import io
@@ -70,6 +71,11 @@ def get_yolo_model():
                 else:
                     print("Warning: car_parts_large_v1.pt model file not found on disk.")
     return _yolo_model
+
+@app.on_event("startup")
+def preload_yolo_model():
+    """Warms up the YOLO model asynchronously right after port binding so the first /predict is fast."""
+    threading.Thread(target=get_yolo_model, daemon=True).start()
 
 @app.get("/")
 @app.post("/health")
@@ -257,33 +263,37 @@ def _sync_chat_with_rag(query: str):
         f"<user_question>\n{query}\n</user_question>"
     )
 
-    # 3. Gemini Chat Completion with status and error validation (Finding #9)
-    chat_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key={GEMINI_API_KEY}"
-    try:
-        chat_res = requests.post(
-            chat_url,
-            json={"contents": [{"parts": [{"text": prompt}]}]},
-            timeout=25,
-        )
-    except requests.exceptions.Timeout:
-        raise HTTPException(status_code=504, detail="Gemini text generation request timed out.")
-    except requests.exceptions.RequestException as e:
-        raise HTTPException(status_code=502, detail=f"Failed to reach Gemini generation endpoint: {str(e)}")
+    # 3. Gemini Chat Completion with multi-model fallback and error validation
+    candidate_models = ["gemini-3.5-flash", "gemini-3.5-flash-lite", "gemini-flash-lite-latest"]
+    chat_data = None
+    last_error_msg = "Unknown error"
 
-    if chat_res.status_code != 200:
+    for model_name in candidate_models:
+        chat_url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={GEMINI_API_KEY}"
+        try:
+            chat_res = requests.post(
+                chat_url,
+                json={"contents": [{"parts": [{"text": prompt}]}]},
+                timeout=20,
+            )
+            if chat_res.status_code == 200:
+                data = chat_res.json()
+                if "error" not in data:
+                    chat_data = data
+                    break
+            last_error_msg = chat_res.text[:200]
+        except requests.exceptions.Timeout:
+            last_error_msg = f"{model_name} timed out"
+            continue
+        except Exception as e:
+            last_error_msg = str(e)
+            continue
+
+    if not chat_data:
         raise HTTPException(
             status_code=502,
-            detail=f"Gemini generation API error (HTTP {chat_res.status_code}): {chat_res.text[:200]}",
+            detail=f"Gemini generation API error across fallback models: {last_error_msg}",
         )
-
-    try:
-        chat_data = chat_res.json()
-    except Exception:
-        raise HTTPException(status_code=502, detail="Invalid JSON received from Gemini generation API.")
-
-    if "error" in chat_data:
-        error_msg = chat_data["error"].get("message", "Gemini API error")
-        raise HTTPException(status_code=502, detail=f"AI model error: {error_msg}")
 
     candidates = chat_data.get("candidates", [])
     if not candidates or "content" not in candidates[0]:

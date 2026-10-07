@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -103,18 +104,43 @@ class PartDetectionService {
   /// saves the image + result to Supabase scan_history.
   Future<PartDetectionResult> analyzeAndFetchPart(File imageFile) async {
     try {
-      // 1. Send image to FastAPI YOLO11 server
+      // 1. Optimize payload size: compress image to 512x512 JPEG to prevent 502 gateway timeouts
+      Uint8List? compressedBytes;
+      try {
+        compressedBytes = await FlutterImageCompress.compressWithFile(
+          imageFile.absolute.path,
+          minWidth: 512,
+          minHeight: 512,
+          quality: 85,
+          format: CompressFormat.jpeg,
+        );
+      } catch (e) {
+        debugPrint('[PartDetection] Compression fallback: $e');
+      }
+
+      // 2. Send image to FastAPI YOLO11 server
       final request =
           http.MultipartRequest('POST', Uri.parse(_predictUrl));
-      request.files.add(
-        await http.MultipartFile.fromPath(
-          'file',
-          imageFile.path,
-          contentType: MediaType('image', 'jpeg'),
-        ),
-      );
+      if (compressedBytes != null) {
+        request.files.add(
+          http.MultipartFile.fromBytes(
+            'file',
+            compressedBytes,
+            filename: 'scan.jpg',
+            contentType: MediaType('image', 'jpeg'),
+          ),
+        );
+      } else {
+        request.files.add(
+          await http.MultipartFile.fromPath(
+            'file',
+            imageFile.path,
+            contentType: MediaType('image', 'jpeg'),
+          ),
+        );
+      }
 
-      final streamedResponse = await request.send();
+      final streamedResponse = await request.send().timeout(const Duration(seconds: 40));
       final response = await http.Response.fromStream(streamedResponse);
 
       if (response.statusCode != 200) {
