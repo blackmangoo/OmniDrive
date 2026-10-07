@@ -140,7 +140,7 @@ class PartDetectionService {
         );
       }
 
-      final streamedResponse = await request.send().timeout(const Duration(seconds: 40));
+      final streamedResponse = await request.send().timeout(const Duration(seconds: 65));
       final response = await http.Response.fromStream(streamedResponse);
 
       if (response.statusCode != 200) {
