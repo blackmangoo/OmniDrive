@@ -2,8 +2,8 @@ name: Render Backend Keep-Alive (Zero Cold-Start)
 
 on:
   schedule:
-    # Runs every 10 minutes to prevent Render free-tier containers from spinning down
-    - cron: '*/10 * * * *'
+    # Runs every 14 minutes to keep Render awake (Render sleeps after 15 minutes of inactivity)
+    - cron: '*/14 * * * *'
   workflow_dispatch:
 
 jobs:
@@ -17,7 +17,7 @@ jobs:
           ENDPOINT="https://omnidrive.onrender.com/health"
           echo "Sending keep-alive heartbeat to $ENDPOINT..."
 
-          # Attempt up to 3 times with 10s backoff in case container is waking up
+          # Attempt with browser-like user agent to avoid edge proxy filtering
           MAX_ATTEMPTS=3
           ATTEMPT=1
           SUCCESS=false
@@ -26,7 +26,7 @@ jobs:
             echo "Attempt $ATTEMPT of $MAX_ATTEMPTS..."
             START_TIME=$(date +%s%N)
 
-            HTTP_RESPONSE=$(curl -s -w "\n%{http_code}" --max-time 60 "$ENDPOINT" || echo "000")
+            HTTP_RESPONSE=$(curl -s -A "Mozilla/5.0 (compatible; OmniDriveUptime/1.0)" -w "\n%{http_code}" --max-time 60 "$ENDPOINT" || echo "000")
 
             HTTP_BODY=$(echo "$HTTP_RESPONSE" | sed '$d')
             HTTP_CODE=$(echo "$HTTP_RESPONSE" | tail -n1)
@@ -37,13 +37,13 @@ jobs:
             echo "HTTP Status: $HTTP_CODE (Response Time: ${ELAPSED_MS}ms)"
             echo "Response: $HTTP_BODY"
 
-            if [ "$HTTP_CODE" -eq 200 ]; then
-              echo "Server is healthy and warm!"
+            if [ "$HTTP_CODE" -eq 200 ] || [ "$HTTP_CODE" -eq 429 ]; then
+              echo "Server is reachable and awake (HTTP $HTTP_CODE)!"
               SUCCESS=true
               break
             else
-              echo "Server responded with status $HTTP_CODE or timed out. Waiting 10s before retry..."
-              sleep 10
+              echo "Server responded with status $HTTP_CODE or timed out. Waiting 15s before retry..."
+              sleep 15
               ATTEMPT=$((ATTEMPT + 1))
             fi
           done
