@@ -103,11 +103,15 @@ def health_check():
 # Finding #6: 10 MB upload cap to prevent memory exhaustion
 MAX_IMAGE_SIZE_BYTES = 10 * 1024 * 1024
 
+# Thread synchronization lock for non-thread-safe YOLO predictor
+_inference_lock = threading.Lock()
+
 def _sync_yolo_inference(model: YOLO, image: Image.Image):
-    """CPU-bound inference executed off the asyncio event loop."""
+    """CPU-bound inference executed off the asyncio event loop with mutex locking."""
     start_time = time.time()
-    with torch.inference_mode():
-        results = model.predict(source=image, imgsz=224, verbose=False)
+    with _inference_lock:
+        with torch.inference_mode():
+            results = model.predict(source=image, imgsz=224, verbose=False)
     inference_time = (time.time() - start_time) * 1000
 
     result = results[0]
@@ -159,15 +163,21 @@ async def predict_car_part(file: UploadFile = File(...)):
             detail=f"Uploaded file exceeds maximum size limit of {MAX_IMAGE_SIZE_BYTES // (1024 * 1024)}MB.",
         )
 
-    # Finding #8: Catch UnidentifiedImageError and return 400 Bad Request
+    # Finding #8: Catch UnidentifiedImageError, truncated bytes, and return 400 Bad Request
     try:
         image = Image.open(io.BytesIO(contents))
         if image.mode != "RGB":
             image = image.convert("RGB")
+        image.load()  # Force decode raster pixels so truncated/corrupt streams fail here
     except UnidentifiedImageError:
         raise HTTPException(
             status_code=400,
             detail="Uploaded file is corrupted or not a valid image format.",
+        )
+    except OSError as e:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Uploaded image is truncated or corrupted: {str(e)}",
         )
     except Exception as e:
         raise HTTPException(
@@ -206,20 +216,30 @@ except Exception as e:
     print(f"Warning: Supabase client could not be initialized: {e}")
     supabase_client = None
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
+_http_session = requests.Session()
 
 class ChatRequest(BaseModel):
     query: str
 
 def _sync_chat_with_rag(query: str):
     """Synchronous network I/O and vector search executed off the asyncio event loop."""
+    clean_query = query.strip()
+    if not clean_query:
+        raise HTTPException(status_code=400, detail="Query cannot be empty.")
+    if len(clean_query) > 2000:
+        clean_query = clean_query[:2000]
+
+    # Sanitize XML closing tags to avoid prompt boundary breakout
+    safe_query = clean_query.replace("</user_question>", "[user_question_end]")
+
     # 1. Embedding request with status and error validation (Finding #9)
     url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:embedContent?key={GEMINI_API_KEY}"
     try:
-        res = requests.post(
+        res = _http_session.post(
             url,
             json={
                 "model": "models/gemini-embedding-2",
-                "content": {"parts": [{"text": query}]},
+                "content": {"parts": [{"text": clean_query}]},
                 "outputDimensionality": 768,
             },
             timeout=15,
@@ -251,6 +271,7 @@ def _sync_chat_with_rag(query: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Supabase vector search error: {str(e)}")
 
+    docs_count = len(docs) if docs else 0
     context_text = "\n\n".join([doc["content"] for doc in docs]) if docs else "No specific DIY documentation found."
 
     prompt = (
@@ -260,7 +281,7 @@ def _sync_chat_with_rag(query: str):
         "If the documentation does not directly answer the inquiry, provide helpful automotive "
         "best practices and emphasize workshop safety.\n\n"
         f"<technical_documentation>\n{context_text}\n</technical_documentation>\n\n"
-        f"<user_question>\n{query}\n</user_question>"
+        f"<user_question>\n{safe_query}\n</user_question>"
     )
 
     # 3. Gemini Chat Completion with multi-model fallback and error validation
@@ -271,7 +292,7 @@ def _sync_chat_with_rag(query: str):
     for model_name in candidate_models:
         chat_url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={GEMINI_API_KEY}"
         try:
-            chat_res = requests.post(
+            chat_res = _http_session.post(
                 chat_url,
                 json={"contents": [{"parts": [{"text": prompt}]}]},
                 timeout=20,
@@ -300,11 +321,20 @@ def _sync_chat_with_rag(query: str):
         return {
             "success": True,
             "answer": "I could not generate a response for that inquiry. Please try rephrasing.",
-            "retrieved_docs": len(docs),
+            "retrieved_docs": docs_count,
         }
 
-    answer_text = candidates[0]["content"]["parts"][0]["text"]
-    return {"success": True, "answer": answer_text, "retrieved_docs": len(docs)}
+    parts = candidates[0].get("content", {}).get("parts", [])
+    answer_text = None
+    for p in parts:
+        if isinstance(p, dict) and "text" in p and p["text"]:
+            answer_text = p["text"]
+            break
+
+    if not answer_text:
+        answer_text = "I could not generate a response for that inquiry. Please try rephrasing."
+
+    return {"success": True, "answer": answer_text, "retrieved_docs": docs_count}
 
 @app.post("/chat")
 async def chat_with_rag(request: ChatRequest):
