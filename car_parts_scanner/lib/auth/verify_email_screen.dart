@@ -95,7 +95,10 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
           password: widget.password!,
         );
       } else {
-        // Fallback if password is not available
+        // Fallback if password is not available: refresh session to pull latest confirmed status
+        try {
+          await Supabase.instance.client.auth.refreshSession();
+        } catch (_) {}
         final response = await Supabase.instance.client.auth.getUser();
         final user = response.user;
         if (user == null || user.emailConfirmedAt == null) {

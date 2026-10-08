@@ -277,10 +277,16 @@ DECLARE
     v_approved BOOLEAN;
 BEGIN
     v_role := COALESCE(NEW.raw_user_meta_data->>'role', 'customer');
+
+    -- Privilege escalation guard: self-registration as admin is forbidden
+    IF v_role NOT IN ('customer', 'vendor', 'rider') THEN
+        v_role := 'customer';
+    END IF;
+
     v_full_name := COALESCE(NEW.raw_user_meta_data->>'full_name', 'User');
     v_phone := NEW.raw_user_meta_data->>'phone';
 
-    -- Customers auto-approved; Vendors & Riders require Admin approval
+    -- Only customers auto-approved; Vendors & Riders require Admin approval
     IF v_role = 'vendor' OR v_role = 'rider' THEN
         v_approved := FALSE;
     ELSE
@@ -290,7 +296,6 @@ BEGIN
     INSERT INTO public.user_profiles (id, role, full_name, phone, is_approved)
     VALUES (NEW.id, v_role, v_full_name, v_phone, v_approved)
     ON CONFLICT (id) DO UPDATE SET
-        role = EXCLUDED.role,
         full_name = EXCLUDED.full_name;
 
     -- If vendor, prepare basic vendor profile record
@@ -315,13 +320,42 @@ CREATE TRIGGER on_auth_user_created
     AFTER INSERT ON auth.users
     FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
 
--- 7.4 Admin Approval Helpers
+-- Prevent non-admin clients from modifying role or is_approved directly
+CREATE OR REPLACE FUNCTION public.protect_user_profile_fields()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+BEGIN
+    IF NOT (
+        (COALESCE(auth.jwt() ->> 'role', '') = 'service_role') OR
+        EXISTS (SELECT 1 FROM public.user_profiles WHERE id = auth.uid() AND role = 'admin')
+    ) THEN
+        NEW.role := OLD.role;
+        NEW.is_approved := OLD.is_approved;
+    END IF;
+    RETURN NEW;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS tr_protect_user_profile_fields ON public.user_profiles;
+CREATE TRIGGER tr_protect_user_profile_fields
+    BEFORE UPDATE ON public.user_profiles
+    FOR EACH ROW EXECUTE FUNCTION public.protect_user_profile_fields();
+
+-- 7.4 Admin Approval Helpers (Guarded by Admin caller role check)
 CREATE OR REPLACE FUNCTION public.approve_user(p_user_id UUID, p_role TEXT)
 RETURNS VOID
 LANGUAGE plpgsql
 SECURITY DEFINER
+SET search_path = public
 AS $$
 BEGIN
+    IF NOT EXISTS (SELECT 1 FROM public.user_profiles WHERE id = auth.uid() AND role = 'admin') THEN
+        RAISE EXCEPTION 'Access denied: Only administrators can approve users.';
+    END IF;
+
     UPDATE public.user_profiles
     SET is_approved = TRUE, updated_at = NOW()
     WHERE id = p_user_id;
@@ -338,12 +372,18 @@ CREATE OR REPLACE FUNCTION public.reject_user(p_user_id UUID)
 RETURNS VOID
 LANGUAGE plpgsql
 SECURITY DEFINER
+SET search_path = public
 AS $$
 BEGIN
+    IF NOT EXISTS (SELECT 1 FROM public.user_profiles WHERE id = auth.uid() AND role = 'admin') THEN
+        RAISE EXCEPTION 'Access denied: Only administrators can reject users.';
+    END IF;
+
     DELETE FROM public.user_profiles WHERE id = p_user_id;
 END;
 $$;
 
+DROP FUNCTION IF EXISTS public.get_pending_approvals();
 CREATE OR REPLACE FUNCTION public.get_pending_approvals()
 RETURNS TABLE (
     id UUID,
@@ -355,12 +395,19 @@ RETURNS TABLE (
     shop_name TEXT,
     location TEXT
 )
-LANGUAGE sql STABLE SECURITY DEFINER
+LANGUAGE plpgsql STABLE SECURITY DEFINER
+SET search_path = public, auth
 AS $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM public.user_profiles WHERE id = auth.uid() AND role = 'admin') THEN
+        RAISE EXCEPTION 'Access denied: Only administrators can view pending approvals.';
+    END IF;
+
+    RETURN QUERY
     SELECT
         u.id,
         u.full_name,
-        au.email,
+        au.email::TEXT,
         u.role,
         u.phone,
         u.created_at,
@@ -371,6 +418,19 @@ AS $$
     LEFT JOIN public.vendor_profiles v ON v.id = u.id
     WHERE u.is_approved = FALSE
     ORDER BY u.created_at DESC;
+END;
+$$;
+
+-- 7.5 User Self-Account Deletion (Cascade delete including auth.users)
+CREATE OR REPLACE FUNCTION public.delete_current_user()
+RETURNS VOID
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, auth
+AS $$
+BEGIN
+    DELETE FROM auth.users WHERE id = auth.uid();
+END;
 $$;
 
 -- ==============================================================================
@@ -420,6 +480,7 @@ CREATE POLICY "Users update own notifications" ON public.notifications FOR UPDAT
 -- 8.3 Vendor Product Management
 CREATE POLICY "Vendors manage own products" ON public.products FOR ALL USING (auth.uid() = vendor_id);
 CREATE POLICY "Public view vendor profiles" ON public.vendor_profiles FOR SELECT USING (true);
+CREATE POLICY "Vendors insert own vendor profile" ON public.vendor_profiles FOR INSERT WITH CHECK (auth.uid() = id);
 CREATE POLICY "Vendors update own vendor profile" ON public.vendor_profiles FOR UPDATE USING (auth.uid() = id);
 
 -- 8.4 Order Access

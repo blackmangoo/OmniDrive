@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'auth_gate.dart';
 import '../core/theme/app_spacing.dart';
@@ -8,7 +9,6 @@ import '../core/theme/app_typography.dart';
 import '../core/motion/motion_tappable.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:car_parts_scanner/core/theme/app_colors.dart';
-import '../marketplace/admin/admin_shell.dart';
 
 
 class AdminMfaScreen extends StatefulWidget {
@@ -106,7 +106,7 @@ class _AdminMfaScreenState extends State<AdminMfaScreen> {
         }
 
         _factorId = response.id;
-        _qrCodeData = response.totp?.qrCode;
+        _qrCodeData = response.totp?.uri ?? response.totp?.qrCode;
         _secretKey = response.totp?.secret;
 
         if (mounted) {
@@ -143,13 +143,6 @@ class _AdminMfaScreenState extends State<AdminMfaScreen> {
       setState(() => _submitting = false);
       await _initMfa();
     }
-  }
-
-  void _continueToDashboard() {
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (_) => const AdminShell()),
-      (_) => false,
-    );
   }
 
   Future<void> _verifyCode() async {
@@ -346,18 +339,7 @@ class _AdminMfaScreenState extends State<AdminMfaScreen> {
             ),
           ),
         ),
-        SizedBox(height: 16),
-        TextButton(
-          onPressed: _continueToDashboard,
-          child: Text(
-            'Continue to Admin Dashboard →',
-            style: AppTypography.body.copyWith(
-              color: AppColors.accent,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        SizedBox(height: 16),
+        SizedBox(height: 24),
         TappableScale(
           onTap: _submitting ? null : _signOut,
           child: Padding(
@@ -408,11 +390,11 @@ class _AdminMfaScreenState extends State<AdminMfaScreen> {
             ),
           ),
           SizedBox(height: 28),
-          if (_qrCodeData != null)
+          if (_qrCodeData != null && _qrCodeData!.isNotEmpty)
             Container(
               padding: EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: AppColors.textPrimary,
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
@@ -422,46 +404,19 @@ class _AdminMfaScreenState extends State<AdminMfaScreen> {
                   )
                 ],
               ),
-              child: Image.network(
-                'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${Uri.encodeComponent(_qrCodeData!)}',
-                width: 200,
-                height: 200,
-                fit: BoxFit.contain,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    width: 200,
-                    height: 200,
-                    color: AppColors.textPrimary,
-                    alignment: Alignment.center,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.broken_image_rounded, color: AppColors.error, size: 40),
-                        SizedBox(height: 8),
-                        Text(
-                          'Failed to load QR code',
-                          style: AppTypography.body.copyWith(color: Colors.black54, fontSize: 12),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-                loadingBuilder: (context, child, loadingProgress) {
-                  if (loadingProgress == null) return child;
-                  return SizedBox(
-                    width: 200,
-                    height: 200,
-                    child: Center(
-                      child: CircularProgressIndicator(
-                        value: loadingProgress.expectedTotalBytes != null
-                            ? loadingProgress.cumulativeBytesLoaded /
-                                loadingProgress.expectedTotalBytes!
-                            : null,
-                        color: AppColors.accent,
-                      ),
-                    ),
-                  );
-                },
+              child: QrImageView(
+                data: _qrCodeData!,
+                version: QrVersions.auto,
+                size: 200,
+                backgroundColor: Colors.white,
+                eyeStyle: const QrEyeStyle(
+                  eyeShape: QrEyeShape.square,
+                  color: Colors.black,
+                ),
+                dataModuleStyle: const QrDataModuleStyle(
+                  dataModuleShape: QrDataModuleShape.square,
+                  color: Colors.black,
+                ),
               ),
             ),
           SizedBox(height: 20),
@@ -652,21 +607,8 @@ class _AdminMfaScreenState extends State<AdminMfaScreen> {
             ),
           ),
         ),
-        if (_state == MfaState.enrolling) ...[
-          SizedBox(height: 12),
-          TextButton(
-            onPressed: _submitting ? null : _continueToDashboard,
-            child: Text(
-              'Skip for Now & Enter Dashboard →',
-              style: AppTypography.body.copyWith(
-                color: AppColors.accent,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ],
         if (_state == MfaState.challenging) ...[
-          SizedBox(height: 8),
+          SizedBox(height: 12),
           TextButton(
             onPressed: _submitting ? null : _resetAndRetryMfa,
             child: Text(

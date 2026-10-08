@@ -26,14 +26,16 @@ class MarketplaceService {
   static RealtimeChannel? _notifChannel;
 
   // ── Current user helpers ───────────────────────────────────────────────────
-  static String get currentUserId => _sb.auth.currentUser!.id;
+  static String get currentUserId => _sb.auth.currentUser?.id ?? '';
 
   static Future<AppUser?> fetchCurrentUser() async {
     try {
+      final uid = currentUserId;
+      if (uid.isEmpty) return null;
       final data = await _sb
           .from('user_profiles')
           .select()
-          .eq('id', currentUserId)
+          .eq('id', uid)
           .single();
       return AppUser.fromMap(data);
     } catch (e) {
@@ -78,15 +80,18 @@ class MarketplaceService {
     );
   }
 
-  /// Permanently deletes the current user's profile and related records,
+  /// Permanently deletes the current user's profile and auth record via secure RPC,
   /// complying with Apple Guideline 5.1.1(v) and Google Play account deletion mandates.
   static Future<void> deleteUserAccount() async {
     final user = _sb.auth.currentUser;
     if (user == null) return;
     try {
-      await _sb.from('user_profiles').delete().eq('id', user.id);
+      await _sb.rpc('delete_current_user');
     } catch (e) {
-      debugPrint('Error deleting user profile: $e');
+      debugPrint('Error invoking delete_current_user RPC: $e');
+      try {
+        await _sb.from('user_profiles').delete().eq('id', user.id);
+      } catch (_) {}
     }
     await _sb.auth.signOut();
   }
@@ -104,13 +109,13 @@ class MarketplaceService {
       try {
         final data = await _sb
             .from('user_profiles')
-            .select('role')
+            .select('role, created_at')
             .eq('id', currentUserId)
             .maybeSingle();
         dbRole = data?['role'] as String?;
       } catch (_) {}
 
-      // Check if user selected a specific role before launching OAuth (e.g. rider/vendor)
+      // Check if user selected a specific role during registration before launching OAuth
       String? pendingRole;
       try {
         final prefs = await SharedPreferences.getInstance();
@@ -122,24 +127,32 @@ class MarketplaceService {
 
       // If DB has the role from previous session or trigger
       if (dbRole != null) {
-        // If trigger defaulted to customer but the user explicitly requested rider/vendor in OAuth
+        // Protect existing accounts from demotion: only newly registered profiles (<2 min old)
+        // can adopt a pending role selected on the registration form.
         if (pendingRole != null && pendingRole != 'customer' && dbRole == 'customer') {
           try {
-            await _sb.from('user_profiles').update({
-              'role': pendingRole,
-              'is_approved': false,
-            }).eq('id', currentUserId);
-            dbRole = pendingRole;
-            if (pendingRole == 'vendor') {
-              await _sb.from('vendor_profiles').upsert({
-                'id': currentUserId,
-                'shop_name': meta['shop_name'] ?? 'My Shop',
-                'location': meta['location'] ?? '',
-                'phone': meta['phone'] ?? '',
-              });
+            final profile = await _sb.from('user_profiles').select('created_at').eq('id', currentUserId).maybeSingle();
+            final createdAtStr = profile?['created_at'] as String?;
+            final isNewRegistration = createdAtStr != null &&
+                DateTime.now().toUtc().difference(DateTime.parse(createdAtStr).toUtc()).inMinutes < 2;
+
+            if (isNewRegistration) {
+              await _sb.from('user_profiles').update({
+                'role': pendingRole,
+                'is_approved': false,
+              }).eq('id', currentUserId);
+              dbRole = pendingRole;
+              if (pendingRole == 'vendor') {
+                await _sb.from('vendor_profiles').upsert({
+                  'id': currentUserId,
+                  'shop_name': meta['shop_name'] ?? 'My Shop',
+                  'location': meta['location'] ?? '',
+                  'phone': meta['phone'] ?? '',
+                });
+              }
             }
           } catch (e) {
-            debugPrint('Error upgrading pending OAuth role: $e');
+            debugPrint('Error upgrading initial OAuth role: $e');
           }
         }
 

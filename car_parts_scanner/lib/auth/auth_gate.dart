@@ -16,6 +16,7 @@ import '../marketplace/admin/admin_shell.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import '../main.dart';
 import 'package:car_parts_scanner/core/theme/app_colors.dart';
+import '../core/theme/app_typography.dart';
 
 
 /// Role-aware auth gate.  Routes to the correct shell based on user role.
@@ -251,6 +252,39 @@ class _AuthGateState extends State<AuthGate> {
                 });
               }
             },
+          );
+        }
+
+        // Vendor security policy: vendors must sign in with verified credentials, not social logins
+        final provider = session.user.appMetadata['provider'];
+        if (_role == 'vendor' && provider != null && provider != 'email') {
+          return Scaffold(
+            backgroundColor: AppColors.background,
+            body: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.shield_outlined, color: AppColors.error, size: 48),
+                    const SizedBox(height: 16),
+                    Text('Vendor Credentials Required', style: AppTypography.title),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Vendor accounts must sign in using verified email and password credentials.',
+                      textAlign: TextAlign.center,
+                      style: AppTypography.body,
+                    ),
+                    const SizedBox(height: 24),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(backgroundColor: AppColors.accent),
+                      onPressed: () => Supabase.instance.client.auth.signOut(),
+                      child: const Text('Back to Login', style: TextStyle(color: Colors.white)),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           );
         }
 

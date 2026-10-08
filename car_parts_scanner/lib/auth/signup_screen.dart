@@ -42,8 +42,10 @@ class _SignupScreenState extends State<SignupScreen> {
     super.initState();
     _authSub = Supabase.instance.client.auth.onAuthStateChange.listen((data) {
       if (data.event == AuthChangeEvent.signedIn && mounted) {
-        // Pop all pushed auth screens so AuthGate takes over the root view
-        Navigator.of(context).popUntil((route) => route.isFirst);
+        // Only auto-pop for OAuth authentication (Google/Apple), not during email/password registration
+        if (_googleLoading || _appleLoading) {
+          Navigator.of(context).popUntil((route) => route.isFirst);
+        }
       }
     });
   }
@@ -70,17 +72,23 @@ class _SignupScreenState extends State<SignupScreen> {
       // the user would bypass the email verification screen.
       AuthGate.suppressNextSignIn();
 
-      await Supabase.instance.client.auth.signUp(
+      final response = await Supabase.instance.client.auth.signUp(
         email: _emailCtrl.text.trim(),
         password: _passCtrl.text,
         data: {
           'full_name': _nameCtrl.text.trim(),
           'role': widget.role,
         },
-        emailRedirectTo: 'omnidrive://login-callback/',
+        emailRedirectTo: 'omnidrive://login-callback',
       );
 
       if (!mounted) return;
+
+      // If email is pre-confirmed or autoconfirmed, proceed directly
+      if (response.user?.emailConfirmedAt != null) {
+        Navigator.of(context).popUntil((route) => route.isFirst);
+        return;
+      }
 
       Navigator.pushReplacement(
         context,

@@ -82,26 +82,10 @@ class _LoginScreenState extends State<LoginScreen>
     FocusScope.of(context).unfocus();
     setState(() => _loading = true);
     try {
-      final response = await Supabase.instance.client.auth.signInWithPassword(
+      await Supabase.instance.client.auth.signInWithPassword(
         email: _emailCtrl.text.trim(),
         password: _passCtrl.text,
       );
-
-      final user = response.user;
-      if (user != null) {
-        final actualRole = await MarketplaceService.getUserRole();
-        final selectedRole = _roleLabel.toLowerCase();
-
-        if (actualRole != selectedRole && actualRole != 'admin') {
-          await Supabase.instance.client.auth.signOut();
-          if (!mounted) return;
-          _showErrorDialog(
-            'Wrong Role Selected',
-            'This is a ${actualRole.toUpperCase()} account.\n\nPlease tap the "${actualRole[0].toUpperCase()}${actualRole.substring(1)}" tab at the top, then try again.',
-          );
-          return;
-        }
-      }
     } on AuthException catch (e) {
       if (!mounted) return;
       String title = 'Login Failed';
@@ -129,17 +113,6 @@ class _LoginScreenState extends State<LoginScreen>
     }
   }
 
-  String get _currentRoleKey {
-    switch (_roleIndex) {
-      case 1:
-        return 'vendor';
-      case 2:
-        return 'rider';
-      default:
-        return 'customer';
-    }
-  }
-
   Future<void> _signInWithGoogle() async {
     final now = DateTime.now();
     if (_lastLoginTap != null && now.difference(_lastLoginTap!) < Duration(seconds: 2)) return;
@@ -147,9 +120,7 @@ class _LoginScreenState extends State<LoginScreen>
     FocusScope.of(context).unfocus();
     setState(() => _googleLoading = true);
     try {
-      final launched = await MarketplaceService.signInWithGoogle(
-        intendedRole: _currentRoleKey,
-      );
+      final launched = await MarketplaceService.signInWithGoogle();
       if (!launched && mounted) {
         _showErrorDialog('Google Sign-In Failed', 'Unable to launch browser for authentication.');
       }
@@ -174,9 +145,7 @@ class _LoginScreenState extends State<LoginScreen>
     FocusScope.of(context).unfocus();
     setState(() => _appleLoading = true);
     try {
-      final launched = await MarketplaceService.signInWithApple(
-        intendedRole: _currentRoleKey,
-      );
+      final launched = await MarketplaceService.signInWithApple();
       if (!launched && mounted) {
         _showErrorDialog('Apple Sign-In Failed', 'Unable to launch browser for authentication.');
       }
