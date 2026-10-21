@@ -969,7 +969,12 @@ class _CarModelPromptSheetState extends State<_CarModelPromptSheet> {
     super.initState();
     _loadUserCars();
     _carCtrl.addListener(() {
-      if (mounted) setState(() {});
+      if (mounted) {
+        if (_selectedCarChip != null && _carCtrl.text.trim() != _selectedCarChip) {
+          _selectedCarChip = null;
+        }
+        setState(() {});
+      }
     });
   }
 

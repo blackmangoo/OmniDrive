@@ -347,8 +347,11 @@ class MarketplaceService {
       if (categoryId != null) query = query.eq('category_id', categoryId);
       if (vendorId != null) query = query.eq('vendor_id', vendorId);
       if (searchQuery != null && searchQuery.trim().isNotEmpty) {
-        final clean = searchQuery.trim();
-        query = query.or('name.ilike.%$clean%,description.ilike.%$clean%');
+        // Sanitize PostgREST filter delimiters to prevent syntax errors (PGRST100)
+        final clean = searchQuery.replaceAll(RegExp(r'[,()%"]'), ' ').trim();
+        if (clean.isNotEmpty) {
+          query = query.or('name.ilike.%$clean%,description.ilike.%$clean%');
+        }
       }
       final data = await query.order('created_at', ascending: false);
       var prods = (data as List).map((m) => Product.fromMap(m)).toList();
@@ -356,8 +359,8 @@ class MarketplaceService {
       // If no exact-phrase matches and query has multiple tokens (e.g. "Honda Civic Brake Pad"),
       // search each term so that products matching the part name or vehicle model are returned.
       if (prods.isEmpty && searchQuery != null && searchQuery.trim().contains(' ')) {
-        final tokens = searchQuery
-            .trim()
+        final sanitized = searchQuery.replaceAll(RegExp(r'[,()%"]'), ' ').trim();
+        final tokens = sanitized
             .split(RegExp(r'\s+'))
             .where((t) => t.length >= 2)
             .toList();
