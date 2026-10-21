@@ -5,6 +5,7 @@ import '../marketplace_constants.dart';
 import '../marketplace_models.dart';
 import '../marketplace_service.dart';
 import 'checkout_screen.dart';
+import 'customer_shell.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/motion/motion_stagger.dart';
 import '../../core/motion/motion_tappable.dart';
@@ -105,7 +106,16 @@ class _CartScreenState extends State<CartScreen> {
       Text('Add some auto parts to get started', style: kBody(13)),
       SizedBox(height: 24),
       TappableScale(
-        onTap: () => Navigator.pop(context),
+        onTap: () {
+          if (Navigator.canPop(context)) {
+            Navigator.pop(context);
+          } else {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (_) => const CustomerShell()),
+            );
+          }
+        },
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 32, vertical: 14),
           decoration: BoxDecoration(

@@ -457,7 +457,11 @@ CREATE POLICY "Public can view categories" ON public.categories FOR SELECT USING
 CREATE POLICY "Public can view active products" ON public.products FOR SELECT USING (is_active = true OR auth.uid() = vendor_id);
 CREATE POLICY "Public can view car parts" ON public.car_parts FOR SELECT USING (true);
 CREATE POLICY "Public can view part docs" ON public.part_docs FOR SELECT USING (true);
-CREATE POLICY "Allow insert part docs" ON public.part_docs FOR INSERT WITH CHECK (true);
+CREATE POLICY "Admins insert part docs" ON public.part_docs FOR INSERT
+WITH CHECK (
+    (COALESCE(auth.jwt() ->> 'role', '') = 'service_role') OR
+    EXISTS (SELECT 1 FROM public.user_profiles WHERE id = auth.uid() AND role = 'admin')
+);
 
 -- 8.2 User Isolation Policies
 CREATE POLICY "Users view own profile" ON public.user_profiles FOR SELECT USING (auth.uid() = id);

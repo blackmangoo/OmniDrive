@@ -103,7 +103,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
         _messages.add(
           ChatMessage(
             text:
-                "🔌 **Connection Error**\n\nMake sure the API server and Ngrok tunnel are running.",
+                "🔌 **Connection Error**\n\nUnable to reach the AI Mechanic service. Please verify your internet connection and try again.",
             isUser: false,
           ),
         );

@@ -217,7 +217,7 @@ class PartDetectionService {
     } on SocketException {
       return PartDetectionResult(
           confidence: 0,
-          error: 'Cannot reach server — check WiFi and API IP address.');
+          error: 'Unable to connect to AI Diagnostics. Please verify your internet connection and try again.');
     } catch (e) {
       return PartDetectionResult(
           confidence: 0, error: 'Unexpected error: $e');
