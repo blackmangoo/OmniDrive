@@ -571,19 +571,70 @@ class _ProductCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Image with Hero Transition
-            Hero(
-              tag: 'product_image_${product.id}',
-              child: ClipRRect(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
-                child: AspectRatio(
-                  aspectRatio: 1.2,
-                  child: product.primaryImage.isNotEmpty
-                      ? Image.network(product.primaryImage, fit: BoxFit.cover,
-                          errorBuilder: (ctx, err, stack) => _PlaceholderImg())
-                      : _PlaceholderImg(),
+            // Image with Hero Transition & Fitment Tag
+            Stack(
+              children: [
+                Hero(
+                  tag: 'product_image_${product.id}',
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
+                    child: AspectRatio(
+                      aspectRatio: 1.2,
+                      child: product.primaryImage.isNotEmpty
+                          ? Image.network(product.primaryImage, fit: BoxFit.cover,
+                              errorBuilder: (ctx, err, stack) => _PlaceholderImg())
+                          : _PlaceholderImg(),
+                    ),
+                  ),
                 ),
-              ),
+                Positioned(
+                  top: 8,
+                  left: 8,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withValues(alpha: 0.65),
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.verified_outlined, size: 10, color: kAccent),
+                        const SizedBox(width: 3),
+                        Text(
+                          product.categoryName ?? 'OEM Fit',
+                          style: GoogleFonts.inter(
+                            fontSize: 9.5,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                if (product.hasDiscount)
+                  Positioned(
+                    top: 8,
+                    right: 8,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2.5),
+                      decoration: BoxDecoration(
+                        color: kError,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        '-${product.discountPercent.toStringAsFixed(0)}%',
+                        style: GoogleFonts.inter(
+                          fontSize: 9,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
             ),
             Expanded(
               child: Padding(

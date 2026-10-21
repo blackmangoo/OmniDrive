@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
@@ -57,12 +58,14 @@ class _LiveTestScreenState extends State<LiveTestScreen> {
 
   final Set<MetricType> _completedMetrics = {};
   final Map<MetricType, double> _milestoneTimes = {};
+  String? _milestoneBanner;
+  Timer? _toastTimer;
 
   StreamSubscription? _speedSub;
   StreamSubscription? _stateSub;
   StreamSubscription? _milestoneSub;
-  StreamSubscription? _elapsedSub;     
-  StreamSubscription? _brakingArmSub;  
+  StreamSubscription? _elapsedSub;
+  StreamSubscription? _brakingArmSub;
 
   @override
   void initState() {
@@ -97,24 +100,41 @@ class _LiveTestScreenState extends State<LiveTestScreen> {
     // Listen to run state changes
     _stateSub = widget.runService.stateStream.listen((state) {
       if (!mounted) return;
+      if (state == RunState.running && _state == RunState.armed) {
+        // Physical launch feedback
+        HapticFeedback.mediumImpact();
+      }
       setState(() => _state = state);
       if (state == RunState.done) {
         _finishRun();
       }
     });
 
-    // Listen to milestones
+    // Listen to milestones with haptic trigger and visual toast banner
     _milestoneSub = widget.runService.milestoneStream.listen((m) {
       if (!mounted) return;
+      // High-impact haptic feedback so driver doesn't need to stare at screen
+      HapticFeedback.heavyImpact();
+      SystemSound.play(SystemSoundType.click);
+
+      _toastTimer?.cancel();
       setState(() {
         _completedMetrics.add(m.type);
         _milestoneTimes[m.type] = m.timeS;
+        _milestoneBanner = '${m.type.displayName}  •  ${m.timeS.toStringAsFixed(2)}s';
+      });
+
+      _toastTimer = Timer(const Duration(milliseconds: 2800), () {
+        if (mounted) setState(() => _milestoneBanner = null);
       });
     });
 
     // Listen to braking ARM
     _brakingArmSub = widget.runService.brakingArmStream.listen((armed) {
       if (!mounted) return;
+      if (armed && !_brakingArmed) {
+        HapticFeedback.vibrate();
+      }
       setState(() => _brakingArmed = armed);
     });
   }
@@ -122,6 +142,7 @@ class _LiveTestScreenState extends State<LiveTestScreen> {
   @override
   void dispose() {
     WakelockPlus.disable();
+    _toastTimer?.cancel();
     _speedSub?.cancel();
     _stateSub?.cancel();
     _milestoneSub?.cancel();
@@ -204,6 +225,45 @@ class _LiveTestScreenState extends State<LiveTestScreen> {
                     ),
                   ],
                 ),
+              ),
+
+              // ── Milestone Achievement HUD Banner ───────────────────────
+              AnimatedSwitcher(
+                duration: const Duration(milliseconds: 300),
+                child: _milestoneBanner != null
+                    ? Container(
+                        key: ValueKey(_milestoneBanner),
+                        margin: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: AppColors.success.withValues(alpha: 0.16),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: AppColors.success, width: 1.5),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.success.withValues(alpha: 0.25),
+                              blurRadius: 16,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.emoji_events_rounded, color: Colors.amber, size: 18),
+                            const SizedBox(width: 8),
+                            Text(
+                              _milestoneBanner!,
+                              style: GoogleFonts.inter(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    : const SizedBox(height: 0),
               ),
 
               Spacer(flex: 1),

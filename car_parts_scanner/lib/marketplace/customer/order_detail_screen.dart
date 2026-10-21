@@ -15,9 +15,6 @@ class OrderDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = statusColor(order.status);
-    final date  = DateFormat('EEEE, d MMM yyyy  •  hh:mm a').format(order.createdAt.toLocal());
-
     return Scaffold(
       backgroundColor: kBg,
       appBar: AppBar(
@@ -34,22 +31,10 @@ class OrderDetailScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ── Status Card ───────────────────────────────────────────────
+            // ── Interactive Status Stepper Card ───────────────────────────
             StaggeredEntrance(
               index: 0,
-              child: Container(
-                width: double.infinity,
-                padding: EdgeInsets.all(20),
-                decoration: kCardDeco(),
-                child: Column(children: [
-                  Text(statusIcon(order.status), style: TextStyle(fontSize: 42)),
-                  SizedBox(height: 10),
-                  Text(statusLabel(order.status),
-                      style: GoogleFonts.inter(color: color, fontSize: 20, fontWeight: FontWeight.bold)),
-                  SizedBox(height: 6),
-                  Text(date, style: AppTypography.body.copyWith(color: AppColors.textMuted, fontSize: 12)),
-                ]),
-              ),
+              child: _OrderTrackingStepper(order: order),
             ),
 
             SizedBox(height: 20),
@@ -178,4 +163,261 @@ class OrderDetailScreen extends StatelessWidget {
       ),
     ],
   );
+}
+
+// ── Multi-Stage Delivery Stepper ─────────────────────────────────────────────
+
+class _OrderTrackingStepper extends StatelessWidget {
+  final Order order;
+  const _OrderTrackingStepper({required this.order});
+
+  int get _currentStepIndex {
+    switch (order.status.toLowerCase()) {
+      case 'pending':
+        return 0;
+      case 'confirmed':
+      case 'preparing':
+        return 1;
+      case 'ready':
+      case 'dispatched':
+        return 2;
+      case 'delivered':
+        return 3;
+      default:
+        return -1; // Cancelled
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isCancelled = order.status.toLowerCase() == 'cancelled';
+    final date = DateFormat('EEEE, d MMM yyyy  •  hh:mm a').format(order.createdAt.toLocal());
+    final statusBadgeColor = statusColor(order.status);
+
+    if (isCancelled) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: kError.withValues(alpha: 0.08),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: kError.withValues(alpha: 0.3)),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: kError.withValues(alpha: 0.15),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(Icons.cancel_rounded, color: kError, size: 30),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Order Cancelled',
+                      style: GoogleFonts.inter(color: kError, fontSize: 17, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 4),
+                  Text(
+                    'This order was cancelled. Please browse the marketplace to place a new order.',
+                    style: AppTypography.caption.copyWith(color: AppColors.textSecondary, height: 1.4),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    final currentIdx = _currentStepIndex;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: kCardDeco(radius: 18),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header: Status title + live badge
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      _statusHeadline(order.status),
+                      style: AppTypography.title.copyWith(
+                        color: AppColors.textPrimary,
+                        fontSize: 17,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      date,
+                      style: AppTypography.caption.copyWith(
+                        color: AppColors.textMuted,
+                        fontSize: 11,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              kStatusPill(statusLabel(order.status), statusBadgeColor),
+            ],
+          ),
+
+          const SizedBox(height: 24),
+
+          // Stepper: 4 horizontal nodes with animated/tinted connector bars
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildStepNode(
+                stepIndex: 0,
+                currentStep: currentIdx,
+                label: 'Placed',
+                icon: Icons.receipt_long_rounded,
+              ),
+              _buildConnector(stepIndex: 0, currentStep: currentIdx),
+              _buildStepNode(
+                stepIndex: 1,
+                currentStep: currentIdx,
+                label: 'Preparing',
+                icon: Icons.handyman_rounded,
+              ),
+              _buildConnector(stepIndex: 1, currentStep: currentIdx),
+              _buildStepNode(
+                stepIndex: 2,
+                currentStep: currentIdx,
+                label: 'Dispatched',
+                icon: Icons.delivery_dining_rounded,
+              ),
+              _buildConnector(stepIndex: 2, currentStep: currentIdx),
+              _buildStepNode(
+                stepIndex: 3,
+                currentStep: currentIdx,
+                label: 'Delivered',
+                icon: Icons.check_circle_rounded,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _statusHeadline(String status) {
+    switch (status.toLowerCase()) {
+      case 'pending':
+        return 'Order Received';
+      case 'confirmed':
+        return 'Order Confirmed by Vendor';
+      case 'preparing':
+        return 'Packing Auto Spares';
+      case 'ready':
+        return 'Ready for Rider Pickup';
+      case 'dispatched':
+        return 'Out for Delivery';
+      case 'delivered':
+        return 'Delivered Successfully';
+      default:
+        return 'Order In Progress';
+    }
+  }
+
+  Widget _buildStepNode({
+    required int stepIndex,
+    required int currentStep,
+    required String label,
+    required IconData icon,
+  }) {
+    final isDone = stepIndex < currentStep;
+    final isCurrent = stepIndex == currentStep;
+
+    Color nodeColor;
+    Color iconColor;
+    if (isDone) {
+      nodeColor = kSuccess;
+      iconColor = Colors.white;
+    } else if (isCurrent) {
+      nodeColor = kAccent;
+      iconColor = Colors.white;
+    } else {
+      nodeColor = AppColors.field;
+      iconColor = AppColors.textMuted.withValues(alpha: 0.5);
+    }
+
+    return SizedBox(
+      width: 58,
+      child: Column(
+        children: [
+          Container(
+            width: 34,
+            height: 34,
+            decoration: BoxDecoration(
+              color: nodeColor,
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: isCurrent
+                    ? kAccent.withValues(alpha: 0.4)
+                    : (isDone ? kSuccess : kBorder),
+                width: isCurrent ? 3 : 1,
+              ),
+              boxShadow: isCurrent
+                  ? [
+                      BoxShadow(
+                        color: kAccent.withValues(alpha: 0.35),
+                        blurRadius: 10,
+                        offset: const Offset(0, 3),
+                      ),
+                    ]
+                  : null,
+            ),
+            child: Center(
+              child: Icon(
+                isDone ? Icons.check_rounded : icon,
+                color: iconColor,
+                size: 16,
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            label,
+            textAlign: TextAlign.center,
+            style: GoogleFonts.inter(
+              fontSize: 10.5,
+              fontWeight: (isCurrent || isDone) ? FontWeight.w700 : FontWeight.w500,
+              color: isCurrent
+                  ? AppColors.textPrimary
+                  : (isDone ? AppColors.textSecondary : AppColors.textMuted),
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildConnector({required int stepIndex, required int currentStep}) {
+    final isPassed = stepIndex < currentStep;
+    return Expanded(
+      child: Container(
+        margin: const EdgeInsets.only(top: 15),
+        height: 2.5,
+        decoration: BoxDecoration(
+          color: isPassed ? kSuccess : kBorder,
+          borderRadius: BorderRadius.circular(2),
+        ),
+      ),
+    );
+  }
 }

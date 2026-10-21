@@ -579,22 +579,62 @@ class _ResultsSheet extends StatelessWidget {
               ),
             ),
 
-            // Top Hero Badge
+            // Top Hero: Display either the captured photo thumbnail or status icon
             Center(
               child: Hero(
                 tag: 'scan_results_hud',
-                child: Container(
-                  padding: EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: (hasError ? AppColors.error : AppColors.accent).withValues(alpha: 0.1),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    hasError ? Icons.error_outline : Icons.analytics_rounded,
-                    color: hasError ? AppColors.error : AppColors.accent,
-                    size: 32,
-                  ),
-                ),
+                child: result.localImageFile != null && !hasError
+                    ? Container(
+                        width: 88,
+                        height: 88,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(22),
+                          border: Border.all(color: AppColors.accent, width: 2),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.accent.withValues(alpha: 0.25),
+                              blurRadius: 16,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: Stack(
+                            fit: StackFit.expand,
+                            children: [
+                              Image.file(
+                                result.localImageFile!,
+                                fit: BoxFit.cover,
+                              ),
+                              Positioned(
+                                bottom: 4,
+                                right: 4,
+                                child: Container(
+                                  padding: const EdgeInsets.all(3),
+                                  decoration: const BoxDecoration(
+                                    color: Colors.black87,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(Icons.check_circle_rounded, color: AppColors.success, size: 16),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                    : Container(
+                        padding: EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: (hasError ? AppColors.error : AppColors.accent).withValues(alpha: 0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          hasError ? Icons.error_outline : Icons.analytics_rounded,
+                          color: hasError ? AppColors.error : AppColors.accent,
+                          size: 32,
+                        ),
+                      ),
               ),
             ),
             SizedBox(height: 16),

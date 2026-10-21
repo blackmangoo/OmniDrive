@@ -15,6 +15,7 @@ class PartDetectionResult {
   final List<Map<String, dynamic>>? allPredictions;
   final double? inferenceTimeMs;
   final String? scanImageUrl; // URL of the image saved to Supabase Storage
+  final File? localImageFile; // Local capture file for instant high-res preview
 
   PartDetectionResult({
     this.part,
@@ -23,6 +24,7 @@ class PartDetectionResult {
     this.allPredictions,
     this.inferenceTimeMs,
     this.scanImageUrl,
+    this.localImageFile,
   });
 }
 
@@ -169,6 +171,7 @@ class PartDetectionService {
           confidence: confidence,
           allPredictions: allPredictions,
           inferenceTimeMs: inferenceMs,
+          localImageFile: imageFile,
           error: 'No car part detected.\n\n'
               'The AI could not confidently identify a car part in this image '
               '(best match: $predictedClass at ${confidence.toStringAsFixed(1)}%).\n\n'
@@ -200,6 +203,7 @@ class PartDetectionService {
           allPredictions: allPredictions,
           inferenceTimeMs: inferenceMs,
           scanImageUrl: scanImageUrl,
+          localImageFile: imageFile,
           error:
               'AI identified "$predictedClass" (${confidence.toStringAsFixed(1)}%) '
               'but it\'s not yet in the database.',
@@ -213,14 +217,18 @@ class PartDetectionService {
         allPredictions: allPredictions,
         inferenceTimeMs: inferenceMs,
         scanImageUrl: scanImageUrl,
+        localImageFile: imageFile,
       );
     } on SocketException {
       return PartDetectionResult(
           confidence: 0,
+          localImageFile: imageFile,
           error: 'Unable to connect to AI Diagnostics. Please verify your internet connection and try again.');
     } catch (e) {
       return PartDetectionResult(
-          confidence: 0, error: 'Unexpected error: $e');
+          confidence: 0,
+          localImageFile: imageFile,
+          error: 'Unexpected error: $e');
     }
   }
 }
