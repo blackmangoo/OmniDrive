@@ -346,11 +346,37 @@ class MarketplaceService {
       if (activeOnly) query = query.eq('is_active', true);
       if (categoryId != null) query = query.eq('category_id', categoryId);
       if (vendorId != null) query = query.eq('vendor_id', vendorId);
-      if (searchQuery != null && searchQuery.isNotEmpty) {
-        query = query.ilike('name', '%$searchQuery%');
+      if (searchQuery != null && searchQuery.trim().isNotEmpty) {
+        final clean = searchQuery.trim();
+        query = query.or('name.ilike.%$clean%,description.ilike.%$clean%');
       }
       final data = await query.order('created_at', ascending: false);
-      return (data as List).map((m) => Product.fromMap(m)).toList();
+      var prods = (data as List).map((m) => Product.fromMap(m)).toList();
+
+      // If no exact-phrase matches and query has multiple tokens (e.g. "Honda Civic Brake Pad"),
+      // search each term so that products matching the part name or vehicle model are returned.
+      if (prods.isEmpty && searchQuery != null && searchQuery.trim().contains(' ')) {
+        final tokens = searchQuery
+            .trim()
+            .split(RegExp(r'\s+'))
+            .where((t) => t.length >= 2)
+            .toList();
+        if (tokens.isNotEmpty) {
+          final orFilters = tokens
+              .map((t) => 'name.ilike.%$t%,description.ilike.%$t%')
+              .join(',');
+          var fallbackQuery = _sb.from('products').select(
+                '*, vendor_profiles(shop_name, shop_logo_url), categories(name)',
+              );
+          if (activeOnly) fallbackQuery = fallbackQuery.eq('is_active', true);
+          if (categoryId != null) fallbackQuery = fallbackQuery.eq('category_id', categoryId);
+          if (vendorId != null) fallbackQuery = fallbackQuery.eq('vendor_id', vendorId);
+          fallbackQuery = fallbackQuery.or(orFilters);
+          final fallbackData = await fallbackQuery.order('created_at', ascending: false);
+          prods = (fallbackData as List).map((m) => Product.fromMap(m)).toList();
+        }
+      }
+      return prods;
     } catch (e) {
       debugPrint('fetchProducts error: $e');
       return [];

@@ -17,7 +17,8 @@ import 'package:car_parts_scanner/core/theme/app_colors.dart';
 
 
 class MarketplaceHomeScreen extends StatefulWidget {
-  const MarketplaceHomeScreen({super.key});
+  final String? initialSearchQuery;
+  const MarketplaceHomeScreen({super.key, this.initialSearchQuery});
   @override
   State<MarketplaceHomeScreen> createState() => _MarketplaceHomeScreenState();
 }
@@ -105,7 +106,23 @@ class _MarketplaceHomeScreenState extends State<MarketplaceHomeScreen> {
   void initState() {
     super.initState();
     _pageCtrl = PageController();
+    if (widget.initialSearchQuery != null && widget.initialSearchQuery!.trim().isNotEmpty) {
+      final q = widget.initialSearchQuery!.trim();
+      _searchCtrl.text = q;
+      _searchQuery = q;
+    }
     _loadData();
+  }
+
+  @override
+  void didUpdateWidget(MarketplaceHomeScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.initialSearchQuery != oldWidget.initialSearchQuery) {
+      final q = widget.initialSearchQuery?.trim();
+      _searchCtrl.text = q ?? '';
+      _searchQuery = (q != null && q.isNotEmpty) ? q : null;
+      _loadData();
+    }
   }
 
   @override
@@ -148,6 +165,13 @@ class _MarketplaceHomeScreenState extends State<MarketplaceHomeScreen> {
                 expandedHeight: 0,
                 pinned: true,
                 surfaceTintColor: Colors.transparent,
+                leading: Navigator.canPop(context)
+                    ? IconButton(
+                        icon: Icon(Icons.arrow_back_ios_new_rounded,
+                            color: kTextPrimary, size: 20),
+                        onPressed: () => Navigator.pop(context),
+                      )
+                    : null,
                 title: Row(
                   children: [
                     Container(
@@ -437,7 +461,24 @@ class _MarketplaceHomeScreenState extends State<MarketplaceHomeScreen> {
                     SizedBox(height: 16),
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16),
-                      child: kSectionHeader('Featured Products'),
+                      child: kSectionHeader(
+                        _searchQuery != null && _searchQuery!.isNotEmpty
+                            ? 'Search Results'
+                            : 'Featured Products',
+                        trailing: _searchQuery != null && _searchQuery!.isNotEmpty
+                            ? TextButton(
+                                onPressed: () {
+                                  _searchCtrl.clear();
+                                  setState(() => _searchQuery = null);
+                                  _loadData();
+                                },
+                                child: Text('Show All',
+                                    style: AppTypography.label.copyWith(
+                                        color: kAccent,
+                                        fontWeight: FontWeight.w600)),
+                              )
+                            : null,
+                      ),
                     ),
                     SizedBox(height: 12),
                   ],
@@ -471,7 +512,16 @@ class _MarketplaceHomeScreenState extends State<MarketplaceHomeScreen> {
                       ),
                     )
                   : _products.isEmpty
-                      ? SliverFillRemaining(child: _EmptyState())
+                      ? SliverFillRemaining(
+                          child: _EmptyState(
+                            searchQuery: _searchQuery,
+                            onClear: () {
+                              _searchCtrl.clear();
+                              setState(() => _searchQuery = null);
+                              _loadData();
+                            },
+                          ),
+                        )
                       : SliverPadding(
                           padding: EdgeInsets.fromLTRB(16, 0, 16, 100),
                           sliver: SliverGrid(
@@ -617,17 +667,49 @@ class _PlaceholderImg extends StatelessWidget {
 }
 
 class _EmptyState extends StatelessWidget {
+  final String? searchQuery;
+  final VoidCallback? onClear;
+  const _EmptyState({this.searchQuery, this.onClear});
+
   @override
   Widget build(BuildContext context) => Center(
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Icon(Icons.inventory_2_outlined, size: 64, color: kBorder),
-        SizedBox(height: 16),
-        Text('No products found', style: kHeadline(16, color: kTextSecondary)),
-        SizedBox(height: 8),
-        Text('Try a different search or category', style: kBody(13)),
-      ],
+    child: Padding(
+      padding: const EdgeInsets.all(24.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.inventory_2_outlined, size: 64, color: kBorder),
+          const SizedBox(height: 16),
+          Text(
+            searchQuery != null && searchQuery!.isNotEmpty
+                ? 'No spares found matching\n"$searchQuery"'
+                : 'No products found',
+            textAlign: TextAlign.center,
+            style: kHeadline(16, color: kTextSecondary),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            searchQuery != null && searchQuery!.isNotEmpty
+                ? 'Try searching with fewer terms or check spelling.'
+                : 'Try a different search or category',
+            textAlign: TextAlign.center,
+            style: kBody(13),
+          ),
+          if (searchQuery != null && searchQuery!.isNotEmpty && onClear != null) ...[
+            const SizedBox(height: 16),
+            ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: kAccent,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              ),
+              onPressed: onClear,
+              icon: const Icon(Icons.refresh_rounded, size: 16),
+              label: const Text('Show All Spares'),
+            ),
+          ],
+        ],
+      ),
     ),
   );
 }

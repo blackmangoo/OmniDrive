@@ -2,7 +2,9 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'camera_preview_screen.dart';
 import 'part_detection_service.dart';
 import 'core/theme/app_spacing.dart';
@@ -10,6 +12,8 @@ import 'core/theme/app_typography.dart';
 import 'core/motion/motion_stagger.dart';
 import 'core/motion/motion_tappable.dart';
 import 'package:car_parts_scanner/core/theme/app_colors.dart';
+import 'marketplace/customer/marketplace_home_screen.dart';
+import 'marketplace/marketplace_constants.dart';
 
 
 class ImageSearchScreen extends StatefulWidget {
@@ -95,13 +99,24 @@ class _ImageSearchScreenState extends State<ImageSearchScreen>
         .showSnackBar(SnackBar(content: Text(msg)));
   }
 
-  void _showResultsModal(PartDetectionResult result) {
-    showModalBottomSheet(
+  void _showResultsModal(PartDetectionResult result) async {
+    final searchQuery = await showModalBottomSheet<String>(
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
       builder: (_) => _ResultsSheet(result: result),
     );
+
+    if (searchQuery != null && searchQuery.trim().isNotEmpty && mounted) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => MarketplaceHomeScreen(
+            initialSearchQuery: searchQuery.trim(),
+          ),
+        ),
+      );
+    }
   }
 
   // ── Build ─────────────────────────────────────────────────────────────────
@@ -519,6 +534,19 @@ class _ResultsSheet extends StatelessWidget {
   final PartDetectionResult result;
   const _ResultsSheet({required this.result});
 
+  Future<void> _openMarketplaceSearch(BuildContext context, String partName) async {
+    final query = await showModalBottomSheet<String>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => _CarModelPromptSheet(partName: partName),
+    );
+
+    if (query != null && query.trim().isNotEmpty && context.mounted) {
+      Navigator.pop(context, query.trim());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final bool hasError = result.error != null;
@@ -635,6 +663,45 @@ class _ResultsSheet extends StatelessWidget {
                       'Rs. ${result.part!.averagePrice!.toStringAsFixed(0)}',
                 ),
 
+              // ── Search in Marketplace CTA Button ──────────────────
+              const SizedBox(height: 16),
+              TappableScale(
+                onTap: () => _openMarketplaceSearch(context, result.part!.className),
+                child: Container(
+                  width: double.infinity,
+                  height: 52,
+                  decoration: BoxDecoration(
+                    gradient: kCyanGradient,
+                    borderRadius: BorderRadius.circular(14),
+                    boxShadow: [
+                      BoxShadow(
+                        color: kAccent.withValues(alpha: 0.3),
+                        blurRadius: 14,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.storefront_rounded, color: Colors.black, size: 21),
+                      const SizedBox(width: 10),
+                      Text(
+                        'Search in Marketplace',
+                        style: GoogleFonts.inter(
+                          color: Colors.black,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 15,
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      const Icon(Icons.arrow_forward_rounded, color: Colors.black, size: 18),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+
               if (result.part!.description != null) ...[
                 SizedBox(height: 12),
                 _SectionLabel('DESCRIPTION'),
@@ -682,19 +749,36 @@ class _ResultsSheet extends StatelessWidget {
                       return StaggeredEntrance(
                         index: idx,
                         child: Padding(
-                          padding: EdgeInsets.only(bottom: 10),
-                          child: Row(children: [
-                            Expanded(
-                              child: Text(cls,
-                                  style: AppTypography.body.copyWith(
-                                      color: AppColors.textSecondary, fontSize: 13)),
+                          padding: const EdgeInsets.only(bottom: 8),
+                          child: InkWell(
+                            onTap: () => _openMarketplaceSearch(context, cls),
+                            borderRadius: BorderRadius.circular(10),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                              decoration: BoxDecoration(
+                                color: AppColors.surface,
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(color: AppColors.border),
+                              ),
+                              child: Row(children: [
+                                Expanded(
+                                  child: Text(cls,
+                                      style: AppTypography.body.copyWith(
+                                          color: AppColors.textPrimary,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 13)),
+                                ),
+                                Text('${conf.toStringAsFixed(1)}%',
+                                    style: AppTypography.body.copyWith(
+                                      color: AppColors.textMuted,
+                                      fontSize: 13,
+                                    )),
+                                const SizedBox(width: 8),
+                                Icon(Icons.search_rounded,
+                                    size: 16, color: AppColors.accent),
+                              ]),
                             ),
-                            Text('${conf.toStringAsFixed(1)}%',
-                                style: AppTypography.body.copyWith(
-                                  color: AppColors.textMuted,
-                                  fontSize: 13,
-                                )),
-                          ]),
+                          ),
                         ),
                       );
                     }),
@@ -860,6 +944,363 @@ class _ConfidenceProgressBarState extends State<_ConfidenceProgressBar>
           ),
         );
       },
+    );
+  }
+}
+
+// ─── Car Model Prompt Modal Sheet ─────────────────────────────────────────────
+
+class _CarModelPromptSheet extends StatefulWidget {
+  final String partName;
+  const _CarModelPromptSheet({required this.partName});
+
+  @override
+  State<_CarModelPromptSheet> createState() => _CarModelPromptSheetState();
+}
+
+class _CarModelPromptSheetState extends State<_CarModelPromptSheet> {
+  final TextEditingController _carCtrl = TextEditingController();
+  List<Map<String, dynamic>> _userCars = [];
+  bool _loadingCars = true;
+  String? _selectedCarChip;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserCars();
+    _carCtrl.addListener(() {
+      if (mounted) setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    _carCtrl.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadUserCars() async {
+    try {
+      final user = Supabase.instance.client.auth.currentUser;
+      if (user != null) {
+        final data = await Supabase.instance.client
+            .from('user_cars')
+            .select('make, model, year')
+            .eq('user_id', user.id)
+            .order('created_at', ascending: false);
+        if (mounted) {
+          setState(() {
+            _userCars = List<Map<String, dynamic>>.from(data);
+            if (_userCars.isNotEmpty) {
+              final first = _userCars.first;
+              final label = '${first['make']} ${first['model']}'.trim();
+              _selectedCarChip = label;
+              _carCtrl.text = label;
+            }
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint('Error loading user cars for search prompt: $e');
+    } finally {
+      if (mounted) setState(() => _loadingCars = false);
+    }
+  }
+
+  String get _currentQuery {
+    final model = _carCtrl.text.trim();
+    return model.isNotEmpty ? '$model ${widget.partName}' : widget.partName;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.fromLTRB(
+        24,
+        16,
+        24,
+        MediaQuery.of(context).viewInsets.bottom + 24,
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(26)),
+      ),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Handle bar
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                margin: const EdgeInsets.only(bottom: 20),
+                decoration: BoxDecoration(
+                  color: AppColors.textMuted.withValues(alpha: 0.4),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+            ),
+
+            // Header
+            Row(
+              children: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: AppColors.accent.withValues(alpha: 0.12),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.directions_car_rounded,
+                    color: AppColors.accent,
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Find Compatible Spares',
+                        style: AppTypography.title.copyWith(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        'Part detected: ${widget.partName}',
+                        style: AppTypography.caption.copyWith(
+                          color: AppColors.accent,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 20),
+
+            // Registered Cars (from user_cars table)
+            if (_loadingCars)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 14,
+                      height: 14,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: AppColors.accent,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Text(
+                      'Checking your garage…',
+                      style: AppTypography.caption.copyWith(color: AppColors.textMuted),
+                    ),
+                  ],
+                ),
+              )
+            else if (_userCars.isNotEmpty) ...[
+              Text(
+                'YOUR REGISTERED VEHICLES',
+                style: AppTypography.caption.copyWith(
+                  color: AppColors.textMuted,
+                  letterSpacing: 1.5,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 11,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: _userCars.map((car) {
+                  final label = '${car['make']} ${car['model']}'.trim();
+                  final isSelected = _selectedCarChip == label;
+                  return ChoiceChip(
+                    label: Text(
+                      '🚗 $label${car['year'] != null ? ' (${car['year']})' : ''}',
+                      style: GoogleFonts.inter(
+                        fontSize: 12,
+                        fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                        color: isSelected ? Colors.black : AppColors.textPrimary,
+                      ),
+                    ),
+                    selected: isSelected,
+                    selectedColor: kAccent,
+                    backgroundColor: AppColors.field,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      side: BorderSide(
+                        color: isSelected ? kAccent : AppColors.border,
+                      ),
+                    ),
+                    onSelected: (selected) {
+                      setState(() {
+                        if (selected) {
+                          _selectedCarChip = label;
+                          _carCtrl.text = label;
+                        } else {
+                          _selectedCarChip = null;
+                          _carCtrl.clear();
+                        }
+                      });
+                    },
+                  );
+                }).toList(),
+              ),
+              const SizedBox(height: 16),
+            ],
+
+            // Input field for car model
+            Text(
+              'CAR MODEL (OPTIONAL)',
+              style: AppTypography.caption.copyWith(
+                color: AppColors.textMuted,
+                letterSpacing: 1.5,
+                fontWeight: FontWeight.w600,
+                fontSize: 11,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Container(
+              decoration: kFieldDeco(radius: 12),
+              child: TextField(
+                controller: _carCtrl,
+                style: AppTypography.body.copyWith(color: AppColors.textPrimary),
+                decoration: InputDecoration(
+                  hintText: 'e.g. Honda Civic, Toyota Corolla 2018...',
+                  hintStyle: AppTypography.body.copyWith(
+                    color: AppColors.textMuted.withValues(alpha: 0.6),
+                    fontSize: 13,
+                  ),
+                  prefixIcon: Icon(
+                    Icons.directions_car_outlined,
+                    color: AppColors.textMuted,
+                    size: 20,
+                  ),
+                  suffixIcon: _carCtrl.text.isNotEmpty
+                      ? IconButton(
+                          icon: const Icon(Icons.close_rounded, size: 18),
+                          color: AppColors.textMuted,
+                          onPressed: () {
+                            setState(() {
+                              _selectedCarChip = null;
+                              _carCtrl.clear();
+                            });
+                          },
+                        )
+                      : null,
+                  border: InputBorder.none,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            // Live search preview box
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+              decoration: BoxDecoration(
+                color: AppColors.accent.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppColors.accent.withValues(alpha: 0.25)),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.search_rounded, color: AppColors.accent, size: 18),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Search query: ',
+                    style: AppTypography.caption.copyWith(color: AppColors.textMuted),
+                  ),
+                  Expanded(
+                    child: Text(
+                      _currentQuery,
+                      style: GoogleFonts.inter(
+                        color: AppColors.textPrimary,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 13,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 24),
+
+            // Search CTA
+            SizedBox(
+              width: double.infinity,
+              height: 52,
+              child: TappableScale(
+                onTap: () => Navigator.pop(context, _currentQuery),
+                child: Container(
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    gradient: kCyanGradient,
+                    borderRadius: BorderRadius.circular(14),
+                    boxShadow: [
+                      BoxShadow(
+                        color: kAccent.withValues(alpha: 0.3),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.storefront_rounded, color: Colors.black, size: 20),
+                      const SizedBox(width: 8),
+                      Text(
+                        _carCtrl.text.trim().isNotEmpty
+                            ? 'Search ${_carCtrl.text.trim()} Spares'
+                            : 'Search Spares in Marketplace',
+                        style: GoogleFonts.inter(
+                          color: Colors.black,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 15,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+            if (_carCtrl.text.trim().isNotEmpty) ...[
+              const SizedBox(height: 10),
+              Center(
+                child: TextButton(
+                  onPressed: () => Navigator.pop(context, widget.partName),
+                  child: Text(
+                    'Search "${widget.partName}" Only (All Vehicles)',
+                    style: AppTypography.body.copyWith(
+                      color: AppColors.textMuted,
+                      fontSize: 12,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
     );
   }
 }
